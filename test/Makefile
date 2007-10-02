@@ -1,8 +1,6 @@
 # e.g. SpiderMonkey at http://www.mozilla.org/js/spidermonkey/
 JS=js
 
-OCAMLC=ocamlc
-OCAMLJS=../bin/ocamljs
 COMPFLAGS=-warn-error A
 
 TESTS=$(basename $(wildcard *.ml))
@@ -10,10 +8,10 @@ TESTS=$(basename $(wildcard *.ml))
 all: $(addsuffix .test,$(TESTS))
 
 %.js : %.ml
-	$(OCAMLJS) $(COMPFLAGS) -o $@ $<
+	../bin/ocamljs $(COMPFLAGS) -I ../lib -o $@ $<
 
 %.exp : %.ml
-	$(OCAMLC) $(COMPFLAGS) -o $(basename $@) $<; \
+	ocamlc $(COMPFLAGS) -o $(basename $@) $<; \
 	./$(basename $@) > $@
 
 %.test: %.exp %.js
