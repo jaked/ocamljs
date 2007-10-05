@@ -1,16 +1,16 @@
-(***********************************************************************)
-(*                                                                     *)
-(*                           Objective Caml                            *)
-(*                                                                     *)
-(*            Xavier Leroy, projet Cristal, INRIA Rocquencourt         *)
-(*                                                                     *)
-(*  Copyright 1996 Institut National de Recherche en Informatique et   *)
-(*  en Automatique.  All rights reserved.  This file is distributed    *)
-(*  under the terms of the Q Public License version 1.0.               *)
-(*                                                                     *)
-(***********************************************************************)
-
-(* $Id: errors.mli,v 1.5 2000/03/06 22:11:31 weis Exp $ *)
+(*
+ * This file is part of ocamljs, OCaml to Javascript compiler
+ * Copyright (C) 2007 Skydeck, Inc
+ * Original file (driver/errors.mli in the Objective Caml source
+ * distribution) is Copyright (C) INRIA.
+ *
+ * This program is free software released under the QPL.
+ * See LICENSE for more details.
+ *
+ * The Software is provided AS IS with NO WARRANTY OF ANY KIND,
+ * INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND 
+ * FITNESS FOR A PARTICULAR PURPOSE.
+ *)
 
 (* Error report *)
 open Format

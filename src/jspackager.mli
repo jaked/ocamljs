@@ -1,16 +1,16 @@
-(***********************************************************************)
-(*                                                                     *)
-(*                           Objective Caml                            *)
-(*                                                                     *)
-(*            Xavier Leroy, projet Cristal, INRIA Rocquencourt         *)
-(*                                                                     *)
-(*  Copyright 2002 Institut National de Recherche en Informatique et   *)
-(*  en Automatique.  All rights reserved.  This file is distributed    *)
-(*  under the terms of the Q Public License version 1.0.               *)
-(*                                                                     *)
-(***********************************************************************)
-
-(* $Id: bytepackager.mli,v 1.1 2002/02/08 16:55:42 xleroy Exp $ *)
+(*
+ * This file is part of ocamljs, OCaml to Javascript compiler
+ * Copyright (C) 2007 Skydeck, Inc
+ * Original file (bytecomp/bytepackager.mli) in the Objective Caml source
+ * distribution) is Copyright (C) INRIA.
+ *
+ * This program is free software released under the QPL.
+ * See LICENSE for more details.
+ *
+ * The Software is provided AS IS with NO WARRANTY OF ANY KIND,
+ * INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND 
+ * FITNESS FOR A PARTICULAR PURPOSE.
+ *)
 
 (* "Package" a set of .cmo files into one .cmo file having the
    original compilation units as sub-modules. *)

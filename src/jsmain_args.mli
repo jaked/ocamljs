@@ -1,16 +1,16 @@
-(***********************************************************************)
-(*                                                                     *)
-(*                           Objective Caml                            *)
-(*                                                                     *)
-(*             Damien Doligez, projet Para, INRIA Rocquencourt         *)
-(*                                                                     *)
-(*  Copyright 1998 Institut National de Recherche en Informatique et   *)
-(*  en Automatique.  All rights reserved.  This file is distributed    *)
-(*  under the terms of the Q Public License version 1.0.               *)
-(*                                                                     *)
-(***********************************************************************)
-
-(* $Id: main_args.mli,v 1.26 2005/05/09 13:39:17 doligez Exp $ *)
+(*
+ * This file is part of ocamljs, OCaml to Javascript compiler
+ * Copyright (C) 2007 Skydeck, Inc
+ * Original file (driver/main_args.mli) in the Objective Caml source
+ * distribution) is Copyright (C) INRIA.
+ *
+ * This program is free software released under the QPL.
+ * See LICENSE for more details.
+ *
+ * The Software is provided AS IS with NO WARRANTY OF ANY KIND,
+ * INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND 
+ * FITNESS FOR A PARTICULAR PURPOSE.
+ *)
 
 module Make_options (F :
     sig
