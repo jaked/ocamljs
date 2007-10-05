@@ -62,10 +62,10 @@ let scan_file obj_name tolink =
   if Filename.check_suffix file_name ".js"
   then Link_js(file_name) :: tolink
   else try
-    let buffer = String.create (String.length cmj_magic_number) in
-    really_input ic buffer 0 (String.length cmj_magic_number);
-    if buffer = cmj_magic_number then begin
-      (* This is a .cmj file. It must be linked in any case.
+    let buffer = String.create (String.length cmjs_magic_number) in
+    really_input ic buffer 0 (String.length cmjs_magic_number);
+    if buffer = cmjs_magic_number then begin
+      (* This is a .cmjs file. It must be linked in any case.
          Read the relocation information to see which modules it
          requires. *)
       let compunit_pos = input_binary_int ic in  (* Go to descriptor *)
@@ -75,7 +75,7 @@ let scan_file obj_name tolink =
       List.iter add_required compunit.cu_reloc;
       Link_object(file_name, compunit) :: tolink
     end
-    else if buffer = cmja_magic_number then begin
+    else if buffer = cmjsa_magic_number then begin
       (* This is an archive file. Each unit contained in it will be linked
          in only if needed. *)
       let pos_toc = input_binary_int ic in    (* Go to table of contents *)
@@ -148,7 +148,7 @@ let link_compunit output_fun inchan file_name compunit =
   if !Clflags.link_everything then
     List.iter Symtable.require_primitive compunit.cu_primitives
 
-(* Link in a .cmj file *)
+(* Link in a .cmjs file *)
 
 let link_object output_fun file_name compunit =
   let inchan = open_in_bin file_name in
@@ -161,7 +161,7 @@ let link_object output_fun file_name compunit =
   | x ->
       close_in inchan; raise x
 
-(* Link in a .cmja file *)
+(* Link in a .cmjsa file *)
 
 let link_archive output_fun file_name units_required =
   let inchan = open_in_bin file_name in
@@ -188,7 +188,7 @@ let link_js output_fun file_name =
       | n -> output_fun (String.sub buf 0 n); copy () in
   copy()
 
-(* Link in a .cmj or .cmja or .js file *)
+(* Link in a .cmjs or .cmjsa or .js file *)
 
 let link_file output_fun = function
     Link_object(file_name, unit) ->
@@ -284,7 +284,7 @@ let link_js_exec tolink exec_name =
 let link objfiles output_name =
   let objfiles =
     if !Clflags.nopervasives then objfiles
-    else ["support.js"; "primitives.js"; "stdlib.cmja" ] @ objfiles @ ["std_exit.cmj"] in
+    else ["support.js"; "primitives.js"; "stdlib.cmjsa" ] @ objfiles @ ["std_exit.cmjs"] in
   let tolink = List.fold_right scan_file objfiles [] in
   link_js_exec tolink output_name
 

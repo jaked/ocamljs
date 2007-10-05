@@ -1,4 +1,4 @@
-(* Generation of Javascript for .cmj files *)
+(* Generation of Javascript for .cmjs files *)
 
 open Js
 open Cmo_format

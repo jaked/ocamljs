@@ -10,7 +10,7 @@ open Cmo_format
 (* Emission to a file *)
 
 let to_file outchan unit_name (code, reloc) =
-  output_string outchan cmj_magic_number;
+  output_string outchan cmjs_magic_number;
   let pos_depl = pos_out outchan in
   output_binary_int outchan 0;
   let pos_code = pos_out outchan in

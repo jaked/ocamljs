@@ -33,12 +33,12 @@ let ocamljs_p tags deps out =
   Cmd (S [ocamljs; A"-pack"; T tags;
           atomize_paths deps; flags_of_pathname out; A"-o"; Px out])
 
-let js_compile_ocaml_implem ?tag ml cmj env build =
-  let ml = env ml and cmj = env cmj in
+let js_compile_ocaml_implem ?tag ml cmjs env build =
+  let ml = env ml and cmjs = env cmjs in
   prepare_compile build ml;
-  ocamljs_c (tags_of_pathname ml++"implem"+++tag) ml cmj
+  ocamljs_c (tags_of_pathname ml++"implem"+++tag) ml cmjs
 
-let js_link_gen = link_gen "cmj" "cmja" "cmja" ["cmj"; "cmi"]
+let js_link_gen = link_gen "cmjs" "cmjsa" "cmjsa" ["cmjs"; "cmi"]
 
 let js_link = js_link_gen ocamljs_link_prog
   (fun tags -> tags++"ocaml"++"link"++"js"++"program")
@@ -46,7 +46,7 @@ let js_link = js_link_gen ocamljs_link_prog
 let js_library_link = js_link_gen js_lib_linker js_lib_linker_tags
 
 let js_library_link_modules =
-  link_modules [("cmj",[]); ("cmi",[])] "cmj" "cmja" "cmja" js_lib_linker js_lib_linker_tags
+  link_modules [("cmjs",[]); ("cmi",[])] "cmjs" "cmjsa" "cmjsa" js_lib_linker js_lib_linker_tags
 
 (* from Ocaml_compiler *)
 let link_from_file link modules_file cmX env build =
@@ -57,7 +57,7 @@ let link_from_file link modules_file cmX env build =
 let js_library_link_mllib = link_from_file js_library_link_modules
 
 let js_pack_modules =
-  pack_modules [("cmj",["cmi"]); ("cmi",[])] "cmj" "cmja" "cmja" ocamljs_p
+  pack_modules [("cmjs",["cmi"]); ("cmi",[])] "cmjs" "cmjsa" "cmjsa" ocamljs_p
     (fun tags -> tags++"ocaml"++"pack"++"js")
 
 let js_pack_mlpack = link_from_file js_pack_modules
@@ -65,11 +65,11 @@ let js_pack_mlpack = link_from_file js_pack_modules
 ;;
 
 (* copied from the ocamlc versions in Ocaml_commpiler. *)
-rule "ocaml: mlpack & cmj* & cmi -> cmj"
+rule "ocaml: mlpack & cmjs* & cmi -> cmjs"
   ~tags:["ocaml"; "js"]
-  ~prod:"%.cmj"
+  ~prod:"%.cmjs"
   ~deps:["%.mli"; "%.cmi"; "%.mlpack"]
-  (js_pack_mlpack "%.mlpack" "%.cmj");;
+  (js_pack_mlpack "%.mlpack" "%.cmjs");;
 
 (*
   this rule is a little hack; the right one is commented out below,
@@ -78,64 +78,64 @@ rule "ocaml: mlpack & cmj* & cmi -> cmj"
   build a .cmi
 *)
 
-rule "ocaml: mlpack & cmj* -> cmj"
+rule "ocaml: mlpack & cmjs* -> cmjs"
   ~tags:["ocaml"; "js"]
-  ~prods:["%.cmj"]
+  ~prods:["%.cmjs"]
   ~dep:"%.mlpack"
-  (js_pack_mlpack "%.mlpack" "%.cmj");;
+  (js_pack_mlpack "%.mlpack" "%.cmjs");;
 
 (*
-rule "ocaml: mlpack & cmj* -> cmj & cmi"
+rule "ocaml: mlpack & cmjs* -> cmjs & cmi"
   ~tags:["ocaml"; "js"]
-  ~prods:["%.cmj"; "%.cmi"]
+  ~prods:["%.cmjs"; "%.cmi"]
   ~dep:"%.mlpack"
-  (js_pack_mlpack "%.mlpack" "%.cmj");;
+  (js_pack_mlpack "%.mlpack" "%.cmjs");;
 *)
 
-rule "ocaml: ml & cmi -> cmj"
+rule "ocaml: ml & cmi -> cmjs"
   ~tags:["ocaml"; "js"]
-  ~prod:"%.cmj"
+  ~prod:"%.cmjs"
   ~deps:["%.mli"(* This one is inserted to force this rule to be skiped when
                    a .ml is provided without a .mli *); "%.ml"; "%.ml.depends"; "%.cmi"]
-  (js_compile_ocaml_implem "%.ml" "%.cmj");;
+  (js_compile_ocaml_implem "%.ml" "%.cmjs");;
 
 (*
   see above
 *)
-rule "ocaml: ml -> cmj"
+rule "ocaml: ml -> cmjs"
   ~tags:["ocaml"; "js"]
-  ~prods:["%.cmj"]
+  ~prods:["%.cmjs"]
   ~deps:["%.ml"; "%.ml.depends"]
-  (js_compile_ocaml_implem "%.ml" "%.cmj");
+  (js_compile_ocaml_implem "%.ml" "%.cmjs");
 
 (*
-  rule "ocaml: ml -> cmj & cmi"
+  rule "ocaml: ml -> cmjs & cmi"
   ~tags:["ocaml"; "js"]
-  ~prods:["%.cmj"; "%.cmi"]
+  ~prods:["%.cmjs"; "%.cmi"]
   ~deps:["%.ml"; "%.ml.depends"]
-  (js_compile_ocaml_implem "%.ml" "%.cmj");
+  (js_compile_ocaml_implem "%.ml" "%.cmjs");
 *)
 
-rule "ocaml: cmj* -> js"
+rule "ocaml: cmjs* -> js"
   ~tags:["ocaml"; "js"; "program"]
   ~prod:"%.js"
-  ~dep:"%.cmj"
-  (js_link "%.cmj" "%.js");
+  ~dep:"%.cmjs"
+  (js_link "%.cmjs" "%.js");
 
-rule "ocaml: mllib & cmj* -> cmja"
+rule "ocaml: mllib & cmjs* -> cmja"
   ~tags:["ocaml"; "js"; "library"]
-  ~prod:"%.cmja"
+  ~prod:"%.cmjsa"
   ~dep:"%.mllib"
-  (js_library_link_mllib "%.mllib" "%.cmja");;
+  (js_library_link_mllib "%.mllib" "%.cmjsa");;
 
-rule "ocaml: cmo* -> cmja"
+rule "ocaml: cmo* -> cmjsa"
   ~tags:["ocaml"; "js"; "library"]
-  ~prod:"%.cmja"
-  ~dep:"%.cmj"
-  (js_library_link "%.cmj" "%.cmja");;
+  ~prod:"%.cmjsa"
+  ~dep:"%.cmjs"
+  (js_library_link "%.cmjs" "%.cmjsa");;
 
 flag ["ocaml"; "js"; "link"] begin
-  S (List.map (fun x -> A (x^".cmja")) !Options.ocaml_libs)
+  S (List.map (fun x -> A (x^".cmjsa")) !Options.ocaml_libs)
 end;;
 
 Pathname.define_context "src"            ["ocaml/bytecomp"; "ocaml/driver"; "ocaml/parsing"; "ocaml/typing"; "ocaml/utils"];

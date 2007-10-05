@@ -2,7 +2,7 @@ include ocaml/config/Makefile
 
 OCAMLBUILD=ocamlbuild -no-links
 
-all: prereqs ocamljs stdlib.cmja std_exit.cmj
+all: prereqs ocamljs stdlib.cmjsa std_exit.cmjs
 
 prereqs:
 	./ocaml/build/mkmyocamlbuild_config.sh
@@ -17,21 +17,21 @@ ocamljs:
 #	ocamlbuild -no-links src/jsmain.native
 #	cp _build/src/jsmain.native bin/ocamljs.opt
 
-stdlib.cmja:
-	$(OCAMLBUILD) ocaml/stdlib/stdlib.cmja
-	cp _build/ocaml/stdlib/stdlib.cmja lib
+stdlib.cmjsa:
+	$(OCAMLBUILD) ocaml/stdlib/stdlib.cmjsa
+	cp _build/ocaml/stdlib/stdlib.cmjsa lib
 
-std_exit.cmj:
-	$(OCAMLBUILD) ocaml/stdlib/std_exit.cmj
-	cp _build/ocaml/stdlib/std_exit.cmj lib
+std_exit.cmjs:
+	$(OCAMLBUILD) ocaml/stdlib/std_exit.cmjs
+	cp _build/ocaml/stdlib/std_exit.cmjs lib
 
 install:
 	cp bin/ocamljs $(BINDIR)
-	cp lib/support.js lib/primitives.js lib/stdlib.cmja lib/std_exit.cmj $(LIBDIR)
+	cp lib/support.js lib/primitives.js lib/stdlib.cmjsa lib/std_exit.cmjs $(LIBDIR)
 
 clean:
 	$(OCAMLBUILD) -clean
-	rm -rf bin/ocamljs lib/stdlib.cmja lib/std_exit.cmj
+	rm -rf bin/ocamljs lib/stdlib.cmjsa lib/std_exit.cmjs
 	make -C test clean
 
 test:

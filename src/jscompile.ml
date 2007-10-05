@@ -96,7 +96,7 @@ let implementation ppf sourcefile outputprefix =
       Pparse.remove_preprocessed_if_ast inputfile;
       raise x
   end else begin    
-    let objfile = outputprefix ^ ".cmj" in
+    let objfile = outputprefix ^ ".cmjs" in
     let oc = open_out_bin objfile in
     try
       Pparse.file ppf inputfile Parse.implementation ast_impl_magic_number

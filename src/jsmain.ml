@@ -28,22 +28,22 @@ let process_interface_file ppf name =
 let process_implementation_file ppf name =
   let opref = output_prefix name in
   Jscompile.implementation ppf name opref;
-  objfiles := (opref ^ ".cmj") :: !objfiles
+  objfiles := (opref ^ ".cmjs") :: !objfiles
 
 let process_file ppf name =
   if Filename.check_suffix name ".ml"
   || Filename.check_suffix name ".mlt" then begin
     let opref = output_prefix name in
     Jscompile.implementation ppf name opref;
-    objfiles := (opref ^ ".cmj") :: !objfiles
+    objfiles := (opref ^ ".cmjs") :: !objfiles
   end
   else if Filename.check_suffix name !Config.interface_suffix then begin
     let opref = output_prefix name in
     Jscompile.interface ppf name opref;
     if !make_package then objfiles := (opref ^ ".cmi") :: !objfiles
   end
-  else if Filename.check_suffix name ".cmj"
-       || Filename.check_suffix name ".cmja"
+  else if Filename.check_suffix name ".cmjs"
+       || Filename.check_suffix name ".cmjsa"
        || Filename.check_suffix name ".js" then
     objfiles := name :: !objfiles
   else if Filename.check_suffix name ".cmi" && !make_package then

@@ -26,7 +26,7 @@ all: $(addsuffix .test,$(TESTS))
 
 clean:
 	@for t in $(TESTS); do \
-	  rm -f $$t $$t.js $$t.exp $$t.act $$t.cmi $$t.cmj; \
+	  rm -f $$t $$t.js $$t.exp $$t.act $$t.cmi $$t.cmjs; \
 	done
 
 .PRECIOUS: %.js %.exp

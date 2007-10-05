@@ -1,4 +1,4 @@
-(* Build libraries of .cmj files *)
+(* Build libraries of .cmjs files *)
 
 open Misc
 open Config
@@ -11,7 +11,7 @@ type error =
 
 exception Error of error
 
-(* Copy a compilation unit from a .cmj or .cmja into the archive *)
+(* Copy a compilation unit from a .cmjs or .cmjsa into the archive *)
 let copy_compunit ic oc compunit =
   seek_in ic compunit.cu_pos;
   compunit.cu_pos <- pos_out oc;
@@ -31,9 +31,9 @@ let copy_object_file oc name =
       raise(Error(File_not_found name)) in
   let ic = open_in_bin file_name in
   try
-    let buffer = String.create (String.length cmj_magic_number) in
-    really_input ic buffer 0 (String.length cmj_magic_number);
-    if buffer = cmj_magic_number then begin
+    let buffer = String.create (String.length cmjs_magic_number) in
+    really_input ic buffer 0 (String.length cmjs_magic_number);
+    if buffer = cmjs_magic_number then begin
       let compunit_pos = input_binary_int ic in
       seek_in ic compunit_pos;
       let compunit = (input_value ic : compilation_unit) in
@@ -42,7 +42,7 @@ let copy_object_file oc name =
       close_in ic;
       [compunit]
     end else
-    if buffer = cmja_magic_number then begin
+    if buffer = cmjsa_magic_number then begin
       let toc_pos = input_binary_int ic in
       seek_in ic toc_pos;
       let toc = (input_value ic : library) in
@@ -59,7 +59,7 @@ let copy_object_file oc name =
 let create_archive file_list lib_name =
   let outchan = open_out_bin lib_name in
   try
-    output_string outchan cmja_magic_number;
+    output_string outchan cmjsa_magic_number;
     let ofs_pos_toc = pos_out outchan in
     output_binary_int outchan 0;
     let units = List.flatten(List.map (copy_object_file outchan) file_list) in

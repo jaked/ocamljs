@@ -1,4 +1,4 @@
-(* Link .cmj files and produce a Javascript executable. *)
+(* Link .cmjs files and produce a Javascript executable. *)
 
 val link: string list -> string -> unit
 
