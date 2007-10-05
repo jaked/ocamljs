@@ -37,9 +37,9 @@ using trampolines. See lib/support.js for details.</o>
 
 <p>Much of standard OCaml is implemented by a library of C primitives;
 Javascript implementations of these (insofar as they have been
-implemented) are in lib/primitives.js. Some OCaml primitives are
-implemented directly by the code generator; see comp_ccall in
-src/jsgen.ml.</p>
+implemented) are in src/libs/ocamljs/primitives.js. Some OCaml
+primitives are implemented directly by the code generator; see
+comp_ccall in src/ocamljs/jsgen.ml.</p>
 
 <h3>How ocamljs represents OCaml values in Javascript</h3>
 
@@ -60,7 +60,7 @@ them.</p>
 polymorphic variants, exceptions, and arrays) are represented by
 Javascript arrays. Blocks may have a tag (used to distinguish branches
 of variants), which is represented as an extra slot on the array
-object. See lib/support.js for functions on blocks.</p>
+object. See src/libs/ocamljs/support.js for functions on blocks.</p>
 
 <p>OCaml strings are mutable, but Javascript strings are immutable, so
 a direct representation is not possible. Ocamljs represents mutable
