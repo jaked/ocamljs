@@ -1,1 +1,2 @@
 <test/**>: -traverse
+<lib/**>: -traverse

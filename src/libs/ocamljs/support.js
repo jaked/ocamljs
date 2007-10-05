@@ -1,4 +1,4 @@
-(*
+/*
  * This file is part of ocamljs, OCaml to Javascript compiler
  * Copyright (C) 2007 Skydeck, Inc
  *
@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *)
+ */
 
 var oc$$nv = {}
 
@@ -50,7 +50,7 @@ function ___()
     for (var i=0; i < tl; i++) a2[i] = a[i];
     for (var i=tl; i < al; i++) a3[i - tl] = a[i];
     var v = t._.apply(t, a2);
-    return v.__(a3);
+    return v.___.apply(v, a3);
   }
 }
 

@@ -1,4 +1,4 @@
-(*
+/*
  * This file is part of ocamljs, OCaml to Javascript compiler
  * Copyright (C) 2007 Skydeck, Inc
  *
@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *)
+ */
 
 var caml_blit_string = function (s1, o1, s2, o2, n) {
   for (var i = 0; i < n; i++)
