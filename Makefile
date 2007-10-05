@@ -1,6 +1,11 @@
 include ocaml/config/Makefile
 
-LIBS=support.js primitives.js stdlib.cmjsa std_exit.cmjs ocamljs.cmjs javascript.cmjs mozilla.cmjs
+LIBS=\
+support.js primitives.js \
+stdlib.cmjsa std_exit.cmjs \
+ocamljs.cmi ocamljs.cmjs \
+javascript.cmi javascript.cmjs \
+mozilla.cmi mozilla.cmjs
 
 OCAMLBUILD=ocamlbuild -no-links
 
@@ -27,15 +32,15 @@ std_exit.cmjs:
 	$(OCAMLBUILD) ocaml/stdlib/std_exit.cmjs
 	cp _build/ocaml/stdlib/std_exit.cmjs lib
 
-ocamljs.cmjs:
+ocamljs.cmjs ocamljs.cmi:
 	$(OCAMLBUILD) src/libs/ocamljs/ocamljs.cmjs
 	cp _build/src/libs/ocamljs/ocamljs.cm* lib
 
-javascript.cmjs:
+javascript.cmjs javascript.cmi:
 	$(OCAMLBUILD) src/libs/javascript/javascript.cmjs
 	cp _build/src/libs/javascript/javascript.cm* lib
 
-mozilla.cmjs:
+mozilla.cmjs mozilla.cmi:
 	$(OCAMLBUILD) src/libs/mozilla/mozilla.cmjs
 	cp _build/src/libs/mozilla/mozilla.cm* lib
 

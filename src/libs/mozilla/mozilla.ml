@@ -375,3 +375,95 @@ struct
   external abort : <xMLHttpRequest:i; ..> t -> unit = "#abort"
   external status : <xMLHttpRequest:i; ..> t -> int = ".status"
 end
+
+module DOM =
+struct
+  type i
+  type (+'a) t
+end
+
+module Document =
+struct
+  open DOM
+
+  let d = Ocamljs.var "document"
+
+  external getElementById : <document:i; ..> t -> string -> <element:i> t = "#getElementById"
+
+  (* XXX
+     these are just advisory. it would be nice to compile out XUL files
+     along with a module you can use to get at the elements in a
+     typesafe way. this of course wouldn't work if you go changing the
+     DOM around.
+  *)
+  external getElementById_dialog : <document:i; ..> t -> string -> <element:i; dialog:i> t = "#getElementById"
+  external getElementById_menuItem : <document:i; ..> t -> string -> <element:i; menuItem:i> t = "#getElementById"
+  external getElementById_menuList : <document:i; ..> t -> string -> <element:i; menuList:i> t = "#getElementById"
+  external getElementById_statusBarPanel : <document:i; ..> t -> string -> <element:i; statusBarPanel:i> t = "#getElementById"
+  external getElementById_textBox : <document:i; ..> t -> string -> <element:i; textBox:i> t = "#getElementById"
+end
+
+module Element =
+struct
+  open DOM
+
+  type e
+  type 'a l
+
+  external _addEventListener : <element:i; ..> t -> string -> (< ..> -> bool) -> bool -> unit = "#addEventListener"
+  let addEventListener o e f u =
+    let l = Ocamljs.function_ (fun a -> Ocamljs.caml_callback f a) in
+    _addEventListener o e l u;
+    l
+
+  let addEventListener_command o f u = addEventListener o "command" f u
+  let addEventListener_click o f u = addEventListener o "click" f u
+  let addEventListener_dialogaccept o f u = addEventListener o "dialogaccept" f u
+  let addEventListener_load o f u = addEventListener o "load" f u
+  let addEventListener_unload o f u = addEventListener o "unload" f u
+
+  external removeEventListener : <element:i; ..> t -> string -> < ..> l -> bool -> unit = "#removeEventListener"
+
+  let removeEventListener_command o l u = removeEventListener o "command" l u
+  let removeEventListener_click o l u = removeEventListener o "click" l u
+  let removeEventListener_dialogaccept o l u = removeEventListener o "dialogaccept" l u
+  let removeEventListener_load o l u = removeEventListener o "load" l u
+  let removeEventListener_unload o l u = removeEventListener o "unload" l u
+
+  external setAttribute : <element:i; ..> t -> string -> 'a -> unit = "#setAttribute"
+end
+
+module MenuList =
+struct
+  open DOM
+
+  external selectedIndex : <menuList:i; ..> t -> int = ".selectedIndex"
+  external set_selectedIndex : <menuList:i; ..> t -> int -> unit = "=selectedIndex"
+  external value : <menuList:i; ..> t -> string = ".value"
+  external set_value : <menuList:i; ..> t -> string -> unit = "=value"
+end
+
+module MouseEvent =
+struct
+  open DOM
+
+  external button : <mouseEvent:i> t -> int = ".button"
+end
+
+module TextBox =
+struct
+  open DOM
+
+  external value : <textBox:i; ..> t -> string = ".value"
+  external set_value : <textBox:i; ..> t -> string -> unit = "=value"
+end
+
+module Window =
+struct
+  open DOM
+
+  let w = Ocamljs.var "window"
+
+  external openDialog : <window:i; ..> t -> string -> string -> string -> unit = "#openDialog"
+  external location : <window:i; ..> t -> string = ".location"
+end

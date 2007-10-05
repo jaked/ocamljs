@@ -356,3 +356,85 @@ sig
   external abort : <xMLHttpRequest:i; ..> t -> unit = "#abort"
   external status : <xMLHttpRequest:i; ..> t -> int = ".status"
 end
+
+module DOM :
+sig
+  type i
+  type (+'a) t
+end
+
+module Document :
+sig
+  open DOM
+
+  val d : <document:i> t
+
+  external getElementById : <document:i; ..> t -> string -> <element:i> t = "#getElementById"
+
+  external getElementById_dialog : <document:i; ..> t -> string -> <element:i; dialog:i> t = "#getElementById"
+  external getElementById_menuItem : <document:i; ..> t -> string -> <element:i; menuItem:i> t = "#getElementById"
+  external getElementById_menuList : <document:i; ..> t -> string -> <element:i; menuList:i> t = "#getElementById"
+  external getElementById_statusBarPanel : <document:i; ..> t -> string -> <element:i; statusBarPanel:i> t = "#getElementById"
+  external getElementById_textBox : <document:i; ..> t -> string -> <element:i; textBox:i> t = "#getElementById"
+end
+
+module Element :
+sig
+  open DOM
+
+  type e
+  type 'a l
+
+  val addEventListener : <element:i; ..> t -> string -> (< ..> -> bool) -> bool -> < > l
+
+  val addEventListener_command : <element:i; ..> t -> (<event:i> t -> bool) -> bool -> <command:e> l
+  val addEventListener_click : <element:i; ..> t -> (<event:i; mouseEvent:i> t -> bool) -> bool -> <click:e> l
+  val addEventListener_dialogaccept : <element:i; ..> t -> (<event:i> t -> bool) -> bool -> <dialogaccept:e> l
+  val addEventListener_load : <element:i; ..> t -> (<event:i> t -> bool) -> bool -> <load:e> l
+  val addEventListener_unload : <element:i; ..> t -> (<event:i> t -> bool) -> bool -> <unload:e> l
+
+  external removeEventListener : <element:i; ..> t -> string -> < ..> l -> bool -> unit = "#removeEventListener"
+
+  val removeEventListener_command : <element:i; ..> t -> <command:e; ..> l -> bool -> unit
+  val removeEventListener_click : <element:i; ..> t -> <click:e; ..> l -> bool -> unit
+  val removeEventListener_dialogaccept : <element:i; ..> t -> <dialogaccept:e; ..> l -> bool -> unit
+  val removeEventListener_load : <element:i; ..> t -> <load:e; ..> l -> bool -> unit
+  val removeEventListener_unload : <element:i; ..> t -> <unload:e; ..> l -> bool -> unit
+
+  external setAttribute : <element:i; ..> t -> string -> 'a -> unit = "#setAttribute"
+end
+
+module MenuList :
+sig
+  open DOM
+
+  external selectedIndex : <menuList:i; ..> t -> int = ".selectedIndex"
+  external set_selectedIndex : <menuList:i; ..> t -> int -> unit = "=selectedIndex"
+  external value : <menuList:i; ..> t -> string = ".value"
+  external set_value : <menuList:i; ..> t -> string -> unit = "=value"
+end
+
+module MouseEvent :
+sig
+  open DOM
+
+  external button : <mouseEvent:i> t -> int = ".button"
+end
+
+module TextBox :
+sig
+  open DOM
+
+  external value : <textBox:i; ..> t -> string = ".value"
+  external set_value : <textBox:i; ..> t -> string -> unit = "=value"
+end
+
+module Window :
+sig
+  open DOM
+
+  val w : <element:i; window:i> t
+
+  external openDialog : <window:i; ..> t -> string -> string -> string -> unit = "#openDialog"
+  external location : <window:i; ..> t -> string = ".location"
+end
