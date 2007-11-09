@@ -49,10 +49,10 @@ var compare_val = function (v1, v2, total) {
       if (v1 < v2) return LESS;
       if (v1 > v2) return GREATER;
       if (v1 != v2) {
-	if (!total) return UNORDERED;
-	if (v1 == v1) return GREATER;
-	if (v2 == v2) return LESS;
-	return EQUAL;
+        if (!total) return UNORDERED;
+        if (v1 == v1) return GREATER;
+        if (v2 == v2) return LESS;
+        return EQUAL;
       }
       return EQUAL;
     case "string":
@@ -64,43 +64,43 @@ var compare_val = function (v1, v2, total) {
     case "object":
       // like NaN
       if (v1 == null) {
-	if (v2 == null) return EQUAL;
-	return LESS;
+        if (v2 == null) return EQUAL;
+        return LESS;
       }
       if (v2 == null) return GREATER;
 
       // XXX is there a way to get the class of an object as a value?
       // XXX is it worth special casing various JS objects?
       if (v1 instanceof Date) {
-	var t1 = v1.getTime();
-	var t2 = v2.getTime();
-	if (t1 < t2) return LESS;
-	if (t1 > t2) return GREATER;
-	return EQUAL;
+        var t1 = v1.getTime();
+        var t2 = v2.getTime();
+        if (t1 < t2) return LESS;
+        if (t1 > t2) return GREATER;
+        return EQUAL;
       }
       if (v1 instanceof Array) {
-	// we should always either have both tags or neither
-	// so it is OK to fall through here
-	if (v1.t < v2.t) return LESS;
-	if (v1.t > v2.t) return GREATER;
-	var sz1 = v1.length;
-	var sz2 = v2.length;
-	if (sz1 < sz2) return LESS;
-	if (sz1 > sz2) return GREATER;
-	if (sz1 == 0) return EQUAL;
-	for (var i=0; i < sz1; i++)
-	  {
-	    var c = compare_val(v1[i], v2[i], total);
-	    if (c != EQUAL) return c;
-	  }
-	return EQUAL;
+        // we should always either have both tags or neither
+        // so it is OK to fall through here
+        if (v1.t < v2.t) return LESS;
+        if (v1.t > v2.t) return GREATER;
+        var sz1 = v1.length;
+        var sz2 = v2.length;
+        if (sz1 < sz2) return LESS;
+        if (sz1 > sz2) return GREATER;
+        if (sz1 == 0) return EQUAL;
+        for (var i=0; i < sz1; i++)
+        {
+          var c = compare_val(v1[i], v2[i], total);
+          if (c != EQUAL) return c;
+        }
+        return EQUAL;
       }
       if (v1 instanceof oc$$ms) {
-	var s1 = v1.toString();
-	var s2 = v2.toString();
-	if (s1 < s2) return LESS;
-	if (s1 > s2) return GREATER;
-	return EQUAL;
+        var s1 = v1.toString();
+        var s2 = v2.toString();
+        if (s1 < s2) return LESS;
+        if (s1 > s2) return GREATER;
+        return EQUAL;
       }
       return UNORDERED; // XXX
     default:
@@ -216,13 +216,37 @@ var caml_ml_seek_out_64 = function () { throw "caml_ml_seek_out_64"; }
 var caml_ml_set_binary_mode = function () { throw "caml_ml_set_binary_mode"; }
 var caml_named_value = function (n) { return oc$$nv[n]; }
 var caml_notequal = function (v1, v2) { return compare_val(v1, v2, 0) != 0; }
+var caml_obj_block = function (t, l) {
+  if (l == 0) return t;
+  var a = new Array(l);
+  a.t = t;
+  return a;
+}
 var caml_obj_dup = function (a) {
-  var l = a.length;
-  var d = new Array(l);
+  var d = caml_obj_block(a.t, a.length);
   for (var i=0; i < l; i++)
     d[i] = a[i];
-  d.t = a.t;
   return d;
+}
+var caml_obj_set_tag = function(v, t) {
+  v.t = t;
+}
+var caml_obj_tag = function(v) {
+  // XXX closures, mutable strings, objects?
+  if (typeof v == "string")
+    return 252;
+  else if (typeof v == "number") // XXX distinguish floats
+    return 1000;
+  else if (typeof v == "array")
+    return v.t;
+  else
+    return 1001;
+}
+var caml_obj_truncate = function (v, s) {
+  if (s <= 0 || s > v.length)
+    caml_invalid_argument("Obj.truncate");
+  else
+    v.length = s;
 }
 var caml_output_value = function () { throw "caml_output_value"; }
 var caml_register_named_value = function (n, v) { oc$$nv[n] = v; }
