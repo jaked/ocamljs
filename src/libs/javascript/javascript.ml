@@ -34,10 +34,10 @@ module Date =
     external _new_noargs : string -> t = "$new"
 
     let new_ () = _new_noargs "Date"
-    external new_milliseconds : int -> t = "$new" "Date"
+    external new_milliseconds : float -> t = "$new" "Date"
     external new_parts : int -> int -> int -> int -> int -> int -> int -> t = "$new" "Date"
 
-    external getTime : t -> int = "#getTime"
+    external getTime : t -> float = "#getTime"
     external getDate : t -> int = "#getDate"
     external getMonth : t -> int = "#getMonth"
     external getHours : t -> int = "#getHours"

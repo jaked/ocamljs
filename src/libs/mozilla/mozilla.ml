@@ -157,10 +157,10 @@ struct
   type timeout
   type interval
 
-  external _setTimeout : <dOMJSWindow:i; ..> t -> (unit -> unit) -> int -> timeout = "#setTimeout"
+  external _setTimeout : <dOMJSWindow:i; ..> t -> (unit -> unit) -> float -> timeout = "#setTimeout"
   let setTimeout w f d = _setTimeout w (Ocamljs.function_ (fun () -> Ocamljs.caml_callback f ())) d
   external clearTimeout : <dOMJSWindow:i; ..> t -> timeout -> unit = "#clearTimeout"
-  external _setInterval : <dOMJSWindow:i; ..> t -> (unit -> unit) -> int -> interval = "#setInterval"
+  external _setInterval : <dOMJSWindow:i; ..> t -> (unit -> unit) -> float -> interval = "#setInterval"
   let setInterval w f d = _setInterval w (Ocamljs.function_ (fun () -> Ocamljs.caml_callback f ())) d
   external clearInterval : <dOMJSWindow:i; ..> t -> interval -> unit = "#clearInterval"
 end
@@ -409,6 +409,7 @@ struct
   external getElementById_menuList : <document:i; ..> t -> string -> <element:i; menuList:i> t = "#getElementById"
   external getElementById_statusBarPanel : <document:i; ..> t -> string -> <element:i; statusBarPanel:i> t = "#getElementById"
   external getElementById_textBox : <document:i; ..> t -> string -> <element:i; textBox:i> t = "#getElementById"
+  external getElementById_radio : <document:i; ..> t -> string -> <element:i; radio:i> t = "#getElementById"
 end
 
 module Element =
@@ -439,6 +440,9 @@ struct
   let removeEventListener_unload o l u = removeEventListener o "unload" l u
 
   external setAttribute : <element:i; ..> t -> string -> 'a -> unit = "#setAttribute"
+
+  external hidden : <element:i; ..> t -> bool = ".hidden"
+  external set_hidden : <element:i; ..> t -> bool -> unit = "=hidden"
 end
 
 module MenuList =
@@ -456,6 +460,14 @@ struct
   open DOM
 
   external button : <mouseEvent:i> t -> int = ".button"
+end
+
+module Radio =
+struct
+  open DOM
+
+  external selected : <radio:i; ..> t -> bool = ".selected"
+  external set_selected : <radio:i; ..> t -> bool -> unit = "=selected"
 end
 
 module TextBox =

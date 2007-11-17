@@ -154,9 +154,9 @@ sig
   type timeout
   type interval
 
-  val setTimeout : <dOMJSWindow:i; ..> t -> (unit -> unit) -> int -> timeout
+  val setTimeout : <dOMJSWindow:i; ..> t -> (unit -> unit) -> float -> timeout
   external clearTimeout : <dOMJSWindow:i; ..> t -> timeout -> unit = "#clearTimeout"
-  val setInterval : <dOMJSWindow:i; ..> t -> (unit -> unit) -> int -> interval
+  val setInterval : <dOMJSWindow:i; ..> t -> (unit -> unit) -> float -> interval
   external clearInterval : <dOMJSWindow:i; ..> t -> interval -> unit = "#clearInterval"
 end
 
@@ -384,6 +384,7 @@ sig
   external getElementById_menuList : <document:i; ..> t -> string -> <element:i; menuList:i> t = "#getElementById"
   external getElementById_statusBarPanel : <document:i; ..> t -> string -> <element:i; statusBarPanel:i> t = "#getElementById"
   external getElementById_textBox : <document:i; ..> t -> string -> <element:i; textBox:i> t = "#getElementById"
+  external getElementById_radio : <document:i; ..> t -> string -> <element:i; radio:i> t = "#getElementById"
 end
 
 module Element :
@@ -410,6 +411,9 @@ sig
   val removeEventListener_unload : <element:i; ..> t -> <unload:e; ..> l -> bool -> unit
 
   external setAttribute : <element:i; ..> t -> string -> 'a -> unit = "#setAttribute"
+
+  external hidden : <element:i; ..> t -> bool = ".hidden"
+  external set_hidden : <element:i; ..> t -> bool -> unit = "=hidden"
 end
 
 module MenuList :
@@ -427,6 +431,14 @@ sig
   open DOM
 
   external button : <mouseEvent:i> t -> int = ".button"
+end
+
+module Radio :
+sig
+  open DOM
+
+  external selected : <radio:i; ..> t -> bool = ".selected"
+  external set_selected : <radio:i; ..> t -> bool -> unit = "=selected"
 end
 
 module TextBox :
