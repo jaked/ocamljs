@@ -588,6 +588,7 @@ struct
 
   let w = Ocamljs.var "window"
 
-  external openDialog : #window t -> string -> string -> string -> unit = "#openDialog"
+  external close : #window t -> unit = "#close"
   external location : #window t -> string = ".location"
+  external openDialog : #window t -> string -> string -> string -> unit = "#openDialog"
 end

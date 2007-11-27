@@ -315,7 +315,24 @@ and comp_expr_st tail expr k =
 		let i = jsident_of_ident (Ident.create "s") in
 		let cse = comp_expr false se in
 		((fun x -> Jvars (i, cse) :: x), Jvar i) in
-	let cc (i, e) = (jnum_of_int i, comp_expr_st tail e k) in
+	let cc (i, e) =
+          (* true if the sequence returns or throws; otherwise we need a break *)
+          let rec exits stmts =
+            match stmts with
+              | [] -> false
+              | _ ->
+                  match List.nth stmts (List.length stmts - 1) with
+                    | Jreturn _ -> true
+                    | Jthrow _ -> true
+                    | Jites (_, t, e) -> exits t && exits e
+                    | _ -> false in
+          let i = jnum_of_int i in
+          let stmts = comp_expr_st tail e k in
+          let stmts =
+            if exits stmts
+            then stmts
+            else stmts @ [ Jbreak ] in
+        (i, stmts) in
 	let fss = match fe with None -> Some [k Jnull] | Some e -> Some (comp_expr_st tail e k) in
 	let cswitch = Jswitch (cse, List.map cc cs, fss) in
 	let bswitch = Jswitch (jcall "$t" [cse], List.map cc bs, fss) in

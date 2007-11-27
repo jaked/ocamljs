@@ -557,6 +557,7 @@ sig
 
   val w : window t
 
-  external openDialog : #window t -> string -> string -> string -> unit = "#openDialog"
+  external close : #window t -> unit = "#close"
   external location : #window t -> string = ".location"
+  external openDialog : #window t -> string -> string -> string -> unit = "#openDialog"
 end

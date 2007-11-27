@@ -62,6 +62,7 @@ and stmt =
     | Jempty
     | Jvars of ident * exp
     | Jfuns of ident * ident list * stmt list
+    | Jbreak
     | Jreturn of exp
     | Jswitch of exp * (exp * stmt list) list * stmt list option
     | Jites of exp * stmt list * stmt list
