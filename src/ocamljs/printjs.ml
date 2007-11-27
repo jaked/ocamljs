@@ -288,7 +288,7 @@ and stmt ppf = function
 	      if !spc then fprintf ppf "@ " else spc := true;
 	      fprintf ppf "@[<hv>default:@;<1 2>@[%a@]@]" stmts fss in
       fprintf ppf
-	"@[<hv>switch (%a) {%a}@]"
+	"@[<hv>switch (%a) {@,@[%a@]}@]"
 	(expp p) e cases (cs, fss)
   | Jthrow e -> fprintf ppf "@[throw %a@]" (expp p) e
   | Jexps (Jfun _ as e) -> fprintf ppf "@[%a@]" (expp p) e

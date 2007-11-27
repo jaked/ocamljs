@@ -75,6 +75,34 @@ struct
   type i
   type (+'a) t
 
+  class type bufferedInputStream = object method inputStream:i method bufferedInputStream:i end
+  class type channel = object method supports:i method channel:i end
+  class type consoleService = object method consoleService:i end
+  class type cookie = object method cookie:i end
+  class type cookieManager = object method cookieManager:i end
+  class type dOMJSWindow = object method dOMJSWindow:i end
+  class type file = object method file:i end
+  class type fileInputStream = object method inputStream:i method fileInputStream:i end
+  class type fileOutputStream = object method outputStream:i method fileOutputStream:i end
+  class type httpChannel = object method httpChannel:i end
+  class type inputStream = object method inputStream:i end
+  class type localFile = object method file:i method localFile:i end
+  class type mIMEInputStream = object method inputStream:i method mIMEInputStream:i end
+  class type multiplexInputStream = object method inputStream:i method multiplexInputStream:i end
+  class type observerService = object method observerService:i end
+  class type outputStream = object method outputStream:i end
+  class type passwordManager = object method passwordManager:i end
+  class type passwordManagerInternal = object method passwordManagerInternal:i end
+  class type prefBranch = object method prefBranch:i end
+  class type properties = object method properties:i end
+  class type scriptableInputStream = object method inputStream:i method scriptableInputStream:i end
+  class type ['a] simpleEnumerator = object method simpleEnumerator:i end
+  class type stringInputStream = object method inputStream:i method stringInputStream:i end
+  class type supports = object method supports:i end
+  class type uRI = object method uRI:i end
+  class type windowMediator = object method windowMediator:i end
+  class type xMLHttpRequest = object method xMLHttpRequest:i end
+
   let getService_appshell_window_mediator () = getService appshell_window_mediator windowMediator
   let getService_consoleservice () = getService consoleservice consoleService
   let getService_cookiemanager () = getService cookiemanager cookieManager
@@ -103,7 +131,7 @@ module Supports =
 struct
   open XPCOM
 
-  external queryInterface : <supports:i; ..> t -> interface -> 'a = "#QueryInterface"
+  external queryInterface : #supports t -> interface -> 'a = "#QueryInterface"
 
   let queryInterface_httpChannel s = queryInterface s httpChannel
   let queryInterface_cookie s = queryInterface s cookie
@@ -113,39 +141,39 @@ module BufferedInputStream =
 struct
   open XPCOM
 
-  external init : <bufferedInputStream:i; ..> t -> <inputStream:i; ..> t -> int -> unit = "#init"
+  external init : #bufferedInputStream t -> #inputStream t -> int -> unit = "#init"
 end
 
 module Channel =
 struct
   open XPCOM
 
-  external uRI : <channel:i; ..> t -> <uRI:i> t = ".URI"
+  external uRI : #channel t -> uRI t = ".URI"
 end
 
 module ConsoleService =
 struct
   open XPCOM
 
-  external logStringMessage : <consoleService:i; ..> t -> string -> unit = "#logStringMessage"
+  external logStringMessage : #consoleService t -> string -> unit = "#logStringMessage"
 end
 
 module CookieManager =
 struct
   open XPCOM
 
-  external remove : <cookieManager:i; ..> t -> string -> string -> string -> bool -> unit = "#remove"
-  external enumerator : <cookieManager:i; ..> t -> <simpleEnumerator:<supports:i> t> t = ".enumerator"
+  external remove : #cookieManager t -> string -> string -> string -> bool -> unit = "#remove"
+  external enumerator : #cookieManager t -> (supports t) simpleEnumerator t = ".enumerator"
 end
 
 module Cookie =
 struct
   open XPCOM
 
-  external name : <cookie:i; ..> t -> string = ".name"
-  external value : <cookie:i; ..> t -> string = ".value"
-  external host : <cookie:i; ..> t -> string = ".host"
-  external path : <cookie:i; ..> t -> string = ".path"
+  external name : #cookie t -> string = ".name"
+  external value : #cookie t -> string = ".value"
+  external host : #cookie t -> string = ".host"
+  external path : #cookie t -> string = ".path"
 end
 
 module DOMJSWindow =
@@ -157,71 +185,71 @@ struct
   type timeout
   type interval
 
-  external _setTimeout : <dOMJSWindow:i; ..> t -> (unit -> unit) -> float -> timeout = "#setTimeout"
+  external _setTimeout : #dOMJSWindow t -> (unit -> unit) -> float -> timeout = "#setTimeout"
   let setTimeout w f d = _setTimeout w (Ocamljs.function_ (fun () -> Ocamljs.caml_callback f ())) d
-  external clearTimeout : <dOMJSWindow:i; ..> t -> timeout -> unit = "#clearTimeout"
-  external _setInterval : <dOMJSWindow:i; ..> t -> (unit -> unit) -> float -> interval = "#setInterval"
+  external clearTimeout : #dOMJSWindow t -> timeout -> unit = "#clearTimeout"
+  external _setInterval : #dOMJSWindow t -> (unit -> unit) -> float -> interval = "#setInterval"
   let setInterval w f d = _setInterval w (Ocamljs.function_ (fun () -> Ocamljs.caml_callback f ())) d
-  external clearInterval : <dOMJSWindow:i; ..> t -> interval -> unit = "#clearInterval"
+  external clearInterval : #dOMJSWindow t -> interval -> unit = "#clearInterval"
 end
 
 module FileInputStream =
 struct
   open XPCOM
 
-  external init : <fileInputStream:i; ..> t -> <file:i; ..> t -> int -> int -> int -> unit = "#init"
+  external init : #fileInputStream t -> #file t -> int -> int -> int -> unit = "#init"
 end
 
 module File =
 struct
   open XPCOM
 
-  external remove : <file:i; ..> t -> bool -> unit = "#remove"
-  external append : <file:i; ..> t -> string -> unit = "#append"
+  external remove : #file t -> bool -> unit = "#remove"
+  external append : #file t -> string -> unit = "#append"
 end
 
 module FileOutputStream =
 struct
   open XPCOM
 
-  external init : <fileOutputStream:i; ..> t -> <file:i; ..> t -> int -> int -> int -> unit = "#init"
+  external init : #fileOutputStream t -> #file t -> int -> int -> int -> unit = "#init"
 end
 
 module HttpChannel =
 struct
   open XPCOM
 
-  external setRequestHeader : <httpChannel:i; ..> t -> string -> string -> bool -> unit = "#setRequestHeader"
+  external setRequestHeader : #httpChannel t -> string -> string -> bool -> unit = "#setRequestHeader"
 end
 
 module InputStream =
 struct
   open XPCOM
 
-  let coerce is = (is :> <inputStream:i> t)
+  let coerce is = (is :> inputStream t)
 end
 
 module LocalFile =
 struct
   open XPCOM
 
-  external setRelativeDescriptor : <localFile:i; ..> t -> <localFile:i; ..> t -> string -> unit = "#setRelativeDescriptor"
+  external setRelativeDescriptor : #localFile t -> #localFile t -> string -> unit = "#setRelativeDescriptor"
 end
 
 module MIMEInputStream =
 struct
   open XPCOM
 
-  external set_addContentLength : <mIMEInputStream:i; ..> t -> bool -> unit = "=addContentLength"
-  external addHeader : <mIMEInputStream:i; ..> t -> string -> string -> unit = "#addHeader"
-  external setData : <mIMEInputStream:i; ..> t -> <inputStream:i; ..> t -> unit = "#setData"
+  external set_addContentLength : #mIMEInputStream t -> bool -> unit = "=addContentLength"
+  external addHeader : #mIMEInputStream t -> string -> string -> unit = "#addHeader"
+  external setData : #mIMEInputStream t -> #inputStream t -> unit = "#setData"
 end
 
 module MultiplexInputStream =
 struct
   open XPCOM
 
-  external appendStream : <multiplexInputStream:i; ..> t -> <inputStream:i; ..> t -> unit = "#appendStream"
+  external appendStream : #multiplexInputStream t -> #inputStream t -> unit = "#appendStream"
 end
 
 module ObserverService =
@@ -232,7 +260,10 @@ struct
   type tp
   type 'a o
 
-  external _addObserver : <observerService:X.i; ..> X.t -> < ..> o -> string -> bool -> unit = "#addObserver"
+  class type none = object end
+  class type httpOnModifyRequest = object method httpOnModifyRequest:tp end
+
+  external _addObserver : #X.observerService X.t -> #none o -> string -> bool -> unit = "#addObserver"
   let addObserver s f t =
     let o = O.obj [ "observe", O.function_ (fun s t d -> O.caml_callback3 f s t d);
                     "QueryInterface", O.function_ (fun iid -> (* do we need this? *)
@@ -245,7 +276,7 @@ struct
   let addObserver_http_on_modify_request s f =
     addObserver s (fun s t d -> f (Supports.queryInterface_httpChannel s) d) "http-on-modify-request"
 
-  external removeObserver : <observerService:X.i; ..> X.t -> < ..> o -> string -> unit = "#removeObserver"
+  external removeObserver : #X.observerService X.t -> #none o -> string -> unit = "#removeObserver"
 
   let removeObserver_http_on_modify_request s o =
     removeObserver s o "http-on-modify-request"
@@ -255,16 +286,16 @@ module OutputStream =
 struct
   open XPCOM
 
-  external write : <outputStream:i; ..> t -> string -> int -> unit = "#write"
-  external close : <outputStream:i; ..> t -> unit = "#close"
+  external write : #outputStream t -> string -> int -> unit = "#write"
+  external close : #outputStream t -> unit = "#close"
 end
 
 module PasswordManagerInternal =
 struct
   open XPCOM
 
-  external findPasswordEntry : <passwordManagerInternal:i; ..> t -> string -> string -> string -> string out -> string out -> string out -> unit = "#findPasswordEntry"
-  external addUserFull : <passwordManagerInternal:i; ..> t -> string -> string -> string -> string -> string -> unit = "#addUserFull"
+  external findPasswordEntry : #passwordManagerInternal t -> string -> string -> string -> string out -> string out -> string out -> unit = "#findPasswordEntry"
+  external addUserFull : #passwordManagerInternal t -> string -> string -> string -> string -> string -> unit = "#addUserFull"
 
   let findEntry s h u p =
     let h2 = out "" in
@@ -283,28 +314,28 @@ module PasswordManager =
 struct
   open XPCOM
 
-  external addUser : <passwordManager:i; ..> t -> string -> string -> string -> unit = "#addUser"
-  external removeUser : <passwordManager:i; ..> t -> string -> string -> unit = "#removeUser"
-  external addReject : <passwordManager:i; ..> t -> string -> unit = "#addReject"
-  external removeReject : <passwordManager:i; ..> t -> string -> unit = "#removeReject"
+  external addUser : #passwordManager t -> string -> string -> string -> unit = "#addUser"
+  external removeUser : #passwordManager t -> string -> string -> unit = "#removeUser"
+  external addReject : #passwordManager t -> string -> unit = "#addReject"
+  external removeReject : #passwordManager t -> string -> unit = "#removeReject"
 end
 
 module PrefBranch =
 struct
   open XPCOM
 
-  external pREF_BOOL : <prefBranch:i; ..> t -> int = ".PREF_BOOL"
-  external pREF_INT : <prefBranch:i; ..> t -> int = ".PREF_INT"
-  external pREF_STRING : <prefBranch:i; ..> t -> int = ".PREF_STRING"
-  external getPrefType : <prefBranch:i; ..> t -> string -> int = "#getPrefType"
-  external getBoolPref : <prefBranch:i; ..> t -> string -> bool = "#getBoolPref"
-  external getCharPref : <prefBranch:i; ..> t -> string -> string = "#getCharPref"
-  external getIntPref : <prefBranch:i; ..> t -> string -> int = "#getIntPref"
-  external setBoolPref : <prefBranch:i; ..> t -> string -> bool -> unit = "#setBoolPref"
-  external setCharPref : <prefBranch:i; ..> t -> string -> string -> unit = "#setCharPref"
-  external setIntPref : <prefBranch:i; ..> t -> string -> int -> unit = "#setIntPref"
+  external pREF_BOOL : #prefBranch t -> int = ".PREF_BOOL"
+  external pREF_INT : #prefBranch t -> int = ".PREF_INT"
+  external pREF_STRING : #prefBranch t -> int = ".PREF_STRING"
+  external getPrefType : #prefBranch t -> string -> int = "#getPrefType"
+  external getBoolPref : #prefBranch t -> string -> bool = "#getBoolPref"
+  external getCharPref : #prefBranch t -> string -> string = "#getCharPref"
+  external getIntPref : #prefBranch t -> string -> int = "#getIntPref"
+  external setBoolPref : #prefBranch t -> string -> bool -> unit = "#setBoolPref"
+  external setCharPref : #prefBranch t -> string -> string -> unit = "#setCharPref"
+  external setIntPref : #prefBranch t -> string -> int -> unit = "#setIntPref"
 
-  external getStringPref : <prefBranch:i; ..> t -> string -> string = "#getCharPref"
+  external getStringPref : #prefBranch t -> string -> string = "#getCharPref"
 
   type pref = Bool of bool | Int of int | String of string | None
   let getPref s p =
@@ -321,7 +352,7 @@ module Properties =
 struct
   open XPCOM
 
-  external get : <properties:i; ..> t -> string -> interface -> 'a = "#get"
+  external get : #properties t -> string -> interface -> 'a = "#get"
   let getFile s p = get s p file
 end
 
@@ -329,36 +360,36 @@ module ScriptableInputStream =
 struct
   open XPCOM
 
-  external init : <scriptableInputStream:i; ..> t -> <inputStream:i; ..> t -> unit = "#init"
+  external init : #scriptableInputStream t -> #inputStream t -> unit = "#init"
 end
 
 module SimpleEnumerator =
 struct
   open XPCOM
 
-  external hasMoreElements : <simpleEnumerator:'a; ..> t -> bool = "#hasMoreElements"
-  external getNext : <simpleEnumerator:'a; ..> t -> 'a = "#getNext"
+  external hasMoreElements : 'a #simpleEnumerator t -> bool = "#hasMoreElements"
+  external getNext : 'a #simpleEnumerator t -> 'a = "#getNext"
 end
 
 module StringInputStream =
 struct
   open XPCOM
 
-  external setData : <stringInputStream:i; ..> t -> string -> int -> unit = "#setData"
+  external setData : #stringInputStream t -> string -> int -> unit = "#setData"
 end
 
 module URI =
 struct
   open XPCOM
 
-  external spec : <uRI:i; ..> t -> string = ".spec"
+  external spec : #uRI t -> string = ".spec"
 end
 
 module WindowMediator =
 struct
   open XPCOM
 
-  external _getEnumerator : <windowMediator:i; ..> t -> string -> <simpleEnumerator:<supports:i> t> t = "#getEnumerator"
+  external _getEnumerator : #windowMediator t -> string -> (supports t) simpleEnumerator t = "#getEnumerator"
 
   let getEnumerator w t = _getEnumerator w (Ocamljs.nullable_of_option t)
 end
@@ -367,27 +398,45 @@ module XMLHttpRequest =
 struct
   open XPCOM
 
-  external new_ : unit -> <xMLHttpRequest:i> t = "$new" "XMLHttpRequest"
-  external _set_onreadystatechange : <xMLHttpRequest:i; ..> t -> (unit -> unit) -> unit = "=onreadystatechange"
+  external new_ : unit -> xMLHttpRequest t = "$new" "XMLHttpRequest"
+  external _set_onreadystatechange : #xMLHttpRequest t -> (unit -> unit) -> unit = "=onreadystatechange"
   let set_onreadystatechange x f = _set_onreadystatechange x (Ocamljs.function_ (fun () -> Ocamljs.caml_callback f ()))
-  external _set_onload : <xMLHttpRequest:i; ..> t -> (unit -> unit) -> unit = "=onload"
+  external _set_onload : #xMLHttpRequest t -> (unit -> unit) -> unit = "=onload"
   let set_onload x f = _set_onload x (Ocamljs.function_ (fun () -> Ocamljs.caml_callback f ()))
-  external open_ : <xMLHttpRequest:i; ..> t -> string -> string -> bool -> unit = "#open"
-  external setRequestHeader : <xMLHttpRequest:i; ..> t -> string -> string -> unit = "#setRequestHeader"
-  external getResponseHeader : <xMLHttpRequest:i; ..> t -> string -> string = "#getResponseHeader"
-  external overrideMimeType : <xMLHttpRequest:i; ..> t -> string -> unit = "#overrideMimeType"
-  external send : <xMLHttpRequest:i; ..> t -> <inputStream:i; ..> t -> unit = "#send"
-  external readyState : <xMLHttpRequest:i; ..> t -> int = ".readyState"
-  external responseText : <xMLHttpRequest:i; ..> t -> string = ".responseText"
-  external channel : <xMLHttpRequest:i; ..> t -> <supports:i; channel:i> t = ".channel"
-  external abort : <xMLHttpRequest:i; ..> t -> unit = "#abort"
-  external status : <xMLHttpRequest:i; ..> t -> int = ".status"
+  external open_ : #xMLHttpRequest t -> string -> string -> bool -> unit = "#open"
+  external setRequestHeader : #xMLHttpRequest t -> string -> string -> unit = "#setRequestHeader"
+  external getResponseHeader : #xMLHttpRequest t -> string -> string = "#getResponseHeader"
+  external overrideMimeType : #xMLHttpRequest t -> string -> unit = "#overrideMimeType"
+  external send : #xMLHttpRequest t -> #inputStream t -> unit = "#send"
+  external readyState : #xMLHttpRequest t -> int = ".readyState"
+  external responseText : #xMLHttpRequest t -> string = ".responseText"
+  external channel : #xMLHttpRequest t -> channel t = ".channel"
+  external abort : #xMLHttpRequest t -> unit = "#abort"
+  external status : #xMLHttpRequest t -> int = ".status"
 end
 
 module DOM =
 struct
   type i
   type (+'a) t
+
+  (* XXX do these fall into some more sensible hierarchy than element -> everything else? *)
+  class type button = object method element:i method button:i end
+  class type deck = object method element:i method deck:i end
+  class type dialog = object method element:i method dialog:i end
+  class type document = object method document:i end
+  class type element = object method element:i end
+  class type event = object method event:i end
+  class type label = object method label:i end
+  class type menuItem = object method element:i method menuItem:i end
+  class type menuList = object method element:i method menuList:i end
+  class type mouseEvent = object method event:i method mouseEvent:i end
+  class type statusBarPanel = object method element:i method statusBarPanel:i end
+  class type stringBundle = object method stringBundle:i end
+  class type style = object method style:i end
+  class type textBox = object method element:i method textBox:i end
+  class type radio = object method element:i method radio:i end
+  class type window = object method element:i method window:i end
 end
 
 module Document =
@@ -396,7 +445,7 @@ struct
 
   let d = Ocamljs.var "document"
 
-  external getElementById : <document:i; ..> t -> string -> <element:i> t = "#getElementById"
+  external getElementById : #document t -> string -> element t = "#getElementById"
 
   (* XXX
      these are just advisory. it would be nice to compile out XUL files
@@ -404,12 +453,16 @@ struct
      typesafe way. this of course wouldn't work if you go changing the
      DOM around.
   *)
-  external getElementById_dialog : <document:i; ..> t -> string -> <element:i; dialog:i> t = "#getElementById"
-  external getElementById_menuItem : <document:i; ..> t -> string -> <element:i; menuItem:i> t = "#getElementById"
-  external getElementById_menuList : <document:i; ..> t -> string -> <element:i; menuList:i> t = "#getElementById"
-  external getElementById_statusBarPanel : <document:i; ..> t -> string -> <element:i; statusBarPanel:i> t = "#getElementById"
-  external getElementById_textBox : <document:i; ..> t -> string -> <element:i; textBox:i> t = "#getElementById"
-  external getElementById_radio : <document:i; ..> t -> string -> <element:i; radio:i> t = "#getElementById"
+  external getElementById_button : #document t -> string -> button t = "#getElementById"
+  external getElementById_deck : #document t -> string -> deck t = "#getElementById"
+  external getElementById_dialog : #document t -> string -> dialog t = "#getElementById"
+  external getElementById_label : #document t -> string -> label t = "#getElementById"
+  external getElementById_menuItem : #document t -> string -> menuItem t = "#getElementById"
+  external getElementById_menuList : #document t -> string -> menuList t = "#getElementById"
+  external getElementById_radio : #document t -> string -> radio t = "#getElementById"
+  external getElementById_statusBarPanel : #document t -> string -> statusBarPanel t = "#getElementById"
+  external getElementById_stringBundle : #document t -> string -> stringBundle t = "#getElementById"
+  external getElementById_textBox : #document t -> string -> textBox t = "#getElementById"
 end
 
 module Element =
@@ -419,7 +472,14 @@ struct
   type e
   type 'a l
 
-  external _addEventListener : <element:i; ..> t -> string -> (< ..> -> bool) -> bool -> unit = "#addEventListener"
+  class type none = object end
+  class type click = object method click:e end
+  class type command = object method command:e end
+  class type dialogaccept = object method dialogaccept:e end
+  class type load = object method load:e end
+  class type unload = object method unload:e end
+
+  external _addEventListener : #element t -> string -> (#none -> bool) -> bool -> unit = "#addEventListener"
   let addEventListener o e f u =
     let l = Ocamljs.function_ (fun a -> Ocamljs.caml_callback f a) in
     _addEventListener o e l u;
@@ -431,7 +491,7 @@ struct
   let addEventListener_load o f u = addEventListener o "load" f u
   let addEventListener_unload o f u = addEventListener o "unload" f u
 
-  external removeEventListener : <element:i; ..> t -> string -> < ..> l -> bool -> unit = "#removeEventListener"
+  external removeEventListener : #element t -> string -> #none l -> bool -> unit = "#removeEventListener"
 
   let removeEventListener_command o l u = removeEventListener o "command" l u
   let removeEventListener_click o l u = removeEventListener o "click" l u
@@ -439,43 +499,87 @@ struct
   let removeEventListener_load o l u = removeEventListener o "load" l u
   let removeEventListener_unload o l u = removeEventListener o "unload" l u
 
-  external setAttribute : <element:i; ..> t -> string -> 'a -> unit = "#setAttribute"
+  external getAttribute : #element t -> string -> 'a = "#getAttribute"
+  external setAttribute : #element t -> string -> 'a -> unit = "#setAttribute"
 
-  external hidden : <element:i; ..> t -> bool = ".hidden"
-  external set_hidden : <element:i; ..> t -> bool -> unit = "=hidden"
+  external hidden : #element t -> bool = ".hidden"
+  external set_hidden : #element t -> bool -> unit = "=hidden"
+
+  external style: #element t -> style t = ".style"
+end
+
+module Button =
+struct
+  open DOM
+
+  external disabled : #button t -> bool = ".disabled"
+  external set_disabled : #button t -> bool -> unit = "=disabled"
+  external label : #button t -> string = ".label"
+  external set_label : #button t -> string -> unit = "=label"
+end
+
+module Deck =
+struct
+  open DOM
+
+  external selectedIndex : #deck t -> int = ".selectedIndex"
+  external set_selectedIndex : #deck t -> int -> unit = "=selectedIndex"
+end
+
+module Label =
+struct
+  open DOM
+
+  external value : #label t -> string = ".value"
+  external set_value: #label t -> string -> unit = "=value"
 end
 
 module MenuList =
 struct
   open DOM
 
-  external selectedIndex : <menuList:i; ..> t -> int = ".selectedIndex"
-  external set_selectedIndex : <menuList:i; ..> t -> int -> unit = "=selectedIndex"
-  external value : <menuList:i; ..> t -> string = ".value"
-  external set_value : <menuList:i; ..> t -> string -> unit = "=value"
+  external selectedIndex : #menuList t -> int = ".selectedIndex"
+  external set_selectedIndex : #menuList t -> int -> unit = "=selectedIndex"
+  external value : #menuList t -> string = ".value"
+  external set_value : #menuList t -> string -> unit = "=value"
 end
 
 module MouseEvent =
 struct
   open DOM
 
-  external button : <mouseEvent:i> t -> int = ".button"
+  external button : #mouseEvent t -> int = ".button"
 end
 
 module Radio =
 struct
   open DOM
 
-  external selected : <radio:i; ..> t -> bool = ".selected"
-  external set_selected : <radio:i; ..> t -> bool -> unit = "=selected"
+  external selected : #radio t -> bool = ".selected"
+  external set_selected : #radio t -> bool -> unit = "=selected"
+end
+
+module StringBundle =
+struct
+  open DOM
+
+  external getString : #stringBundle t -> string -> string = "#getString"
+end
+
+module Style =
+struct
+  open DOM
+
+  external visibility : #style t -> string = ".visibility"
+  external set_visibility : #style t -> string -> unit = "=visibility"
 end
 
 module TextBox =
 struct
   open DOM
 
-  external value : <textBox:i; ..> t -> string = ".value"
-  external set_value : <textBox:i; ..> t -> string -> unit = "=value"
+  external value : #textBox t -> string = ".value"
+  external set_value : #textBox t -> string -> unit = "=value"
 end
 
 module Window =
@@ -484,6 +588,6 @@ struct
 
   let w = Ocamljs.var "window"
 
-  external openDialog : <window:i; ..> t -> string -> string -> string -> unit = "#openDialog"
-  external location : <window:i; ..> t -> string = ".location"
+  external openDialog : #window t -> string -> string -> string -> unit = "#openDialog"
+  external location : #window t -> string = ".location"
 end
