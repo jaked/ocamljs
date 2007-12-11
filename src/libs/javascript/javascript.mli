@@ -48,6 +48,7 @@ module Date :
     external setMinutes : t -> int -> unit = "#setMinutes"
 
     external toString : t -> string = "#toString"
+    external toDateString : t -> string = "#toDateString"
 
   end
 

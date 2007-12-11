@@ -421,21 +421,25 @@ struct
   type (+'a) t
 
   (* XXX do these fall into some more sensible hierarchy than element -> everything else? *)
+  class type browser = object method browser:i end
   class type button = object method element:i method button:i end
   class type deck = object method element:i method deck:i end
   class type dialog = object method element:i method dialog:i end
   class type document = object method document:i end
   class type element = object method element:i end
   class type event = object method event:i end
+  class type eventTarget = object method eventTarget:i end
   class type label = object method label:i end
   class type menuItem = object method element:i method menuItem:i end
   class type menuList = object method element:i method menuList:i end
   class type mouseEvent = object method event:i method mouseEvent:i end
+  class type radio = object method element:i method radio:i end
   class type statusBarPanel = object method element:i method statusBarPanel:i end
   class type stringBundle = object method stringBundle:i end
   class type style = object method style:i end
+  class type tab = object method element:i method tab:i end
+  class type tabBrowser = object method element:i method tabBrowser:i end
   class type textBox = object method element:i method textBox:i end
-  class type radio = object method element:i method radio:i end
   class type window = object method element:i method window:i end
 end
 
@@ -526,6 +530,31 @@ struct
   external set_selectedIndex : #deck t -> int -> unit = "=selectedIndex"
 end
 
+module Event =
+struct
+  open DOM
+
+  type eventPhase = CAPTURING_PHASE | AT_TARGET | BUBBLING_PHASE
+
+  external bubbles : #event t -> bool = ".bubbles"
+  external cancelable : #event t -> bool = ".cancelable"
+  external currentTarget : #event t -> eventTarget t = ".currentTarget"
+  external _eventPhase : #event t -> int = ".eventPhase"
+  let eventPhase e =
+    match _eventPhase e with
+      | 1 -> CAPTURING_PHASE
+      | 2 -> AT_TARGET
+      | 3 -> BUBBLING_PHASE
+      | _ -> raise (Failure "unknown event phase")
+  external target : #event t -> eventTarget t = ".target"
+  external timeStamp : #event t -> float = ".timeStamp"
+  external type_ : #event t -> string = ".type"
+
+  external initEvent : #event t -> string -> bool -> bool -> unit = "#initEvent"
+  external preventDefault : #event t -> unit = "#preventDefault"
+  external stopPropagation : #event t -> unit = "#stopPropagation"
+end
+
 module Label =
 struct
   open DOM
@@ -570,8 +599,18 @@ module Style =
 struct
   open DOM
 
+  external display : #style t -> string = ".display"
+  external set_display : #style t -> string -> unit = "=display"
   external visibility : #style t -> string = ".visibility"
   external set_visibility : #style t -> string -> unit = "=visibility"
+end
+
+module TabBrowser =
+struct
+  open DOM
+
+  external addTab : #tabBrowser t -> string -> tab = "#addTab"
+  external set_selectedTab : #tabBrowser t -> tab -> unit = "=selectedTab"
 end
 
 module TextBox =
@@ -591,4 +630,5 @@ struct
   external close : #window t -> unit = "#close"
   external location : #window t -> string = ".location"
   external openDialog : #window t -> string -> string -> string -> unit = "#openDialog"
+  external getBrowser : #window t -> tabBrowser t = "#getBrowser"
 end
