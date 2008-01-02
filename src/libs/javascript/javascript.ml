@@ -77,5 +77,6 @@ module String =
     let match_ s r = Ocamljs.option_of_nullable (_match s r)
     external split : t -> string -> string array = "#split"
     external indexOf : t -> string -> int = "#indexOf"
+    external replace : t -> RegExp.t -> t -> t = "#replace"
 
   end

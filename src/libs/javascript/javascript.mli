@@ -73,5 +73,6 @@ module String :
     val match_ : t -> RegExp.t -> string array option
     external split : t -> string -> string array = "#split"
     external indexOf : t -> string -> int = "#indexOf"
-    
+    external replace : t -> RegExp.t -> t -> t = "#replace"
+
   end
