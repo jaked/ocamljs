@@ -139,7 +139,7 @@ flag ["ocaml"; "js"; "link"] begin
 end;;
 
 Pathname.define_context "src/ocamljs"    ["ocaml/bytecomp"; "ocaml/driver"; "ocaml/parsing"; "ocaml/typing"; "ocaml/utils"];
-Pathname.define_context "ocaml/bytecomp" ["ocaml/parsing"; "ocaml/typing"; "ocaml/utils"];
+Pathname.define_context "ocaml/bytecomp" ["src/ocamljs"; "ocaml/parsing"; "ocaml/typing"; "ocaml/utils"];
 Pathname.define_context "ocaml/driver"   ["ocaml/parsing"; "ocaml/utils"];
 Pathname.define_context "ocaml/parsing"  ["ocaml/utils"];
 Pathname.define_context "ocaml/typing"   ["ocaml/parsing"; "ocaml/utils"];

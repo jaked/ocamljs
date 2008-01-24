@@ -246,6 +246,16 @@ let comp_prim p es =
     | _ ->
 	raise (Unimplemented "comp_prim") (* Jstring "comp_prim" *)
 
+let starts_with s sw =
+  let sl = String.length s in
+  let swl = String.length sw in
+  sl >= swl && String.sub s 0 swl = sw
+
+let drop s n =
+  let sl = String.length s in
+  if sl <= n then s
+  else String.sub s n (sl - n)
+
 (* compile a lambda as a Js.exp *)
 (* tail is true if the expression is in tail position *)
 let rec comp_expr tail expr =
@@ -263,7 +273,7 @@ let rec comp_expr tail expr =
 
     | Lapply(e, es) ->
 	let app = if tail then "__" else "_" in
-	jmcall (comp_expr false e) app (List.map (comp_expr false) es)
+	jcall app [comp_expr false e; Jarray (List.map (comp_expr false) es)]
 
     | Lifthenelse (i, t, e) -> Jite (comp_expr false i, comp_expr tail t,  comp_expr tail e)
 
@@ -274,6 +284,24 @@ let rec comp_expr tail expr =
     | Lassign (i, e) -> Jassign (Jvar (jsident_of_ident i), comp_expr false e)
 
     | Lprim (p, args) -> comp_prim p (List.map (comp_expr false) args)
+
+    | Lsend (_, Lconst(Const_immstring m), o, args) ->
+	let app = if tail then "__m" else "_m" in
+        let co = comp_expr false o in
+        let cargs = List.map (comp_expr false) args in
+        begin
+          match cargs with
+            | [] when starts_with m "_get_" -> Jfieldref (co, drop m 5)
+            | [e] when starts_with m "_set_" -> Jassign (Jfieldref (co, drop m 5), e)
+            | es ->
+                let m = if starts_with m "_" then drop m 1 else m in
+                match co with
+                  | Jvar _ -> jcall app [Jfieldref(co, m); co; Jarray es]
+                  | _ ->
+                      let i = jsident_of_ident (Ident.create "v") in
+                      (* here we bind i to avoid multiply evaluating co *)
+                      exp_of_stmts [ Jvars (i, co); Jreturn (jcall app [Jfieldref(Jvar i, m); Jvar i; Jarray es]) ]
+        end
 
     | _ ->  Jstring "comp_expr"
 

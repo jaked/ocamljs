@@ -46,3 +46,6 @@ let nullable_of_option x =
   match x with
     | None -> null()
     | Some x -> x
+
+type 'a jsfun = 'a
+let jsfun f = function_ (fun x -> caml_callback f x)

@@ -292,7 +292,7 @@ and stmt ppf = function
 	"@[<hv>switch (%a) {@,@[%a@]}@]"
 	(expp p) e cases (cs, fss)
   | Jthrow e -> fprintf ppf "@[throw %a@]" (expp p) e
-  | Jexps (Jfun _ as e) -> fprintf ppf "@[%a@]" (expp p) e
+  | Jexps (Jcall (Jfun _, _) as e) -> fprintf ppf "@[(%a)@]" (expp p) e
   | Jexps e -> fprintf ppf "@[%a@]" (expp p) e
   | Jtrycatch (s1, i, s2) ->
       fprintf ppf "@[<hv>try %a catch (%s) %a@]" block s1 i block s2

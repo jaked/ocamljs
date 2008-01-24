@@ -18,11 +18,18 @@
  * MA 02111-1307, USA
  */
 
+/*
+function console_log(s) {
+  var cs = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces["nsIConsoleService"]);
+  cs.logStringMessage(s);
+}
+*/
+
 var oc$$nv = {}
 
 // XXX name these sensibly and compactify code afterwards
 
-function ___()
+function ___m(m, t, a)
 {
   function ap(a1, a2) {
     var a = new Array();
@@ -31,58 +38,61 @@ function ___()
     return a;
   }
 
-  var a = arguments;
-  var al = a.length;
-  var t = this;
-  var tl = t.length;
+  while (true) {
+    // non-ocamljs functions can't be under/over-applied
+    if (!m.$oc)
+      return m.apply(t, a);
 
-  if (al == tl)
-    return t.apply(t, a);
-  else if (al < tl)
-  {
-    switch (tl - al) {
-    case 1: return _f(function (z) { return t.apply(t, ap(a, arguments)) });
-    case 2: return _f(function (z,y) { return t.apply(t, ap(a, arguments)) });
-    case 3: return _f(function (z,y,x) { return t.apply(t, ap(a, arguments)) });
-    case 4: return _f(function (z,y,x,w) { return t.apply(t, ap(a, arguments)) });
-    case 5: return _f(function (z,y,x,w,v) { return t.apply(t, ap(a, arguments)) });
-    case 6: return _f(function (z,y,x,w,v,u) { return t.apply(t, ap(a, arguments)) });
-    case 7: return _f(function (z,y,x,w,v,u,s) { return t.apply(t, ap(a, arguments)) });
-    default: throw "unimplemented";
+    var al = a.length;
+    var ml = m.length;
+
+    if (al < ml)
+    {
+      switch (ml - al) {
+      case 1: return _f(function (z) { return m.apply(t, ap(a, arguments)) });
+      case 2: return _f(function (z,y) { return m.apply(t, ap(a, arguments)) });
+      case 3: return _f(function (z,y,x) { return m.apply(t, ap(a, arguments)) });
+      case 4: return _f(function (z,y,x,w) { return m.apply(t, ap(a, arguments)) });
+      case 5: return _f(function (z,y,x,w,v) { return m.apply(t, ap(a, arguments)) });
+      case 6: return _f(function (z,y,x,w,v,u) { return m.apply(t, ap(a, arguments)) });
+      case 7: return _f(function (z,y,x,w,v,u,s) { return m.apply(t, ap(a, arguments)) });
+      default: throw "unimplemented";
+      }
+    }
+    else if (al == ml)
+      return m.apply(t, a);
+    else // al > ml
+    {
+      m = _m(m, t, a.slice(0, ml));
+      t = m;
+      a = a.slice(ml);
     }
   }
-  else // al > tl
-  {
-    var a2 = new Array(tl);
-    var a3 = new Array(al - tl);
-    for (var i=0; i < tl; i++) a2[i] = a[i];
-    for (var i=tl; i < al; i++) a3[i - tl] = a[i];
-    var v = t._.apply(t, a2);
-    return v.___.apply(v, a3);
-  }
 }
 
-function __()
+// tail call
+function __m(m, t, args)
 {
-  var a = arguments;
-  a.$tr = this;
-  return a;
+  args.$m = m;
+  args.$tr = t;
+  return args;
 }
+function __(t, args) { return __m(t, t, args); }
 
-function _()
+// non tail call
+function _m(m, t, args)
 {
-  var v = this.__.apply(this, arguments);
+  var v = __m(m, t, args);
   while (v && v.$tr)
-    v = v.$tr.___.apply(v.$tr, v);
+    v = ___m(v.$m, v.$tr, v);
   return v;
 }
+function _(t, args) { return _m(t, t, args); }
 
-// does not work because of XPCNativeWrappers?
-// Function.prototype._ = _
-// Function.prototype.__ = __
-// Function.prototype.___ = ___
-
-function _f(f) { f._ = _; f.__ = __; f.___ = ___; return f; }
+function _f(f) {
+  f.$oc = true;
+  return f;
+}
 
 function $N(t, a) {
   var l = a.length;
