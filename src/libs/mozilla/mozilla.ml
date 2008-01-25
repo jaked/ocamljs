@@ -109,6 +109,37 @@ struct
     method setRequestHeader : string -> string -> bool -> unit
   end
 
+  class type request =
+  object
+    inherit supports
+    method _get_name : string
+    method isPending : bool
+    method _get_status : int
+    method cancel : int -> unit
+    method suspend : unit
+    method resume : unit
+  end
+
+  class type requestObserver =
+  object
+    inherit supports
+    method onStartRequest : #request -> #supports -> unit
+    method onStopRequest : #request -> #supports -> int -> unit
+  end
+
+  class type streamListener =
+  object
+    inherit requestObserver
+    method onDataAvailable : #request -> #supports -> #inputStream -> float -> float -> unit
+  end
+
+  class type inputStreamPump =
+  object
+    inherit request
+    method init : #inputStream -> float -> float -> float -> float -> bool -> unit
+    method asyncRead : #streamListener -> #supports -> unit
+  end
+
   class type localFile =
   object
     inherit file
@@ -172,6 +203,9 @@ struct
   object
     inherit inputStream
     method init : #inputStream -> unit
+    method close : unit
+    method available : float
+    method read : float -> string
   end
 
   class type transport =
@@ -236,6 +270,7 @@ struct
   let fileInputStream = ci "nsIFileInputStream"
   let fileOutputStream = ci "nsIFileOutputStream"
   let httpChannel = ci "nsIHttpChannel"
+  let inputStreamPump = ci "nsIInputStreamPump"
   let localFile = ci "nsILocalFile"
   let mIMEInputStream = ci "nsIMIMEInputStream"
   let multiplexInputStream = ci "nsIMultiplexInputStream"
@@ -261,6 +296,7 @@ struct
   let network_buffered_input_stream = cc "@mozilla.org/network/buffered-input-stream;1"
   let network_file_input_stream = cc "@mozilla.org/network/file-input-stream;1"
   let network_file_output_stream = cc "@mozilla.org/network/file-output-stream;1"
+  let network_input_stream_pump = cc "@mozilla.org/network/input-stream-pump;1"
   let network_mime_input_stream = cc "@mozilla.org/network/mime-input-stream;1"
   let observer_service = cc "@mozilla.org/observer-service;1"
   let passwordmanager = cc "@mozilla.org/passwordmanager;1"
@@ -287,6 +323,7 @@ struct
   let createInstance_io_multiplex_input_stream () = createInstance io_multiplex_input_stream multiplexInputStream
   let createInstance_io_string_input_stream () = createInstance io_string_input_stream stringInputStream
   let createInstance_scriptableinputstream () = createInstance scriptableinputstream scriptableInputStream
+  let createInstance_network_input_stream_pump () = createInstance network_input_stream_pump inputStreamPump
   let createInstance_network_server_socket () = createInstance network_server_socket serverSocket
 
   let make_out v = Ocamljs.obj [ "value", v ]

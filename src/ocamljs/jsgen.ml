@@ -243,8 +243,18 @@ let comp_prim p es =
        Pcvtbint _, [e]) ->
 	e
 
+    | Pduprecord _, [e] -> jcall "caml_obj_dup" [e]
+
     | _ ->
 	raise (Unimplemented "comp_prim") (* Jstring "comp_prim" *)
+(*
+        let b = Buffer.create 16 in
+        let f = Format.formatter_of_buffer b in
+        Printlambda.primitive f p;
+        Format.pp_print_flush f ();
+        let p = Buffer.contents b in
+	raise (Unimplemented ("comp_prim: " ^ p)) (* Jstring "comp_prim" *)
+*)
 
 let starts_with s sw =
   let sl = String.length s in

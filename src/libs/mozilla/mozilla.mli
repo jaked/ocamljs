@@ -109,6 +109,37 @@ sig
     method setRequestHeader : string -> string -> bool -> unit
   end
 
+  class type request =
+  object
+    inherit supports
+    method _get_name : string
+    method isPending : bool
+    method _get_status : int
+    method cancel : int -> unit
+    method suspend : unit
+    method resume : unit
+  end
+
+  class type requestObserver =
+  object
+    inherit supports
+    method onStartRequest : #request -> #supports -> unit
+    method onStopRequest : #request -> #supports -> int -> unit
+  end
+
+  class type streamListener =
+  object
+    inherit requestObserver
+    method onDataAvailable : #request -> #supports -> #inputStream -> float -> float -> unit
+  end
+
+  class type inputStreamPump =
+  object
+    inherit request
+    method init : #inputStream -> float -> float -> float -> float -> bool -> unit
+    method asyncRead : #streamListener -> #supports -> unit
+  end
+
   class type localFile =
   object
     inherit file
@@ -172,6 +203,9 @@ sig
   object
     inherit inputStream
     method init : #inputStream -> unit
+    method close : unit
+    method available : float
+    method read : float -> string
   end
 
   class type transport =
@@ -232,6 +266,7 @@ sig
   val fileInputStream : interface
   val fileOutputStream : interface
   val httpChannel : interface
+  val inputStreamPump : interface
   val localFile : interface
   val mIMEInputStream : interface
   val multiplexInputStream : interface
@@ -257,6 +292,7 @@ sig
   val network_buffered_input_stream : class_
   val network_file_input_stream : class_
   val network_file_output_stream : class_
+  val network_input_stream_pump : class_
   val network_mime_input_stream : class_
   val observer_service : class_
   val passwordmanager : class_
@@ -283,6 +319,7 @@ sig
   val createInstance_io_multiplex_input_stream : unit -> multiplexInputStream
   val createInstance_io_string_input_stream : unit -> stringInputStream
   val createInstance_scriptableinputstream : unit -> scriptableInputStream
+  val createInstance_network_input_stream_pump : unit -> inputStreamPump
   val createInstance_network_server_socket : unit -> serverSocket
 
   val make_out : 'a -> 'a out

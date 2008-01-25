@@ -35,6 +35,8 @@ external var : string -> 'a = "$var"
 external caml_callback : ('a -> 'b) -> 'a -> 'b = "caml_callback"
 external caml_callback2 : ('a1 -> 'a2 -> 'b) -> 'a1 -> 'a2 -> 'b = "caml_callback2"
 external caml_callback3 : ('a1 -> 'a2 -> 'a3 -> 'b) -> 'a1 -> 'a2 -> 'a3 -> 'b = "caml_callback3"
+external caml_callback4 : ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'b) -> 'a1 -> 'a2 -> 'a3 -> 'a4 -> 'b = "caml_callback4"
+external caml_callback5 : ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b) -> 'a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b = "caml_callback5"
 
 (* XXX do these belong here? *)
 let option_of_nullable x =
@@ -48,4 +50,8 @@ let nullable_of_option x =
     | Some x -> x
 
 type 'a jsfun = 'a
-let jsfun f = function_ (fun x -> caml_callback f x)
+let jsfun f = function_ (fun a -> caml_callback f a)
+let jsfun2 f = function_ (fun a1 a2 -> caml_callback2 f a1 a2)
+let jsfun3 f = function_ (fun a1 a2 a3 -> caml_callback3 f a1 a2 a3)
+let jsfun4 f = function_ (fun a1 a2 a3 a4 -> caml_callback4 f a1 a2 a3 a4)
+let jsfun5 f = function_ (fun a1 a2 a3 a4 a5 -> caml_callback5 f a1 a2 a3 a4 a5)

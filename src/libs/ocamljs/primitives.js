@@ -23,8 +23,10 @@ var caml_blit_string = function (s1, o1, s2, o2, n) {
     oc$$ssetu(s2, o2 + i, oc$$srefu(s1, o1 + i));
 }
 var caml_callback = function (f, a) { return _(f, [a]); }
-var caml_callback2 = function (f, a, b) { return _(f, [a, b]); }
-var caml_callback3 = function (f, a, b, c) { return _(f, [a, b, c]); }
+var caml_callback2 = function (f, a1, a2) { return _(f, [a1, a2]); }
+var caml_callback3 = function (f, a1, a2, a3) { return _(f, [a1, a2, a3]); }
+var caml_callback4 = function (f, a1, a2, a3, a4) { return _(f, [a1, a2, a3, a4]); }
+var caml_callback5 = function (f, a1, a2, a3, a4, a5) { return _(f, [a1, a2, a3, a4, a5]); }
 var caml_callbackN = function (f, n, args) { return _(f, args); }
 // XXX caml_callback_exn ?
 var compare_val = function (v1, v2, total) {
