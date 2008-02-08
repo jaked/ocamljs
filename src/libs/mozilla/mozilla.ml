@@ -24,9 +24,15 @@ struct
   type interface
   type result
 
+  class type iDRef =
+  object
+    method equals : interface -> bool
+  end
+
   class type ['a] out =
   object
     method _get_value : 'a
+    method _set_value : 'a -> unit
   end
 
   class type inputStream =
@@ -47,6 +53,7 @@ struct
   class type uRI =
   object
     method _get_spec : string
+    method _set_spec : string -> unit
   end
 
   class type channel =
@@ -160,10 +167,15 @@ struct
     method appendStream : #inputStream -> unit
   end
 
+  class type observer =
+  object
+    method observe : #supports -> string -> string -> unit
+  end
+
   class type observerService =
   object
-    method addObserver : (supports -> string -> string -> unit) Ocamljs.jsfun -> string -> bool -> unit
-    method removeObserver : (supports -> string -> string -> unit) Ocamljs.jsfun -> string -> unit
+    method addObserver : observer -> string -> bool -> unit
+    method removeObserver : observer -> string -> unit
   end
 
   class type passwordManager =
@@ -234,6 +246,23 @@ struct
     method setData : string -> int -> unit
   end
 
+  class type uRIContentListener =
+  object
+    inherit supports
+    method onStartURIOpen : #uRI -> bool
+    method doContent : string -> bool -> #request -> streamListener out -> bool
+    method isPreferred : string -> string out -> bool
+    method canHandleContent : string -> bool -> string out
+    (* loadCookie, parentContentListener *)
+  end
+
+  class type uRILoader =
+  object
+    inherit supports
+    method registerContentListener : #uRIContentListener -> unit
+    method unRegisterContentListener : #uRIContentListener -> unit
+  end
+
   class type windowMediator =
   object
     method getEnumerator : string -> supports simpleEnumerator
@@ -253,6 +282,13 @@ struct
     method _get_channel : channel
     method abort : unit
     method _get_status : int
+  end
+
+  class type xPathResult =
+  object
+    method _get_ANY_TYPE : int
+    method _get_FIRST_ORDERED_NODE_TYPE : int
+    method _get_singleNodeValue : 'a
   end
 
   external createInstance : class_ -> interface -> 'a = "#createInstance"
@@ -280,10 +316,16 @@ struct
   let passwordManagerInternal = ci "nsIPasswordManagerInternal"
   let prefBranch = ci "nsIPrefBranch"
   let properties = ci "nsIProperties"
+  let requestObserver = ci "nsIRequestObserver"
   let scriptableInputStream = ci "nsIScriptableInputStream"
   let serverSocket = ci "nsIServerSocket"
+  let streamListener = ci "nsIStreamListener"
   let stringInputStream = ci "nsIStringInputStream"
   let supports = ci "nsISupports"
+  let supportsWeakReference = ci "nsISupportsWeakReference"
+  let uRI = ci "nsIURI"
+  let uRIContentListener = ci "nsIURIContentListener"
+  let uRILoader = ci "nsIURILoader"
   let windowMediator = ci "nsIWindowMediator"
 
   let appshell_window_mediator = cc "@mozilla.org/appshell/window-mediator;1"
@@ -298,11 +340,13 @@ struct
   let network_file_output_stream = cc "@mozilla.org/network/file-output-stream;1"
   let network_input_stream_pump = cc "@mozilla.org/network/input-stream-pump;1"
   let network_mime_input_stream = cc "@mozilla.org/network/mime-input-stream;1"
+  let network_server_socket = cc "@mozilla.org/network/server-socket;1"
+  let network_simple_uri = cc "@mozilla.org/network/simple-uri;1"
   let observer_service = cc "@mozilla.org/observer-service;1"
   let passwordmanager = cc "@mozilla.org/passwordmanager;1"
   let preferences_service = cc "@mozilla.org/preferences-service;1"
   let scriptableinputstream = cc "@mozilla.org/scriptableinputstream;1"
-  let network_server_socket = cc "@mozilla.org/network/server-socket;1"
+  let uriloader = cc "@mozilla.org/uriloader;1"
 
   let nOINTERFACE = cr "NS_NOINTERFACE"
 
@@ -314,6 +358,7 @@ struct
   let getService_passwordmanager_passwordManager () = getService passwordmanager passwordManager
   let getService_passwordmanager_passwordManagerInternal () = getService passwordmanager passwordManagerInternal
   let getService_preferences_service () = getService preferences_service prefBranch
+  let getService_uriloader () = getService uriloader uRILoader
 
   let createInstance_file_local () = createInstance file_local localFile
   let createInstance_network_buffered_input_stream () = createInstance network_buffered_input_stream bufferedInputStream
@@ -325,6 +370,7 @@ struct
   let createInstance_scriptableinputstream () = createInstance scriptableinputstream scriptableInputStream
   let createInstance_network_input_stream_pump () = createInstance network_input_stream_pump inputStreamPump
   let createInstance_network_server_socket () = createInstance network_server_socket serverSocket
+  let createInstance_network_simple_uri () = createInstance network_simple_uri uRI
 
   let make_out v = Ocamljs.obj [ "value", v ]
   external newXMLHttpRequest : unit -> xMLHttpRequest = "$new" "XMLHttpRequest"
@@ -333,10 +379,6 @@ end
 module DOM =
 struct
   (* XXX do these fall into some more sensible hierarchy than element -> everything else? *)
-
-  class type browser =
-  object
-  end
 
   class type style =
   object
@@ -370,10 +412,48 @@ struct
     method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
     method getAttribute : string -> 'a
     method setAttribute : string -> 'a -> unit
+    method dispatchEvent : #event -> unit
     method _get_hidden : bool
     method _set_hidden : bool -> unit
     method _get_style : style
     method _set_innerHTML : string -> unit
+  end
+
+  class type abstractView =
+  object
+  end
+
+  class type document =
+  object
+    (* XXX do better *)
+    method evaluate : string -> document -> 'namespaceResolver -> int -> #XPCOM.xPathResult -> XPCOM.xPathResult
+
+    method createEvent : string -> #event
+
+    method _get_defaultView : abstractView
+
+    method getElementById : string -> 'a
+    method _get_location : string
+    method _set_location : string -> unit
+  end
+
+  class type a =
+  object
+    inherit element
+    method _get_href : string
+  end
+
+  class type area =
+  object
+    inherit element
+  end
+
+  class type browser =
+  object
+    inherit element
+    method loadURI : string -> XPCOM.uRI -> string -> unit
+    method goBack : unit
+    method _get_contentDocument : document
   end
 
   class type button =
@@ -397,15 +477,40 @@ struct
     inherit element
   end
 
-  class type document =
+  class type form =
   object
-    method getElementById : string -> 'a
+    inherit element
+    method submit : unit
+  end
+
+  class type input =
+  object
+    inherit element
+  end
+
+  class type input_text =
+  object
+    inherit input
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type input_image =
+  object
+    inherit input
+    method click : unit
   end
 
   class type label =
   object
     method _get_value : string
     method _set_value : string -> unit
+  end
+
+  class type map =
+  object
+    inherit element
+    method _get_areas : area array
   end
 
   class type menuItem =
@@ -425,7 +530,29 @@ struct
   class type mouseEvent =
   object
     inherit event
+    method _get_screenX : int
+    method _get_screenY : int
+    method _get_clientX : int
+    method _get_clientY : int
+    method _get_ctrlKey : bool
+    method _get_shiftKey : bool
+    method _get_altKey : bool
+    method _get_metaKey : bool
     method _get_button : int
+    method _get_relatedTarget : eventTarget
+    method initMouseEvent :
+      string -> bool -> bool -> abstractView -> int ->
+      int -> int -> int -> int ->
+      bool -> bool -> bool -> bool ->
+      int -> eventTarget ->
+      unit
+  end
+
+  class type option =
+  object
+    inherit element
+    method _get_text : string
+    method _get_value : string
   end
 
   class type radio =
@@ -433,6 +560,14 @@ struct
     inherit element
     method _get_selected : int
     method _set_selected : int -> unit
+  end
+
+  class type select =
+  object
+    inherit element
+    method _get_options : option array
+    method _get_selectedIndex : int
+    method _set_selectedIndex : int -> unit
   end
 
   class type statusBarPanel =
@@ -448,6 +583,7 @@ struct
   class type tab =
   object
     inherit element
+    method _get_linkedBrowser : browser
   end
 
   class type tabBrowser =
@@ -467,6 +603,8 @@ struct
   class type window =
   object
     inherit element
+    method alert : string -> unit
+    method back : unit
     method close : unit
     method _get_location : string
     method _set_location : string -> unit

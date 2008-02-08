@@ -24,9 +24,15 @@ sig
   type interface
   type result
 
+  class type iDRef =
+  object
+    method equals : interface -> bool
+  end
+
   class type ['a] out =
   object
     method _get_value : 'a
+    method _set_value : 'a -> unit
   end
 
   class type inputStream =
@@ -47,6 +53,7 @@ sig
   class type uRI =
   object
     method _get_spec : string
+    method _set_spec : string -> unit
   end
 
   class type channel =
@@ -160,10 +167,15 @@ sig
     method appendStream : #inputStream -> unit
   end
 
+  class type observer =
+  object
+    method observe : #supports -> string -> string -> unit
+  end
+
   class type observerService =
   object
-    method addObserver : (supports -> string -> string -> unit) Ocamljs.jsfun -> string -> bool -> unit
-    method removeObserver : (supports -> string -> string -> unit) Ocamljs.jsfun -> string -> unit
+    method addObserver : observer -> string -> bool -> unit
+    method removeObserver : observer -> string -> unit
   end
 
   class type passwordManager =
@@ -234,6 +246,23 @@ sig
     method setData : string -> int -> unit
   end
 
+  class type uRIContentListener =
+  object
+    inherit supports
+    method onStartURIOpen : #uRI -> bool
+    method doContent : string -> bool -> #request -> streamListener out -> bool
+    method isPreferred : string -> string out -> bool
+    method canHandleContent : string -> bool -> string out
+    (* loadCookie, parentContentListener *)
+  end
+
+  class type uRILoader =
+  object
+    inherit supports
+    method registerContentListener : #uRIContentListener -> unit
+    method unRegisterContentListener : #uRIContentListener -> unit
+  end
+
   class type windowMediator =
   object
     method getEnumerator : string -> supports simpleEnumerator
@@ -253,6 +282,13 @@ sig
     method _get_channel : channel
     method abort : unit
     method _get_status : int
+  end
+
+  class type xPathResult =
+  object
+    method _get_ANY_TYPE : int
+    method _get_FIRST_ORDERED_NODE_TYPE : int
+    method _get_singleNodeValue : 'a
   end
 
   external createInstance : class_ -> interface -> 'a = "#createInstance"
@@ -276,10 +312,16 @@ sig
   val passwordManagerInternal : interface
   val prefBranch : interface
   val properties : interface
+  val requestObserver : interface
   val scriptableInputStream : interface
   val serverSocket : interface
+  val streamListener : interface
   val stringInputStream : interface
   val supports : interface
+  val supportsWeakReference : interface
+  val uRI : interface
+  val uRIContentListener : interface
+  val uRILoader : interface
   val windowMediator : interface
 
   val appshell_window_mediator : class_
@@ -294,11 +336,13 @@ sig
   val network_file_output_stream : class_
   val network_input_stream_pump : class_
   val network_mime_input_stream : class_
+  val network_server_socket : class_
+  val network_simple_uri : class_
   val observer_service : class_
   val passwordmanager : class_
   val preferences_service : class_
   val scriptableinputstream : class_
-  val network_server_socket : class_
+  val uriloader : class_
 
   val nOINTERFACE : result
 
@@ -310,6 +354,7 @@ sig
   val getService_passwordmanager_passwordManager : unit -> passwordManager
   val getService_passwordmanager_passwordManagerInternal : unit -> passwordManagerInternal
   val getService_preferences_service : unit -> prefBranch
+  val getService_uriloader : unit -> uRILoader
 
   val createInstance_file_local : unit -> localFile
   val createInstance_network_buffered_input_stream : unit -> bufferedInputStream
@@ -321,6 +366,7 @@ sig
   val createInstance_scriptableinputstream : unit -> scriptableInputStream
   val createInstance_network_input_stream_pump : unit -> inputStreamPump
   val createInstance_network_server_socket : unit -> serverSocket
+  val createInstance_network_simple_uri : unit -> uRI
 
   val make_out : 'a -> 'a out
   val newXMLHttpRequest : unit -> xMLHttpRequest
@@ -329,10 +375,6 @@ end
 module DOM :
 sig
   (* XXX do these fall into some more sensible hierarchy than element -> everything else? *)
-
-  class type browser =
-  object
-  end
 
   class type style =
   object
@@ -366,10 +408,48 @@ sig
     method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
     method getAttribute : string -> 'a
     method setAttribute : string -> 'a -> unit
+    method dispatchEvent : #event -> unit
     method _get_hidden : bool
     method _set_hidden : bool -> unit
     method _get_style : style
     method _set_innerHTML : string -> unit
+  end
+
+  class type abstractView =
+  object
+  end
+
+  class type document =
+  object
+    (* XXX do better *)
+    method evaluate : string -> document -> 'namespaceResolver -> int -> #XPCOM.xPathResult -> XPCOM.xPathResult
+
+    method createEvent : string -> #event
+
+    method _get_defaultView : abstractView
+
+    method getElementById : string -> 'a
+    method _get_location : string
+    method _set_location : string -> unit
+  end
+
+  class type a =
+  object
+    inherit element
+    method _get_href : string
+  end
+
+  class type area =
+  object
+    inherit element
+  end
+
+  class type browser =
+  object
+    inherit element
+    method loadURI : string -> XPCOM.uRI -> string -> unit
+    method goBack : unit
+    method _get_contentDocument : document
   end
 
   class type button =
@@ -393,15 +473,40 @@ sig
     inherit element
   end
 
-  class type document =
+  class type form =
   object
-    method getElementById : string -> 'a
+    inherit element
+    method submit : unit
+  end
+
+  class type input =
+  object
+    inherit element
+  end
+
+  class type input_text =
+  object
+    inherit input
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type input_image =
+  object
+    inherit input
+    method click : unit
   end
 
   class type label =
   object
     method _get_value : string
     method _set_value : string -> unit
+  end
+
+  class type map =
+  object
+    inherit element
+    method _get_areas : area array
   end
 
   class type menuItem =
@@ -421,7 +526,29 @@ sig
   class type mouseEvent =
   object
     inherit event
+    method _get_screenX : int
+    method _get_screenY : int
+    method _get_clientX : int
+    method _get_clientY : int
+    method _get_ctrlKey : bool
+    method _get_shiftKey : bool
+    method _get_altKey : bool
+    method _get_metaKey : bool
     method _get_button : int
+    method _get_relatedTarget : eventTarget
+    method initMouseEvent :
+      string -> bool -> bool -> abstractView -> int ->
+      int -> int -> int -> int ->
+      bool -> bool -> bool -> bool ->
+      int -> eventTarget ->
+      unit
+  end
+
+  class type option =
+  object
+    inherit element
+    method _get_text : string
+    method _get_value : string
   end
 
   class type radio =
@@ -429,6 +556,14 @@ sig
     inherit element
     method _get_selected : int
     method _set_selected : int -> unit
+  end
+
+  class type select =
+  object
+    inherit element
+    method _get_options : option array
+    method _get_selectedIndex : int
+    method _set_selectedIndex : int -> unit
   end
 
   class type statusBarPanel =
@@ -444,6 +579,7 @@ sig
   class type tab =
   object
     inherit element
+    method _get_linkedBrowser : browser
   end
 
   class type tabBrowser =
@@ -463,6 +599,8 @@ sig
   class type window =
   object
     inherit element
+    method alert : string -> unit
+    method back : unit
     method close : unit
     method _get_location : string
     method _set_location : string -> unit
