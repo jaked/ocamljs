@@ -18,15 +18,297 @@
  * MA 02111-1307, USA
  *)
 
+module Common =
+struct
+  class type uRI =
+  object
+    method _get_spec : string
+    method _set_spec : string -> unit
+    method resolve : string -> string
+  end
+end
+
+module DOM =
+struct
+  (* XXX do these fall into some more sensible hierarchy than element -> everything else? *)
+
+  class type style =
+  object
+    method _get_display : string
+    method _set_display : string -> unit
+    method _get_visibility : string
+    method _set_visibility : string -> unit
+  end
+
+  class type eventTarget =
+  object
+  end
+
+  class type event =
+  object
+    method _get_bubbles : bool
+    method _get_cancelable : bool
+    method _get_eventPhase : int
+    method _get_target : eventTarget
+    method _get_timeStamp : float
+    method _get_type : string
+
+    method initEvent : string -> bool -> bool -> unit
+    method preventDefault : unit
+    method stopPropagation : unit
+  end
+
+  class type element =
+  object
+    method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
+    method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
+    method getAttribute : string -> 'a
+    method setAttribute : string -> 'a -> unit
+    method dispatchEvent : #event -> unit
+    method _get_hidden : bool
+    method _set_hidden : bool -> unit
+    method _get_style : style
+    method _get_innerHTML : string
+    method _set_innerHTML : string -> unit
+    method _get_innerText : string
+    method _set_innerText : string -> unit
+  end
+
+  class type abstractView =
+  object
+  end
+
+  class type xPathResult =
+  object
+    method _get_ANY_TYPE : int
+    method _get_FIRST_ORDERED_NODE_TYPE : int
+    method _get_singleNodeValue : 'a
+  end
+
+  class type document =
+  object
+    (* XXX do better *)
+    method evaluate : string -> document -> 'namespaceResolver -> int -> #xPathResult -> xPathResult
+
+    method createEvent : string -> #event
+
+    method _get_defaultView : abstractView
+
+    method getElementById : string -> 'a
+    method _get_location : string
+    method _set_location : string -> unit
+  end
+
+  class type a =
+  object
+    inherit element
+    method _get_href : string
+  end
+
+  class type area =
+  object
+    inherit element
+  end
+
+  class type uRI =
+  object
+    constraint uRI = Common.uRI
+    method _get_spec : string
+    method _set_spec : string -> unit
+    method resolve : string -> string
+  end
+
+  class type browser =
+  object
+    inherit element
+    method loadURI : string -> uRI -> string -> unit
+    method goBack : unit
+    method _get_contentDocument : document
+  end
+
+  class type button =
+  object
+    inherit element
+    method _get_disabled : bool
+    method _set_disabled : bool -> unit
+    method _get_label : string
+    method _set_label : string -> unit
+  end
+
+  class type deck =
+  object
+    inherit element
+    method _get_selectedIndex : int
+    method _set_selectedIndex : int -> unit
+  end
+
+  class type dialog =
+  object
+    inherit element
+  end
+
+  class type form =
+  object
+    inherit element
+    method submit : unit
+  end
+
+  class type input =
+  object
+    inherit element
+  end
+
+  class type input_text =
+  object
+    inherit input
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type input_image =
+  object
+    inherit input
+    method click : unit
+  end
+
+  class type label =
+  object
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type map =
+  object
+    inherit element
+    method _get_areas : area array
+  end
+
+  class type menuItem =
+  object
+    inherit element
+  end
+
+  class type menuList =
+  object
+    inherit element
+    method _get_selectedIndex : int
+    method _set_selectedIndex : int -> unit
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type mouseEvent =
+  object
+    inherit event
+    method _get_screenX : int
+    method _get_screenY : int
+    method _get_clientX : int
+    method _get_clientY : int
+    method _get_ctrlKey : bool
+    method _get_shiftKey : bool
+    method _get_altKey : bool
+    method _get_metaKey : bool
+    method _get_button : int
+    method _get_relatedTarget : eventTarget
+    method initMouseEvent :
+      string -> bool -> bool -> abstractView -> int ->
+      int -> int -> int -> int ->
+      bool -> bool -> bool -> bool ->
+      int -> eventTarget ->
+      unit
+  end
+
+  class type option =
+  object
+    inherit element
+    method _get_text : string
+    method _get_value : string
+  end
+
+  class type radio =
+  object
+    inherit element
+    method _get_selected : int
+    method _set_selected : int -> unit
+  end
+
+  class type select =
+  object
+    inherit element
+    method _get_options : option array
+    method _get_selectedIndex : int
+    method _set_selectedIndex : int -> unit
+  end
+
+  class type statusBarPanel =
+  object
+    inherit element
+  end
+
+  class type stringBundle =
+  object
+    method getString : string -> string
+  end
+
+  class type tab =
+  object
+    inherit element
+    method _get_linkedBrowser : browser
+  end
+
+  class type tabBrowser =
+  object
+    inherit element
+    method addTab : string -> tab
+    method removeTab : tab -> unit
+    method _set_selectedTab : #tab -> unit
+  end
+
+  class type textBox =
+  object
+    inherit element
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type window =
+  object
+    inherit element
+    method alert : string -> unit
+    method back : unit
+    method close : unit
+    method _get_location : string
+    method _set_location : string -> unit
+    method openDialog : string -> string -> string -> unit
+    method getBrowser : tabBrowser
+    method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> int
+    method clearTimeout : int -> unit
+    method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> int
+    method clearInterval : int -> unit
+  end
+
+  let document = Ocamljs.var "document"
+  let window = Ocamljs.var "window"
+end
+
 module XPCOM =
 struct
   type class_
-  type interface
+  type 'a interface
   type result
+
+  class type supports =
+  object
+    method _QueryInterface : 'a interface -> 'a
+  end
+
+  class type supportsWeakReference =
+  object
+  end
 
   class type iDRef =
   object
-    method equals : interface -> bool
+    method equals : 'a interface -> bool
   end
 
   class type ['a] out =
@@ -45,15 +327,12 @@ struct
     method init : #inputStream -> int -> unit
   end
 
-  class type supports =
-  object
-    method _QueryInterface : interface -> 'a
-  end
-
   class type uRI =
   object
+    constraint uRI = Common.uRI
     method _get_spec : string
     method _set_spec : string -> unit
+    method resolve : string -> string
   end
 
   class type channel =
@@ -208,7 +487,7 @@ struct
 
   class type properties =
   object
-    method get : string -> interface -> 'a
+    method get : string -> 'a interface -> 'a
   end
 
   class type scriptableInputStream =
@@ -265,7 +544,8 @@ struct
 
   class type windowMediator =
   object
-    method getEnumerator : string -> supports simpleEnumerator
+    method getEnumerator : string -> DOM.window simpleEnumerator
+    method getMostRecentWindow : string -> DOM.window
   end
 
   class type xMLHttpRequest =
@@ -284,15 +564,8 @@ struct
     method _get_status : int
   end
 
-  class type xPathResult =
-  object
-    method _get_ANY_TYPE : int
-    method _get_FIRST_ORDERED_NODE_TYPE : int
-    method _get_singleNodeValue : 'a
-  end
-
-  external createInstance : class_ -> interface -> 'a = "#createInstance"
-  external getService : class_ -> interface -> 'a = "#getService"
+  external createInstance : class_ -> 'a interface -> 'a = "#createInstance"
+  external getService : class_ -> 'a interface -> 'a = "#getService"
 
   let cc c = Ocamljs.hashref (Ocamljs.fieldref (Ocamljs.var "Components") "classes") c
   let ci i = Ocamljs.hashref (Ocamljs.fieldref (Ocamljs.var "Components") "interfaces") i
@@ -374,248 +647,4 @@ struct
 
   let make_out v = Ocamljs.obj [ "value", v ]
   external newXMLHttpRequest : unit -> xMLHttpRequest = "$new" "XMLHttpRequest"
-end
-
-module DOM =
-struct
-  (* XXX do these fall into some more sensible hierarchy than element -> everything else? *)
-
-  class type style =
-  object
-    method _get_display : string
-    method _set_display : string -> unit
-    method _get_visibility : string
-    method _set_visibility : string -> unit
-  end
-
-  class type eventTarget =
-  object
-  end
-
-  class type event =
-  object
-    method _get_bubbles : bool
-    method _get_cancelable : bool
-    method _get_eventPhase : int
-    method _get_target : eventTarget
-    method _get_timeStamp : float
-    method _get_type : string
-
-    method initEvent : string -> bool -> bool -> unit
-    method preventDefault : unit
-    method stopPropagation : unit
-  end
-
-  class type element =
-  object
-    method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
-    method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
-    method getAttribute : string -> 'a
-    method setAttribute : string -> 'a -> unit
-    method dispatchEvent : #event -> unit
-    method _get_hidden : bool
-    method _set_hidden : bool -> unit
-    method _get_style : style
-    method _set_innerHTML : string -> unit
-  end
-
-  class type abstractView =
-  object
-  end
-
-  class type document =
-  object
-    (* XXX do better *)
-    method evaluate : string -> document -> 'namespaceResolver -> int -> #XPCOM.xPathResult -> XPCOM.xPathResult
-
-    method createEvent : string -> #event
-
-    method _get_defaultView : abstractView
-
-    method getElementById : string -> 'a
-    method _get_location : string
-    method _set_location : string -> unit
-  end
-
-  class type a =
-  object
-    inherit element
-    method _get_href : string
-  end
-
-  class type area =
-  object
-    inherit element
-  end
-
-  class type browser =
-  object
-    inherit element
-    method loadURI : string -> XPCOM.uRI -> string -> unit
-    method goBack : unit
-    method _get_contentDocument : document
-  end
-
-  class type button =
-  object
-    inherit element
-    method _get_disabled : bool
-    method _set_disabled : bool -> unit
-    method _get_label : string
-    method _set_label : string -> unit
-  end
-
-  class type deck =
-  object
-    inherit element
-    method _get_selectedIndex : int
-    method _set_selectedIndex : int -> unit
-  end
-
-  class type dialog =
-  object
-    inherit element
-  end
-
-  class type form =
-  object
-    inherit element
-    method submit : unit
-  end
-
-  class type input =
-  object
-    inherit element
-  end
-
-  class type input_text =
-  object
-    inherit input
-    method _get_value : string
-    method _set_value : string -> unit
-  end
-
-  class type input_image =
-  object
-    inherit input
-    method click : unit
-  end
-
-  class type label =
-  object
-    method _get_value : string
-    method _set_value : string -> unit
-  end
-
-  class type map =
-  object
-    inherit element
-    method _get_areas : area array
-  end
-
-  class type menuItem =
-  object
-    inherit element
-  end
-
-  class type menuList =
-  object
-    inherit element
-    method _get_selectedIndex : int
-    method _set_selectedIndex : int -> unit
-    method _get_value : string
-    method _set_value : string -> unit
-  end
-
-  class type mouseEvent =
-  object
-    inherit event
-    method _get_screenX : int
-    method _get_screenY : int
-    method _get_clientX : int
-    method _get_clientY : int
-    method _get_ctrlKey : bool
-    method _get_shiftKey : bool
-    method _get_altKey : bool
-    method _get_metaKey : bool
-    method _get_button : int
-    method _get_relatedTarget : eventTarget
-    method initMouseEvent :
-      string -> bool -> bool -> abstractView -> int ->
-      int -> int -> int -> int ->
-      bool -> bool -> bool -> bool ->
-      int -> eventTarget ->
-      unit
-  end
-
-  class type option =
-  object
-    inherit element
-    method _get_text : string
-    method _get_value : string
-  end
-
-  class type radio =
-  object
-    inherit element
-    method _get_selected : int
-    method _set_selected : int -> unit
-  end
-
-  class type select =
-  object
-    inherit element
-    method _get_options : option array
-    method _get_selectedIndex : int
-    method _set_selectedIndex : int -> unit
-  end
-
-  class type statusBarPanel =
-  object
-    inherit element
-  end
-
-  class type stringBundle =
-  object
-    method getString : string -> string
-  end
-
-  class type tab =
-  object
-    inherit element
-    method _get_linkedBrowser : browser
-  end
-
-  class type tabBrowser =
-  object
-    inherit element
-    method addTab : string -> tab
-    method _set_selectedTab : #tab -> unit
-  end
-
-  class type textBox =
-  object
-    inherit element
-    method _get_value : string
-    method _set_value : string -> unit
-  end
-
-  class type window =
-  object
-    inherit element
-    method alert : string -> unit
-    method back : unit
-    method close : unit
-    method _get_location : string
-    method _set_location : string -> unit
-    method openDialog : string -> string -> string -> unit
-    method getBrowser : tabBrowser
-    method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> int
-    method clearTimeout : int -> unit
-    method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> int
-    method clearInterval : int -> unit
-  end
-
-  let document = Ocamljs.var "document"
-  let window = Ocamljs.var "window"
 end
