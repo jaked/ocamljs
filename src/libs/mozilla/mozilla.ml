@@ -80,9 +80,11 @@ struct
 
   class type xPathResult =
   object
+    method iterateNext : 'a
+    method _get_singleNodeValue : 'a
     method _get_ANY_TYPE : int
     method _get_FIRST_ORDERED_NODE_TYPE : int
-    method _get_singleNodeValue : 'a
+    method _get_ORDERED_NODE_ITERATOR_TYPE : int
   end
 
   class type document =
