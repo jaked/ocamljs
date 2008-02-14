@@ -480,7 +480,7 @@ struct
     method getBoolPref : string -> bool
     method getCharPref : string -> string
     method getIntPref : string -> int
-    method setBoolpref : string -> bool -> unit
+    method setBoolPref : string -> bool -> unit
     method setCharPref : string -> string -> unit
     method setIntPref : string -> int -> unit
   end
