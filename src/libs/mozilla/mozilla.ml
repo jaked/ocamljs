@@ -62,16 +62,14 @@ struct
   object
     method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
     method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
-    method getAttribute : string -> 'a
-    method setAttribute : string -> 'a -> unit
+    method getAttribute : string -> string
+    method setAttribute : string -> string -> unit
     method dispatchEvent : #event -> unit
     method _get_hidden : bool
     method _set_hidden : bool -> unit
     method _get_style : style
     method _get_innerHTML : string
     method _set_innerHTML : string -> unit
-    method _get_innerText : string
-    method _set_innerText : string -> unit
   end
 
   class type abstractView =
