@@ -58,8 +58,13 @@ struct
     method stopPropagation : unit
   end
 
+  class type node =
+  object
+  end
+
   class type element =
   object
+    inherit node
     method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
     method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
     method getAttribute : string -> string
@@ -85,18 +90,28 @@ struct
     method _get_ORDERED_NODE_ITERATOR_TYPE : int
   end
 
+  class type location =
+  object
+    method _get_href : string
+    method _set_href : string -> unit
+  end
+
+  class type xPathNSResolver =
+  object
+  end
+
   class type document =
   object
-    (* XXX do better *)
-    method evaluate : string -> document -> 'namespaceResolver -> int -> #xPathResult -> xPathResult
+    inherit node
+
+    method evaluate : string -> #node -> #xPathNSResolver -> int -> #xPathResult -> xPathResult
 
     method createEvent : string -> #event
 
     method _get_defaultView : abstractView
 
     method getElementById : string -> 'a
-    method _get_location : string
-    method _set_location : string -> unit
+    method _get_location : location
   end
 
   class type a =
@@ -366,6 +381,11 @@ struct
     method _get_enumerator : supports simpleEnumerator
   end
 
+  class type dOMSerializer =
+  object
+    method serializeToString : #DOM.node -> string
+  end
+
   class type file =
   object
     method remove : bool -> unit
@@ -575,6 +595,7 @@ struct
   let consoleService = ci "nsIConsoleService"
   let cookie = ci "nsICookie"
   let cookieManager = ci "nsICookieManager"
+  let dOMSerializer = ci "nsIDOMSerializer"
   let file = ci "nsIFile"
   let fileInputStream = ci "nsIFileInputStream"
   let fileOutputStream = ci "nsIFileOutputStream"
@@ -600,6 +621,7 @@ struct
   let uRIContentListener = ci "nsIURIContentListener"
   let uRILoader = ci "nsIURILoader"
   let windowMediator = ci "nsIWindowMediator"
+  let xMLHttpRequest = ci "nsIXMLHttpRequest"
 
   let appshell_window_mediator = cc "@mozilla.org/appshell/window-mediator;1"
   let consoleservice = cc "@mozilla.org/consoleservice;1"
@@ -620,6 +642,8 @@ struct
   let preferences_service = cc "@mozilla.org/preferences-service;1"
   let scriptableinputstream = cc "@mozilla.org/scriptableinputstream;1"
   let uriloader = cc "@mozilla.org/uriloader;1"
+  let xmlextras_xmlhttprequest = cc "@mozilla.org/xmlextras/xmlhttprequest;1"
+  let xmlextras_xmlserializer = cc "@mozilla.org/xmlextras/xmlserializer;1"
 
   let nOINTERFACE = cr "NS_NOINTERFACE"
 
@@ -644,7 +668,8 @@ struct
   let createInstance_network_input_stream_pump () = createInstance network_input_stream_pump inputStreamPump
   let createInstance_network_server_socket () = createInstance network_server_socket serverSocket
   let createInstance_network_simple_uri () = createInstance network_simple_uri uRI
+  let createInstance_xmlextras_xmlhttprequest () = createInstance xmlextras_xmlhttprequest xMLHttpRequest
+  let createInstance_xmlextras_xmlserializer () = createInstance xmlextras_xmlserializer dOMSerializer
 
   let make_out v = Ocamljs.obj [ "value", v ]
-  external newXMLHttpRequest : unit -> xMLHttpRequest = "$new" "XMLHttpRequest"
 end

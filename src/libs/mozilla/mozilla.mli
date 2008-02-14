@@ -58,8 +58,13 @@ sig
     method stopPropagation : unit
   end
 
+  class type node =
+  object
+  end
+
   class type element =
   object
+    inherit node
     method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
     method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
     method getAttribute : string -> string
@@ -85,18 +90,28 @@ sig
     method _get_ORDERED_NODE_ITERATOR_TYPE : int
   end
 
+  class type location =
+  object
+    method _get_href : string
+    method _set_href : string -> unit
+  end
+
+  class type xPathNSResolver =
+  object
+  end
+
   class type document =
   object
-    (* XXX do better *)
-    method evaluate : string -> document -> 'namespaceResolver -> int -> #xPathResult -> xPathResult
+    inherit node
+
+    method evaluate : string -> #node -> #xPathNSResolver -> int -> #xPathResult -> xPathResult
 
     method createEvent : string -> #event
 
     method _get_defaultView : abstractView
 
     method getElementById : string -> 'a
-    method _get_location : string
-    method _set_location : string -> unit
+    method _get_location : location
   end
 
   class type a =
@@ -366,6 +381,11 @@ sig
     method _get_enumerator : supports simpleEnumerator
   end
 
+  class type dOMSerializer =
+  object
+    method serializeToString : #DOM.node -> string
+  end
+
   class type file =
   object
     method remove : bool -> unit
@@ -571,6 +591,7 @@ sig
   val consoleService : consoleService interface
   val cookie : cookie interface
   val cookieManager : cookieManager interface
+  val dOMSerializer : dOMSerializer interface
   val file : file interface
   val fileInputStream : fileInputStream interface
   val fileOutputStream : fileOutputStream interface
@@ -596,6 +617,7 @@ sig
   val uRIContentListener : uRIContentListener interface
   val uRILoader : uRILoader interface
   val windowMediator : windowMediator interface
+  val xMLHttpRequest : xMLHttpRequest interface
 
   val appshell_window_mediator : class_
   val consoleservice : class_
@@ -616,6 +638,8 @@ sig
   val preferences_service : class_
   val scriptableinputstream : class_
   val uriloader : class_
+  val xmlextras_xmlhttprequest : class_
+  val xmlextras_xmlserializer : class_
 
   val nOINTERFACE : result
 
@@ -640,7 +664,8 @@ sig
   val createInstance_network_input_stream_pump : unit -> inputStreamPump
   val createInstance_network_server_socket : unit -> serverSocket
   val createInstance_network_simple_uri : unit -> uRI
+  val createInstance_xmlextras_xmlhttprequest : unit -> xMLHttpRequest
+  val createInstance_xmlextras_xmlserializer : unit -> dOMSerializer
 
   val make_out : 'a -> 'a out
-  val newXMLHttpRequest : unit -> xMLHttpRequest
 end
