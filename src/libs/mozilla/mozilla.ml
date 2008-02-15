@@ -165,6 +165,10 @@ struct
   class type form =
   object
     inherit element
+    method _get_method : string
+    method _set_method : string -> unit
+    method _get_action : string
+    method _set_action : string -> unit
     method submit : unit
   end
 
