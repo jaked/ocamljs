@@ -509,6 +509,13 @@ struct
     method setIntPref : string -> int -> unit
   end
 
+  class type prefBranch2 =
+  object
+    inherit prefBranch
+    method addObserver : string -> observer -> bool -> unit
+    method removeObserver : string -> observer -> unit
+  end
+
   class type properties =
   object
     method get : string -> 'a interface -> 'a
@@ -612,7 +619,7 @@ struct
   let observerService = ci "nsIObserverService"
   let passwordManager = ci "nsIPasswordManager"
   let passwordManagerInternal = ci "nsIPasswordManagerInternal"
-  let prefBranch = ci "nsIPrefBranch"
+  let prefBranch2 = ci "nsIPrefBranch2"
   let properties = ci "nsIProperties"
   let requestObserver = ci "nsIRequestObserver"
   let scriptableInputStream = ci "nsIScriptableInputStream"
@@ -658,7 +665,7 @@ struct
   let getService_observer_service () = getService observer_service observerService
   let getService_passwordmanager_passwordManager () = getService passwordmanager passwordManager
   let getService_passwordmanager_passwordManagerInternal () = getService passwordmanager passwordManagerInternal
-  let getService_preferences_service () = getService preferences_service prefBranch
+  let getService_preferences_service () = getService preferences_service prefBranch2
   let getService_uriloader () = getService uriloader uRILoader
 
   let createInstance_file_local () = createInstance file_local localFile

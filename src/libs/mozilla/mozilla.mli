@@ -509,6 +509,13 @@ sig
     method setIntPref : string -> int -> unit
   end
 
+  class type prefBranch2 =
+  object
+    inherit prefBranch
+    method addObserver : string -> observer -> bool -> unit
+    method removeObserver : string -> observer -> unit
+  end
+
   class type properties =
   object
     method get : string -> 'a interface -> 'a
@@ -608,7 +615,7 @@ sig
   val observerService : observerService interface
   val passwordManager : passwordManager interface
   val passwordManagerInternal : passwordManagerInternal interface
-  val prefBranch : prefBranch interface
+  val prefBranch2 : prefBranch2 interface
   val properties : properties interface
   val requestObserver : requestObserver interface
   val scriptableInputStream : scriptableInputStream interface
@@ -654,7 +661,7 @@ sig
   val getService_observer_service : unit -> observerService
   val getService_passwordmanager_passwordManager : unit -> passwordManager
   val getService_passwordmanager_passwordManagerInternal : unit -> passwordManagerInternal
-  val getService_preferences_service : unit -> prefBranch
+  val getService_preferences_service : unit -> prefBranch2
   val getService_uriloader : unit -> uRILoader
 
   val createInstance_file_local : unit -> localFile

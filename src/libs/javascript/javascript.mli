@@ -49,6 +49,7 @@ module Date :
 
     external toString : t -> string = "#toString"
     external toDateString : t -> string = "#toDateString"
+    external toLocaleString : t -> string = "#toLocaleString"
 
   end
 
