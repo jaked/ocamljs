@@ -18,298 +18,6 @@
  * MA 02111-1307, USA
  *)
 
-module Common :
-sig
-  class type uRI =
-  object
-    method _get_spec : string
-    method _set_spec : string -> unit
-    method resolve : string -> string
-  end
-end
-
-module DOM :
-sig
-  (* XXX do these fall into some more sensible hierarchy than element -> everything else? *)
-
-  class type style =
-  object
-    method _get_display : string
-    method _set_display : string -> unit
-    method _get_visibility : string
-    method _set_visibility : string -> unit
-  end
-
-  class type eventTarget =
-  object
-  end
-
-  class type event =
-  object
-    method _get_bubbles : bool
-    method _get_cancelable : bool
-    method _get_eventPhase : int
-    method _get_target : eventTarget
-    method _get_timeStamp : float
-    method _get_type : string
-
-    method initEvent : string -> bool -> bool -> unit
-    method preventDefault : unit
-    method stopPropagation : unit
-  end
-
-  class type node =
-  object
-  end
-
-  class type element =
-  object
-    inherit node
-    method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
-    method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
-    method getAttribute : string -> string
-    method setAttribute : string -> string -> unit
-    method dispatchEvent : #event -> unit
-    method _get_hidden : bool
-    method _set_hidden : bool -> unit
-    method _get_style : style
-    method _get_innerHTML : string
-    method _set_innerHTML : string -> unit
-  end
-
-  class type abstractView =
-  object
-  end
-
-  class type xPathResult =
-  object
-    method iterateNext : 'a
-    method _get_singleNodeValue : 'a
-    method _get_ANY_TYPE : int
-    method _get_FIRST_ORDERED_NODE_TYPE : int
-    method _get_ORDERED_NODE_ITERATOR_TYPE : int
-  end
-
-  class type location =
-  object
-    method _get_href : string
-    method _set_href : string -> unit
-  end
-
-  class type xPathNSResolver =
-  object
-  end
-
-  class type document =
-  object
-    inherit node
-
-    method evaluate : string -> #node -> #xPathNSResolver -> int -> #xPathResult -> xPathResult
-
-    method createEvent : string -> #event
-
-    method _get_defaultView : abstractView
-
-    method getElementById : string -> 'a
-    method _get_location : location
-  end
-
-  class type a =
-  object
-    inherit element
-    method _get_href : string
-  end
-
-  class type area =
-  object
-    inherit element
-  end
-
-  class type uRI =
-  object
-    constraint uRI = Common.uRI
-    method _get_spec : string
-    method _set_spec : string -> unit
-    method resolve : string -> string
-  end
-
-  class type browser =
-  object
-    inherit element
-    method loadURI : string -> uRI -> string -> unit
-    method goBack : unit
-    method _get_contentDocument : document
-  end
-
-  class type button =
-  object
-    inherit element
-    method _get_disabled : bool
-    method _set_disabled : bool -> unit
-    method _get_label : string
-    method _set_label : string -> unit
-  end
-
-  class type deck =
-  object
-    inherit element
-    method _get_selectedIndex : int
-    method _set_selectedIndex : int -> unit
-  end
-
-  class type dialog =
-  object
-    inherit element
-  end
-
-  class type form =
-  object
-    inherit element
-    method _get_method : string
-    method _set_method : string -> unit
-    method _get_action : string
-    method _set_action : string -> unit
-    method submit : unit
-  end
-
-  class type input =
-  object
-    inherit element
-  end
-
-  class type input_text =
-  object
-    inherit input
-    method _get_value : string
-    method _set_value : string -> unit
-  end
-
-  class type input_image =
-  object
-    inherit input
-    method click : unit
-  end
-
-  class type label =
-  object
-    method _get_value : string
-    method _set_value : string -> unit
-  end
-
-  class type map =
-  object
-    inherit element
-    method _get_areas : area array
-  end
-
-  class type menuItem =
-  object
-    inherit element
-  end
-
-  class type menuList =
-  object
-    inherit element
-    method _get_selectedIndex : int
-    method _set_selectedIndex : int -> unit
-    method _get_value : string
-    method _set_value : string -> unit
-  end
-
-  class type mouseEvent =
-  object
-    inherit event
-    method _get_screenX : int
-    method _get_screenY : int
-    method _get_clientX : int
-    method _get_clientY : int
-    method _get_ctrlKey : bool
-    method _get_shiftKey : bool
-    method _get_altKey : bool
-    method _get_metaKey : bool
-    method _get_button : int
-    method _get_relatedTarget : eventTarget
-    method initMouseEvent :
-      string -> bool -> bool -> abstractView -> int ->
-      int -> int -> int -> int ->
-      bool -> bool -> bool -> bool ->
-      int -> eventTarget ->
-      unit
-  end
-
-  class type option =
-  object
-    inherit element
-    method _get_text : string
-    method _get_value : string
-  end
-
-  class type radio =
-  object
-    inherit element
-    method _get_selected : int
-    method _set_selected : int -> unit
-  end
-
-  class type select =
-  object
-    inherit element
-    method _get_options : option array
-    method _get_selectedIndex : int
-    method _set_selectedIndex : int -> unit
-  end
-
-  class type statusBarPanel =
-  object
-    inherit element
-  end
-
-  class type stringBundle =
-  object
-    method getString : string -> string
-  end
-
-  class type tab =
-  object
-    inherit element
-    method _get_linkedBrowser : browser
-  end
-
-  class type tabBrowser =
-  object
-    inherit element
-    method addTab : string -> tab
-    method removeTab : tab -> unit
-    method _set_selectedTab : #tab -> unit
-  end
-
-  class type textBox =
-  object
-    inherit element
-    method _get_value : string
-    method _set_value : string -> unit
-  end
-
-  class type window =
-  object
-    inherit element
-    method alert : string -> unit
-    method back : unit
-    method close : unit
-    method _get_location : string
-    method _set_location : string -> unit
-    method openDialog : string -> string -> string -> unit
-    method getBrowser : tabBrowser
-    method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> int
-    method clearTimeout : int -> unit
-    method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> int
-    method clearInterval : int -> unit
-  end
-
-  val document : document
-  val window : window
-end
-
 module XPCOM :
 sig
   type class_
@@ -348,7 +56,6 @@ sig
 
   class type uRI =
   object
-    constraint uRI = Common.uRI
     method _get_spec : string
     method _set_spec : string -> unit
     method resolve : string -> string
@@ -385,9 +92,179 @@ sig
     method _get_enumerator : supports simpleEnumerator
   end
 
+  class type dOMNode =
+  object
+    inherit supports
+    method _get_nodeName : string
+    method _get_nodeValue : string
+    method _get_nodeType : int
+    method _get_parentNode : dOMNode
+    method _get_childNodes : dOMNode array
+    method _get_firstChild : dOMNode
+    method _get_lastChild : dOMNode
+    method _get_previousSibling : dOMNode
+    method _get_nextSibling : dOMNode
+  end
+
+  class type dOMElement =
+  object
+    inherit dOMNode
+    method getAttribute : string -> string
+    method setAttribute : string -> string -> unit
+  end
+
+  class type dOMEvent =
+  object
+    inherit supports
+    method _get_bubbles : bool
+    method _get_cancelable : bool
+    method _get_eventPhase : int
+      (* method _get_target : dOMEventTarget *)
+    method _get_timeStamp : float
+    method _get_type : string
+
+    method initEvent : string -> bool -> bool -> unit
+    method preventDefault : unit
+    method stopPropagation : unit
+  end
+
+  class type dOMEventListener =
+  object
+    inherit supports
+    method handleEvent : #dOMEvent -> unit
+  end
+
+  class type dOMEventTarget =
+  object
+    inherit supports
+    method addEventListener : string -> #dOMEventListener -> bool -> unit
+    method removeEventListener : string -> #dOMEventListener -> bool -> unit
+    method dispatchEvent : #dOMEvent -> bool
+  end
+
+  class type dOMAbstractView =
+  object
+    inherit supports
+  end
+
+  class type dOMDocumentView =
+  object
+    inherit supports
+    method _get_defaultView : dOMAbstractView
+  end
+
+  class type dOMUIEvent =
+  object
+    inherit dOMEvent
+    method initUIEvent : string -> bool -> bool -> #dOMAbstractView -> int -> unit
+  end
+
+  class type dOMMouseEvent =
+  object
+    inherit dOMUIEvent
+    method _get_screenX : int
+    method _get_screenY : int
+    method _get_clientX : int
+    method _get_clientY : int
+    method _get_ctrlKey : bool
+    method _get_shiftKey : bool
+    method _get_altKey : bool
+    method _get_metaKey : bool
+    method _get_button : int
+    method _get_relatedTarget : #dOMEventTarget
+    method initMouseEvent :
+      string -> bool -> bool -> #dOMAbstractView -> int ->
+      int -> int -> int -> int ->
+      bool -> bool -> bool -> bool ->
+      int -> #dOMEventTarget ->
+      unit
+  end
+
+  class type dOMDocument =
+  object
+    inherit dOMNode
+    method getElementById : string -> #dOMElement
+  end
+
+  class type dOMXMLDocument =
+  object
+    inherit dOMDocument
+  end
+
+  class type dOMLocation =
+  object
+    inherit supports
+    method _get_href : string
+    method _set_href : string -> unit
+  end
+
+  class type dOMNSDocument =
+  object
+    inherit supports
+    method _get_location : dOMLocation
+  end
+
   class type dOMSerializer =
   object
-    method serializeToString : #DOM.node -> string
+    method serializeToString : #dOMNode -> string
+  end
+
+  class type dOMDocumentEvent =
+  object
+    inherit supports
+    method createEvent : string -> #dOMEvent
+  end
+
+  class type dOMWindow =
+  object
+    inherit supports
+    method _get_document : dOMDocument
+  end
+
+  class type dOMWindow2 =
+  object
+    inherit dOMWindow
+  end
+
+  class type dOMWindowInternal =
+  object
+    inherit dOMWindow2
+    method alert : string -> unit
+    method back : unit
+    method close : unit
+    method _get_location : string
+    method _set_location : string -> unit
+  end
+
+  class type dOMJSWindow =
+  object
+    inherit supports
+    method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> int
+    method clearTimeout : int -> unit
+    method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> int
+    method clearInterval : int -> unit
+    method openDialog : string -> string -> string -> unit
+  end
+
+  class type dOMXPathNSResolver =
+  object
+    inherit supports
+    method lookupNamespaceURI : string -> string
+  end
+
+  class type dOMXPathEvaluator =
+  object
+    inherit supports
+    method evaluate : string -> #dOMNode -> #dOMXPathNSResolver -> int -> #supports -> #supports
+  end
+
+  class type dOMXPathResult =
+  object
+    method iterateNext : #dOMNode
+    method _get_singleNodeValue : #dOMNode
+    method _get_ANY_TYPE : int
+    method _get_FIRST_ORDERED_NODE_TYPE : int
+    method _get_ORDERED_NODE_ITERATOR_TYPE : int
   end
 
   class type file =
@@ -575,12 +452,13 @@ sig
 
   class type windowMediator =
   object
-    method getEnumerator : string -> DOM.window simpleEnumerator
-    method getMostRecentWindow : string -> DOM.window
+    method getEnumerator : string -> #dOMWindow simpleEnumerator
+    method getMostRecentWindow : string -> #dOMWindow
   end
 
   class type xMLHttpRequest =
   object
+    inherit supports
     method _set_onreadystatechange : (unit -> unit) Ocamljs.jsfun -> unit
     method _set_onload : (unit -> unit) Ocamljs.jsfun -> unit
     method _open : string -> string -> bool -> unit
@@ -590,6 +468,7 @@ sig
     method send : #inputStream -> unit
     method _get_readyState : int
     method _get_responseText : string
+    method _get_responseXML : #dOMXMLDocument
     method _get_channel : channel
     method abort : unit
     method _get_status : int
@@ -679,4 +558,235 @@ sig
   val createInstance_xmlextras_xmlserializer : unit -> dOMSerializer
 
   val make_out : 'a -> 'a out
+end
+
+module DOM :
+sig
+  class type style =
+  object
+    method _get_display : string
+    method _set_display : string -> unit
+    method _get_visibility : string
+    method _set_visibility : string -> unit
+  end
+
+  class type event =
+  object
+    inherit XPCOM.dOMEvent
+  end
+
+  class type eventTarget =
+  object
+    inherit XPCOM.dOMEventTarget
+    method addEventListener_fun_ : string -> (#event -> unit) Ocamljs.jsfun -> bool -> unit
+    method removeEventListener_fun_ : string -> (#event -> unit) Ocamljs.jsfun -> bool -> unit
+  end
+
+  class type node =
+  object
+    inherit XPCOM.dOMNode
+  end
+
+  class type element =
+  object
+    inherit XPCOM.dOMElement
+    inherit eventTarget
+    method _get_hidden : bool
+    method _set_hidden : bool -> unit
+    method _get_style : style
+    method _get_innerHTML : string
+    method _set_innerHTML : string -> unit
+  end
+
+  class type document =
+  object
+    inherit XPCOM.dOMNSDocument
+    inherit XPCOM.dOMDocumentEvent
+    inherit XPCOM.dOMDocumentView
+    inherit XPCOM.dOMEventTarget
+    inherit XPCOM.dOMDocument
+    inherit XPCOM.dOMXPathEvaluator
+  end
+
+  class type a =
+  object
+    inherit element
+    method _get_href : string
+  end
+
+  class type area =
+  object
+    inherit element
+  end
+
+  class type uRI =
+  object
+    inherit XPCOM.uRI
+  end
+
+  class type browser =
+  object
+    inherit element
+    method loadURI : string -> uRI -> string -> unit
+    method goBack : unit
+    method _get_contentDocument : document
+  end
+
+  class type button =
+  object
+    inherit element
+    method _get_disabled : bool
+    method _set_disabled : bool -> unit
+    method _get_label : string
+    method _set_label : string -> unit
+  end
+
+  class type deck =
+  object
+    inherit element
+    method _get_selectedIndex : int
+    method _set_selectedIndex : int -> unit
+  end
+
+  class type dialog =
+  object
+    inherit element
+  end
+
+  class type form =
+  object
+    inherit element
+    method _get_method : string
+    method _set_method : string -> unit
+    method _get_action : string
+    method _set_action : string -> unit
+    method submit : unit
+  end
+
+  class type input =
+  object
+    inherit element
+  end
+
+  class type input_text =
+  object
+    inherit input
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type input_image =
+  object
+    inherit input
+    method click : unit
+  end
+
+  class type label =
+  object
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type map =
+  object
+    inherit element
+    method _get_areas : area array
+  end
+
+  class type menuItem =
+  object
+    inherit element
+  end
+
+  class type menuList =
+  object
+    inherit element
+    method _get_selectedIndex : int
+    method _set_selectedIndex : int -> unit
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type mouseEvent =
+  object
+    inherit XPCOM.dOMMouseEvent
+  end
+
+  class type option =
+  object
+    inherit element
+    method _get_text : string
+    method _get_value : string
+  end
+
+  class type radio =
+  object
+    inherit element
+    method _get_selected : int
+    method _set_selected : int -> unit
+  end
+
+  class type select =
+  object
+    inherit element
+    method _get_options : option array
+    method _get_selectedIndex : int
+    method _set_selectedIndex : int -> unit
+  end
+
+  class type statusBarPanel =
+  object
+    inherit element
+  end
+
+  class type stringBundle =
+  object
+    method getString : string -> string
+  end
+
+  class type tab =
+  object
+    inherit element
+    method _get_linkedBrowser : browser
+  end
+
+  class type tabBrowser =
+  object
+    inherit element
+    method addTab : string -> tab
+    method removeTab : tab -> unit
+    method _set_selectedTab : #tab -> unit
+  end
+
+  class type textBox =
+  object
+    inherit element
+    method _get_value : string
+    method _set_value : string -> unit
+  end
+
+  class type window =
+  object
+    inherit XPCOM.dOMWindow
+    inherit XPCOM.dOMJSWindow
+    inherit XPCOM.dOMWindowInternal
+    inherit eventTarget
+    inherit XPCOM.dOMAbstractView
+
+    method getBrowser : tabBrowser
+  end
+
+  class type xMLDocument =
+  object
+    inherit document
+    inherit XPCOM.dOMXMLDocument
+  end
+
+  class type xPathResult =
+  object
+    inherit XPCOM.dOMXPathResult
+  end
+
+  val document : document
+  val window : window
 end

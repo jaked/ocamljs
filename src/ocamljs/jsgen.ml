@@ -299,18 +299,33 @@ let rec comp_expr tail expr =
 	let app = if tail then "__m" else "_m" in
         let co = comp_expr false o in
         let cargs = List.map (comp_expr false) args in
+        let op, m = match m with
+          | _ when starts_with m "_get_" -> (`Get, drop m 5)
+          | _ when starts_with m "_set_" -> (`Set, drop m 5)
+          | _ when starts_with m "_" -> (`Call, drop m 1)
+          | _ -> (`Call, m) in
+        (* drop trailing _foo_ *)
+        let m =
+          let ml = String.length m in
+          if ml >= 2 && m.[ml - 1] = '_'
+          then
+            try String.sub m 0 (String.rindex_from m (ml - 2) '_')
+            with Not_found -> m
+          else m in
         begin
-          match cargs with
-            | [] when starts_with m "_get_" -> Jfieldref (co, drop m 5)
-            | [e] when starts_with m "_set_" -> Jassign (Jfieldref (co, drop m 5), e)
-            | es ->
-                let m = if starts_with m "_" then drop m 1 else m in
-                match co with
-                  | Jvar _ -> jcall app [Jfieldref(co, m); co; Jarray es]
-                  | _ ->
-                      let i = jsident_of_ident (Ident.create "v") in
-                      (* here we bind i to avoid multiply evaluating co *)
-                      exp_of_stmts [ Jvars (i, co); Jreturn (jcall app [Jfieldref(Jvar i, m); Jvar i; Jarray es]) ]
+          match op, cargs with
+            | `Get, [] -> Jfieldref (co, m)
+            | `Set, [e] -> Jassign (Jfieldref (co, m), e)
+            | `Call, es ->
+                begin
+                  match co with
+                    | Jvar _ -> jcall app [Jfieldref(co, m); co; Jarray es]
+                    | _ ->
+                        let i = jsident_of_ident (Ident.create "v") in
+                        (* here we bind i to avoid multiply evaluating co *)
+                        exp_of_stmts [ Jvars (i, co); Jreturn (jcall app [Jfieldref(Jvar i, m); Jvar i; Jarray es]) ]
+                end
+            | _ -> raise (Failure "bad method call")
         end
 
     | _ ->  Jstring "comp_expr"
@@ -336,6 +351,15 @@ and comp_expr_st tail expr k =
 
     | Lwhile (e1, e2) ->
 	[ Jwhile (comp_expr false e1, comp_expr_st false e2 keffect) ]
+
+    (*
+      special case some constructs that arise from the compilation of pattern matching,
+      to avoid deep nesting in generated Javascript
+    *)
+    | Lifthenelse (i, t, (Lstaticraise _ as e)) ->
+	(Jites (Jnot (comp_expr false i), comp_expr_st tail e k, [])) :: (comp_expr_st tail t k)
+    | Lifthenelse (i, (Lstaticraise _ as t), e) ->
+	(Jites (comp_expr false i, comp_expr_st tail t k, [])) :: (comp_expr_st tail e k)
 
     | Lifthenelse (i, t, e) ->
 	[ Jites (comp_expr false i, comp_expr_st tail t k, comp_expr_st tail e k) ]
