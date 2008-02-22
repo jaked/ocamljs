@@ -755,6 +755,7 @@ sig
     inherit element
     method addTab : string -> tab
     method removeTab : tab -> unit
+    method _get_selectedTab : tab
     method _set_selectedTab : #tab -> unit
   end
 
