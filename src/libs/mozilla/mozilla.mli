@@ -564,6 +564,8 @@ module DOM :
 sig
   class type style =
   object
+    method _get_color : string
+    method _set_color : string -> unit
     method _get_display : string
     method _set_display : string -> unit
     method _get_visibility : string
