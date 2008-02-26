@@ -738,6 +738,8 @@ struct
     method _get_options : option array
     method _get_selectedIndex : int
     method _set_selectedIndex : int -> unit
+    method _get_value : string
+    method _set_value : string -> unit
   end
 
   class type statusBarPanel =
