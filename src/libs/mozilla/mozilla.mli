@@ -159,6 +159,12 @@ sig
     method initUIEvent : string -> bool -> bool -> #dOMAbstractView -> int -> unit
   end
 
+  class type dOMKeyEvent =
+  object
+    inherit dOMUIEvent
+    method initKeyEvent : string -> bool -> bool -> #dOMAbstractView -> bool -> bool -> bool -> bool -> int -> int
+  end
+
   class type dOMMouseEvent =
   object
     inherit dOMUIEvent
@@ -570,6 +576,10 @@ sig
     method _set_display : string -> unit
     method _get_visibility : string
     method _set_visibility : string -> unit
+    method _get_width : string
+    method _set_width : string -> unit
+    method _get_maxWidth : string
+    method _set_maxWidth : string -> unit
   end
 
   class type event =
@@ -707,6 +717,11 @@ sig
     method _set_selectedIndex : int -> unit
     method _get_value : string
     method _set_value : string -> unit
+  end
+
+  class type keyEvent =
+  object
+    inherit XPCOM.dOMKeyEvent
   end
 
   class type mouseEvent =
