@@ -303,6 +303,9 @@ and stmt ppf = function
   | Jwhile (e, ss) ->
       fprintf ppf "@[<hv>while (%a) %a@]" (expp p) e maybe_block ss
 
+  | Jlabel (i, ss) -> fprintf ppf "@[<hv>%s: %a@]" i maybe_block ss
+  | Jbreakto i     -> fprintf ppf "@[break %s@]" i
+
 and maybe_block ppf = function
   | [] -> fprintf ppf "@;<1 2>;@ "
   | [s] ->
@@ -314,7 +317,7 @@ and maybe_block ppf = function
 and block ppf ss = fprintf ppf "{@;<1 2>%a@ }" stmts ss
 
 and st_needs_sc = function
-  | (Jfuns _ | Jites _ | Jfor _ | Jwhile _ | Jswitch _ | Jtrycatch _) -> false
+  | (Jfuns _ | Jites _ | Jfor _ | Jwhile _ | Jswitch _ | Jtrycatch _ | Jlabel _) -> false
   | _ -> true
 
 and stmts ppf ss =
