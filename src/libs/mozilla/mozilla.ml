@@ -399,6 +399,16 @@ struct
     method removeObserver : string -> observer -> unit
   end
 
+  class type prefService =
+  object
+    method readUserPrefs   : file -> unit
+    method resetPrefs      : unit -> unit
+    method resetUserPrefs  : unit -> unit
+    method savePrefFile    : file -> unit
+    method getBranch       : string -> prefBranch
+    method getDefaultBranch: string -> prefBranch
+  end
+
   class type properties =
   object
     method get : string -> 'a interface -> 'a
@@ -504,6 +514,7 @@ struct
   let observerService = ci "nsIObserverService"
   let passwordManager = ci "nsIPasswordManager"
   let passwordManagerInternal = ci "nsIPasswordManagerInternal"
+  let prefService = ci "nsIPrefService"
   let prefBranch2 = ci "nsIPrefBranch2"
   let properties = ci "nsIProperties"
   let requestObserver = ci "nsIRequestObserver"
@@ -550,7 +561,8 @@ struct
   let getService_observer_service () = getService observer_service observerService
   let getService_passwordmanager_passwordManager () = getService passwordmanager passwordManager
   let getService_passwordmanager_passwordManagerInternal () = getService passwordmanager passwordManagerInternal
-  let getService_preferences_service () = getService preferences_service prefBranch2
+  let getService_preferences_service() = getService preferences_service prefService
+  let getService_preferences_branch () = getService preferences_service prefBranch2
   let getService_uriloader () = getService uriloader uRILoader
 
   let createInstance_file_local () = createInstance file_local localFile

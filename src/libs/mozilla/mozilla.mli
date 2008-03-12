@@ -399,6 +399,16 @@ sig
     method removeObserver : string -> observer -> unit
   end
 
+  class type prefService =
+  object
+    method readUserPrefs   : file -> unit
+    method resetPrefs      : unit -> unit
+    method resetUserPrefs  : unit -> unit
+    method savePrefFile    : file -> unit
+    method getBranch       : string -> prefBranch
+    method getDefaultBranch: string -> prefBranch
+  end
+
   class type properties =
   object
     method get : string -> 'a interface -> 'a
@@ -500,6 +510,7 @@ sig
   val observerService : observerService interface
   val passwordManager : passwordManager interface
   val passwordManagerInternal : passwordManagerInternal interface
+  val prefService : prefService interface
   val prefBranch2 : prefBranch2 interface
   val properties : properties interface
   val requestObserver : requestObserver interface
@@ -546,7 +557,8 @@ sig
   val getService_observer_service : unit -> observerService
   val getService_passwordmanager_passwordManager : unit -> passwordManager
   val getService_passwordmanager_passwordManagerInternal : unit -> passwordManagerInternal
-  val getService_preferences_service : unit -> prefBranch2
+  val getService_preferences_service: unit -> prefService
+  val getService_preferences_branch : unit -> prefBranch2
   val getService_uriloader : unit -> uRILoader
 
   val createInstance_file_local : unit -> localFile
