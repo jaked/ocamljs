@@ -652,6 +652,7 @@ sig
   object
     inherit element
     method loadURI : string -> uRI -> string -> unit
+    method stop : unit -> unit
     method goBack : unit
     method _get_contentDocument : document
   end
