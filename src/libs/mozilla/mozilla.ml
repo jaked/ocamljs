@@ -378,6 +378,31 @@ struct
     method addUserFull : string -> string -> string -> string -> string -> unit
   end
 
+  class type loginInfo =
+  object
+    inherit supports
+    method init : string -> string -> string -> string -> string -> string -> string -> unit
+    method equals : loginInfo -> bool
+    method equalsIngnorePassword : loginInfo -> bool
+    method _get_hostname : string
+    method _get_formSubmitURL : string
+    method _get_httpRealm : string
+    method _get_username : string
+    method _get_usernameField : string
+    method _get_password : string
+    method _get_passwordField : string
+  end
+
+  class type loginManager =
+  object
+    method addLogin : loginInfo -> unit
+    method removeLogin : loginInfo -> unit
+    method modifyLogin : loginInfo -> loginInfo -> unit
+    method getLoginSavingEnabled : string -> bool
+    method setLoginSavingEnabled : string -> bool -> unit
+    method findLogins : int out -> string -> string -> string -> loginInfo array
+  end
+
   class type prefBranch =
   object
     method _get_PREF_BOOL : int
@@ -514,6 +539,8 @@ struct
   let observerService = ci "nsIObserverService"
   let passwordManager = ci "nsIPasswordManager"
   let passwordManagerInternal = ci "nsIPasswordManagerInternal"
+  let loginInfo = ci "nsILoginInfo"
+  let loginManager = ci "nsILoginManager"
   let prefService = ci "nsIPrefService"
   let prefBranch2 = ci "nsIPrefBranch2"
   let properties = ci "nsIProperties"
@@ -537,6 +564,8 @@ struct
   let file_local = cc "@mozilla.org/file/local;1"
   let io_multiplex_input_stream = cc "@mozilla.org/io/multiplex-input-stream;1"
   let io_string_input_stream = cc "@mozilla.org/io/string-input-stream;1"
+  let logininfo = cc "@mozilla.org/login-manager/loginInfo;1"
+  let loginmanager = cc "@mozilla.org/login-manager;1"
   let network_buffered_input_stream = cc "@mozilla.org/network/buffered-input-stream;1"
   let network_file_input_stream = cc "@mozilla.org/network/file-input-stream;1"
   let network_file_output_stream = cc "@mozilla.org/network/file-output-stream;1"
@@ -558,6 +587,7 @@ struct
   let getService_consoleservice () = getService consoleservice consoleService
   let getService_cookiemanager () = getService cookiemanager cookieManager
   let getService_file_directory_service () = getService file_directory_service properties
+  let getService_loginManager () = getService loginmanager loginManager
   let getService_observer_service () = getService observer_service observerService
   let getService_passwordmanager_passwordManager () = getService passwordmanager passwordManager
   let getService_passwordmanager_passwordManagerInternal () = getService passwordmanager passwordManagerInternal
@@ -566,6 +596,7 @@ struct
   let getService_uriloader () = getService uriloader uRILoader
 
   let createInstance_file_local () = createInstance file_local localFile
+  let createInstance_loginInfo () = createInstance logininfo loginInfo
   let createInstance_network_buffered_input_stream () = createInstance network_buffered_input_stream bufferedInputStream
   let createInstance_network_file_input_stream () = createInstance network_file_input_stream fileInputStream
   let createInstance_network_file_output_stream () = createInstance network_file_output_stream fileOutputStream

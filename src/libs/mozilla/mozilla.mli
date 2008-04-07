@@ -378,6 +378,31 @@ sig
     method addUserFull : string -> string -> string -> string -> string -> unit
   end
 
+  class type loginInfo =
+  object
+    inherit supports
+    method init : string -> string -> string -> string -> string -> string -> string -> unit
+    method equals : loginInfo -> bool
+    method equalsIngnorePassword : loginInfo -> bool
+    method _get_hostname : string
+    method _get_formSubmitURL : string
+    method _get_httpRealm : string
+    method _get_username : string
+    method _get_usernameField : string
+    method _get_password : string
+    method _get_passwordField : string
+  end
+
+  class type loginManager =
+  object
+    method addLogin : loginInfo -> unit
+    method removeLogin : loginInfo -> unit
+    method modifyLogin : loginInfo -> loginInfo -> unit
+    method getLoginSavingEnabled : string -> bool
+    method setLoginSavingEnabled : string -> bool -> unit
+    method findLogins : int out -> string -> string -> string -> loginInfo array
+  end
+
   class type prefBranch =
   object
     method _get_PREF_BOOL : int
@@ -504,6 +529,8 @@ sig
   val httpChannel : httpChannel interface
   val inputStreamPump : inputStreamPump interface
   val localFile : localFile interface
+  val loginInfo : loginInfo interface
+  val loginManager : loginManager interface
   val mIMEInputStream : mIMEInputStream interface
   val multiplexInputStream : multiplexInputStream interface
   val observer : observer interface
@@ -533,6 +560,7 @@ sig
   val file_local : class_
   val io_multiplex_input_stream : class_
   val io_string_input_stream : class_
+  val loginmanager : class_
   val network_buffered_input_stream : class_
   val network_file_input_stream : class_
   val network_file_output_stream : class_
@@ -554,6 +582,7 @@ sig
   val getService_consoleservice : unit -> consoleService
   val getService_cookiemanager : unit -> cookieManager
   val getService_file_directory_service : unit -> properties
+  val getService_loginManager : unit -> loginManager
   val getService_observer_service : unit -> observerService
   val getService_passwordmanager_passwordManager : unit -> passwordManager
   val getService_passwordmanager_passwordManagerInternal : unit -> passwordManagerInternal
@@ -562,6 +591,7 @@ sig
   val getService_uriloader : unit -> uRILoader
 
   val createInstance_file_local : unit -> localFile
+  val createInstance_loginInfo : unit -> loginInfo
   val createInstance_network_buffered_input_stream : unit -> bufferedInputStream
   val createInstance_network_file_input_stream : unit -> fileInputStream
   val createInstance_network_file_output_stream : unit -> fileOutputStream
