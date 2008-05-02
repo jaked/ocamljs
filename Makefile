@@ -1,7 +1,6 @@
 include ocaml/config/Makefile
 
 LIBS=\
-support.js primitives.js \
 stdlib.cmjsa std_exit.cmjs \
 ocamljs.cmi ocamljs.cmjs \
 javascript.cmi javascript.cmjs \
@@ -44,15 +43,11 @@ mozilla.cmjs mozilla.cmi:
 	$(OCAMLBUILD) src/libs/mozilla/mozilla.cmjs
 	cp _build/src/libs/mozilla/mozilla.cm* lib
 
-support.js:
-	cp src/libs/ocamljs/support.js lib
-
-primitives.js:
-	cp src/libs/ocamljs/primitives.js lib
-
 install:
 	cp bin/ocamljs $(BINDIR)
 	cd lib; cp $(LIBS) $(LIBDIR)
+	cp src/libs/ocamljs/support.js $(LIBDIR)
+	cp src/libs/ocamljs/primitives.js $(LIBDIR)
 
 clean:
 	$(OCAMLBUILD) -clean
