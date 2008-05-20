@@ -48,6 +48,11 @@ struct
   object
   end
 
+  class type appStartup =
+  object
+    method quit : int -> unit
+  end
+
   class type bufferedInputStream =
   object
     inherit inputStream
@@ -522,6 +527,7 @@ struct
   let ci i = Ocamljs.hashref (Ocamljs.fieldref (Ocamljs.var "Components") "interfaces") i
   let cr r = Ocamljs.hashref (Ocamljs.fieldref (Ocamljs.var "Components") "results") r
 
+  let appStartup = ci "nsIAppStartup"
   let bufferedInputStream = ci "nsIBufferedInputStream"
   let consoleService = ci "nsIConsoleService"
   let cookie = ci "nsICookie"
@@ -577,6 +583,7 @@ struct
   let passwordmanager = cc "@mozilla.org/passwordmanager;1"
   let preferences_service = cc "@mozilla.org/preferences-service;1"
   let scriptableinputstream = cc "@mozilla.org/scriptableinputstream;1"
+  let toolkit_app_startup = cc "@mozilla.org/toolkit/app-startup;1"
   let uriloader = cc "@mozilla.org/uriloader;1"
   let xmlextras_xmlhttprequest = cc "@mozilla.org/xmlextras/xmlhttprequest;1"
   let xmlextras_xmlserializer = cc "@mozilla.org/xmlextras/xmlserializer;1"
@@ -593,6 +600,7 @@ struct
   let getService_passwordmanager_passwordManagerInternal () = getService passwordmanager passwordManagerInternal
   let getService_preferences_service() = getService preferences_service prefService
   let getService_preferences_branch () = getService preferences_service prefBranch2
+  let getService_toolkit_app_startup () = getService toolkit_app_startup appStartup
   let getService_uriloader () = getService uriloader uRILoader
 
   let createInstance_file_local () = createInstance file_local localFile

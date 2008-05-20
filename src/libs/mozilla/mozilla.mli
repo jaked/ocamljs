@@ -48,6 +48,11 @@ sig
   object
   end
 
+  class type appStartup =
+  object
+    method quit : int -> unit
+  end
+
   class type bufferedInputStream =
   object
     inherit inputStream
@@ -518,6 +523,7 @@ sig
   external createInstance : class_ -> 'a interface -> 'a = "#createInstance"
   external getService : class_ -> 'a interface -> 'a = "#getService"
 
+  val appStartup : appStartup interface
   val bufferedInputStream : bufferedInputStream interface
   val consoleService : consoleService interface
   val cookie : cookie interface
@@ -572,6 +578,7 @@ sig
   val passwordmanager : class_
   val preferences_service : class_
   val scriptableinputstream : class_
+  val toolkit_app_startup : class_
   val uriloader : class_
   val xmlextras_xmlhttprequest : class_
   val xmlextras_xmlserializer : class_
@@ -588,6 +595,7 @@ sig
   val getService_passwordmanager_passwordManagerInternal : unit -> passwordManagerInternal
   val getService_preferences_service: unit -> prefService
   val getService_preferences_branch : unit -> prefBranch2
+  val getService_toolkit_app_startup : unit -> appStartup
   val getService_uriloader : unit -> uRILoader
 
   val createInstance_file_local : unit -> localFile
