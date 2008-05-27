@@ -53,6 +53,10 @@ struct
     method quit : int -> unit
   end
 
+  class type badCertListener =
+  object
+  end
+
   class type bufferedInputStream =
   object
     inherit inputStream
@@ -66,10 +70,17 @@ struct
     method resolve : string -> string
   end
 
+  class type interfaceRequestor =
+  object
+    inherit supports
+    method getInterface : #iDRef -> 'a
+  end
+
   class type channel =
   object
     inherit supports
     method _get_URI : uRI
+    method _set_notificationCallbacks : #interfaceRequestor -> unit
   end
 
   class type consoleService =
@@ -304,6 +315,7 @@ struct
 
   class type httpChannel =
   object
+    inherit channel
     method setRequestHeader : string -> string -> bool -> unit
   end
 
@@ -522,13 +534,17 @@ struct
 
   external createInstance : class_ -> 'a interface -> 'a = "#createInstance"
   external getService : class_ -> 'a interface -> 'a = "#getService"
+  let _set_returnCode r =
+    Ocamljs.assign (Ocamljs.fieldref (Ocamljs.var "Components") "returncode") r
 
   let cc c = Ocamljs.hashref (Ocamljs.fieldref (Ocamljs.var "Components") "classes") c
   let ci i = Ocamljs.hashref (Ocamljs.fieldref (Ocamljs.var "Components") "interfaces") i
   let cr r = Ocamljs.hashref (Ocamljs.fieldref (Ocamljs.var "Components") "results") r
 
   let appStartup = ci "nsIAppStartup"
+  let badCertListener = ci "nsIBadCertListener"
   let bufferedInputStream = ci "nsIBufferedInputStream"
+  let channel = ci "nsIChannel"
   let consoleService = ci "nsIConsoleService"
   let cookie = ci "nsICookie"
   let cookieManager = ci "nsICookieManager"

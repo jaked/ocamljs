@@ -53,6 +53,10 @@ sig
     method quit : int -> unit
   end
 
+  class type badCertListener =
+  object
+  end
+
   class type bufferedInputStream =
   object
     inherit inputStream
@@ -66,10 +70,17 @@ sig
     method resolve : string -> string
   end
 
+  class type interfaceRequestor =
+  object
+    inherit supports
+    method getInterface : #iDRef -> 'a
+  end
+
   class type channel =
   object
     inherit supports
     method _get_URI : uRI
+    method _set_notificationCallbacks : #interfaceRequestor -> unit
   end
 
   class type consoleService =
@@ -304,6 +315,7 @@ sig
 
   class type httpChannel =
   object
+    inherit channel
     method setRequestHeader : string -> string -> bool -> unit
   end
 
@@ -522,9 +534,12 @@ sig
 
   external createInstance : class_ -> 'a interface -> 'a = "#createInstance"
   external getService : class_ -> 'a interface -> 'a = "#getService"
+  val _set_returnCode : result -> unit
 
   val appStartup : appStartup interface
+  val badCertListener : badCertListener interface
   val bufferedInputStream : bufferedInputStream interface
+  val channel : channel interface
   val consoleService : consoleService interface
   val cookie : cookie interface
   val cookieManager : cookieManager interface
