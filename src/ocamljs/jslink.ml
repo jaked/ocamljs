@@ -280,7 +280,7 @@ let link_js_exec tolink exec_name =
     let output_fun = output_string outchan in
     output_fun ("// compiled by ocamlc " ^ version ^ ", ocamljs " ^ jsversion ^ "\n");
 
-    output_fun ("(function (){\n");
+    output_fun "var ocamljs$caml_named_value = (function (){\n";
     (* exceptions *)
     List.iter
       (fun (n, i) ->
@@ -288,7 +288,8 @@ let link_js_exec tolink exec_name =
       Predef.builtin_values;
 
     List.iter (link_file output_fun) tolink;
-    output_fun ("})();\n");
+    output_fun "return caml_named_value;\n";
+    output_fun "})();\n";
     close_out outchan
   with x ->
     close_out outchan;
