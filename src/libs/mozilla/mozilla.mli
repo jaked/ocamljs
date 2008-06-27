@@ -381,6 +381,15 @@ sig
     method removeObserver : observer -> string -> unit
   end
 
+  class type commandLine =
+  object
+    method getArgument : int -> string
+    method findFlag : string -> bool -> int
+    method removeAruguments : int -> int -> unit
+    method handleFlag : string -> bool -> bool
+    method handleFlagWithParam : string -> bool -> string
+  end
+
   class type passwordManager =
   object
     method addUser : string -> string -> string -> unit
@@ -556,6 +565,7 @@ sig
   val multiplexInputStream : multiplexInputStream interface
   val observer : observer interface
   val observerService : observerService interface
+  val commandLine : commandLine interface
   val passwordManager : passwordManager interface
   val passwordManagerInternal : passwordManagerInternal interface
   val prefService : prefService interface
@@ -860,6 +870,7 @@ sig
     inherit XPCOM.dOMAbstractView
 
     method getBrowser : tabBrowser
+    method _get_arguments : 'a array
   end
 
   class type xMLDocument =

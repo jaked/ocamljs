@@ -381,6 +381,15 @@ struct
     method removeObserver : observer -> string -> unit
   end
 
+  class type commandLine =
+  object
+    method getArgument : int -> string
+    method findFlag : string -> bool -> int
+    method removeAruguments : int -> int -> unit
+    method handleFlag : string -> bool -> bool
+    method handleFlagWithParam : string -> bool -> string
+  end
+
   class type passwordManager =
   object
     method addUser : string -> string -> string -> unit
@@ -559,6 +568,7 @@ struct
   let multiplexInputStream = ci "nsIMultiplexInputStream"
   let observer = ci "nsIObserver"
   let observerService = ci "nsIObserverService"
+  let commandLine = ci "nsICommandLine"
   let passwordManager = ci "nsIPasswordManager"
   let passwordManagerInternal = ci "nsIPasswordManagerInternal"
   let loginInfo = ci "nsILoginInfo"
@@ -866,6 +876,7 @@ struct
     inherit XPCOM.dOMAbstractView
 
     method getBrowser : tabBrowser
+    method _get_arguments : 'a array
   end
 
   class type xMLDocument =
