@@ -265,7 +265,7 @@ and stmt ppf = function
   | Jfuns (i, is, ss) ->
       fprintf ppf "@[<hv>function %s (@[%a@]) %a@]" i ids is block ss
   | Jbreak -> fprintf ppf "break"
-  | Jreturn e -> fprintf ppf "@[return %a@]" (expp p) e
+  | Jreturn e -> fprintf ppf "@[<h>return %a@]" (expp p) e
   | (Jites (i, t, []) | Jites (i, t, [Jempty])) ->
       fprintf ppf
 	"@[<hv>if (%a)%a@]"
