@@ -49,6 +49,8 @@ let nullable_of_option x =
     | None -> null()
     | Some x -> x
 
+let is_null a = a = null ()
+
 type 'a jsfun = 'a
 let jsfun f = function_ (fun a -> caml_callback f a)
 let jsfun2 f = function_ (fun a1 a2 -> caml_callback2 f a1 a2)

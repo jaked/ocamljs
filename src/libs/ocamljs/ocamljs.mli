@@ -38,6 +38,7 @@ external caml_callback3 : ('a1 -> 'a2 -> 'a3 -> 'b) -> 'a1 -> 'a2 -> 'a3 -> 'b =
 
 val option_of_nullable : 'a -> 'a option
 val nullable_of_option : 'a option -> 'a
+val is_null : 'a -> bool
 
 type 'a jsfun
 val jsfun : ('a -> 'b) -> ('a -> 'b) jsfun
