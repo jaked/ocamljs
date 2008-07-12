@@ -289,6 +289,16 @@ sig
     method _get_ORDERED_NODE_ITERATOR_TYPE : int
   end
 
+  class type externalProtocolService =
+  object
+    inherit supports
+    method externalProtocolHandlerExists : string -> bool
+    method isExposedProtocol : string -> bool
+    method loadUrl : uRI -> unit
+    method loadURI : uRI -> supports (* XXX *) -> unit
+    method getApplicationDescription : string -> string
+  end
+
   class type file =
   object
     method remove : bool -> unit
@@ -348,6 +358,12 @@ sig
     inherit request
     method init : #inputStream -> float -> float -> float -> float -> bool -> unit
     method asyncRead : #streamListener -> #supports -> unit
+  end
+
+  class type iOService =
+  object
+    inherit supports
+    method newURI : string -> string -> uRI -> uRI
   end
 
   class type localFile =
@@ -553,11 +569,13 @@ sig
   val cookie : cookie interface
   val cookieManager : cookieManager interface
   val dOMSerializer : dOMSerializer interface
+  val externalProtocolService : externalProtocolService interface
   val file : file interface
   val fileInputStream : fileInputStream interface
   val fileOutputStream : fileOutputStream interface
   val httpChannel : httpChannel interface
   val inputStreamPump : inputStreamPump interface
+  val iOService : iOService interface
   val localFile : localFile interface
   val loginInfo : loginInfo interface
   val loginManager : loginManager interface
@@ -596,6 +614,7 @@ sig
   val network_file_input_stream : class_
   val network_file_output_stream : class_
   val network_input_stream_pump : class_
+  val network_io_service : class_
   val network_mime_input_stream : class_
   val network_server_socket : class_
   val network_simple_uri : class_
@@ -605,6 +624,7 @@ sig
   val scriptableinputstream : class_
   val toolkit_app_startup : class_
   val uriloader : class_
+  val uriloader_external_protocol_service : class_
   val xmlextras_xmlhttprequest : class_
   val xmlextras_xmlserializer : class_
 
@@ -613,8 +633,10 @@ sig
   val getService_appshell_window_mediator : unit -> windowMediator
   val getService_consoleservice : unit -> consoleService
   val getService_cookiemanager : unit -> cookieManager
+  val getService_uriloader_external_protocol_service : unit -> externalProtocolService
   val getService_file_directory_service : unit -> properties
   val getService_loginManager : unit -> loginManager
+  val getService_network_io_service : unit -> iOService
   val getService_observer_service : unit -> observerService
   val getService_passwordmanager_passwordManager : unit -> passwordManager
   val getService_passwordmanager_passwordManagerInternal : unit -> passwordManagerInternal

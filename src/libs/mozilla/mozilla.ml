@@ -289,6 +289,16 @@ struct
     method _get_ORDERED_NODE_ITERATOR_TYPE : int
   end
 
+  class type externalProtocolService =
+  object
+    inherit supports
+    method externalProtocolHandlerExists : string -> bool
+    method isExposedProtocol : string -> bool
+    method loadUrl : uRI -> unit
+    method loadURI : uRI -> supports (* XXX *) -> unit
+    method getApplicationDescription : string -> string
+  end
+
   class type file =
   object
     method remove : bool -> unit
@@ -348,6 +358,12 @@ struct
     inherit request
     method init : #inputStream -> float -> float -> float -> float -> bool -> unit
     method asyncRead : #streamListener -> #supports -> unit
+  end
+
+  class type iOService =
+  object
+    inherit supports
+    method newURI : string -> string -> uRI -> uRI
   end
 
   class type localFile =
@@ -558,11 +574,13 @@ struct
   let cookie = ci "nsICookie"
   let cookieManager = ci "nsICookieManager"
   let dOMSerializer = ci "nsIDOMSerializer"
+  let externalProtocolService = ci "nsIExternalProtocolService"
   let file = ci "nsIFile"
   let fileInputStream = ci "nsIFileInputStream"
   let fileOutputStream = ci "nsIFileOutputStream"
   let httpChannel = ci "nsIHttpChannel"
   let inputStreamPump = ci "nsIInputStreamPump"
+  let iOService = ci "nsIIOService"
   let localFile = ci "nsILocalFile"
   let mIMEInputStream = ci "nsIMIMEInputStream"
   let multiplexInputStream = ci "nsIMultiplexInputStream"
@@ -602,6 +620,7 @@ struct
   let network_file_input_stream = cc "@mozilla.org/network/file-input-stream;1"
   let network_file_output_stream = cc "@mozilla.org/network/file-output-stream;1"
   let network_input_stream_pump = cc "@mozilla.org/network/input-stream-pump;1"
+  let network_io_service = cc "@mozilla.org/network/io-service;1"
   let network_mime_input_stream = cc "@mozilla.org/network/mime-input-stream;1"
   let network_server_socket = cc "@mozilla.org/network/server-socket;1"
   let network_simple_uri = cc "@mozilla.org/network/simple-uri;1"
@@ -611,6 +630,7 @@ struct
   let scriptableinputstream = cc "@mozilla.org/scriptableinputstream;1"
   let toolkit_app_startup = cc "@mozilla.org/toolkit/app-startup;1"
   let uriloader = cc "@mozilla.org/uriloader;1"
+  let uriloader_external_protocol_service = cc "@mozilla.org/uriloader/external-protocol-service;1"
   let xmlextras_xmlhttprequest = cc "@mozilla.org/xmlextras/xmlhttprequest;1"
   let xmlextras_xmlserializer = cc "@mozilla.org/xmlextras/xmlserializer;1"
 
@@ -619,8 +639,10 @@ struct
   let getService_appshell_window_mediator () = getService appshell_window_mediator windowMediator
   let getService_consoleservice () = getService consoleservice consoleService
   let getService_cookiemanager () = getService cookiemanager cookieManager
+  let getService_uriloader_external_protocol_service () = getService uriloader_external_protocol_service externalProtocolService
   let getService_file_directory_service () = getService file_directory_service properties
   let getService_loginManager () = getService loginmanager loginManager
+  let getService_network_io_service () = getService network_io_service iOService
   let getService_observer_service () = getService observer_service observerService
   let getService_passwordmanager_passwordManager () = getService passwordmanager passwordManager
   let getService_passwordmanager_passwordManagerInternal () = getService passwordmanager passwordManagerInternal
