@@ -67,6 +67,8 @@ sig
   object
     method _get_spec : string
     method _set_spec : string -> unit
+    method _get_host : string
+    method _set_host : string -> unit
     method resolve : string -> string
   end
 
@@ -445,6 +447,13 @@ sig
     method findLogins : int out -> string -> string -> string -> loginInfo array
   end
 
+  class type permissionManager =
+  object
+    inherit supports
+    method add : uRI -> string -> int -> unit
+    method remove : string -> string -> unit
+  end
+
   class type prefBranch =
   object
     method _get_PREF_BOOL : int
@@ -586,6 +595,7 @@ sig
   val commandLine : commandLine interface
   val passwordManager : passwordManager interface
   val passwordManagerInternal : passwordManagerInternal interface
+  val permissionManager : permissionManager interface
   val prefService : prefService interface
   val prefBranch2 : prefBranch2 interface
   val properties : properties interface
@@ -620,6 +630,7 @@ sig
   val network_simple_uri : class_
   val observer_service : class_
   val passwordmanager : class_
+  val permissionmanager : class_
   val preferences_service : class_
   val scriptableinputstream : class_
   val toolkit_app_startup : class_
@@ -640,6 +651,7 @@ sig
   val getService_observer_service : unit -> observerService
   val getService_passwordmanager_passwordManager : unit -> passwordManager
   val getService_passwordmanager_passwordManagerInternal : unit -> passwordManagerInternal
+  val getService_permissionmanager : unit -> permissionManager
   val getService_preferences_service: unit -> prefService
   val getService_preferences_branch : unit -> prefBranch2
   val getService_toolkit_app_startup : unit -> appStartup

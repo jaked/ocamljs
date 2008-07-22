@@ -67,6 +67,8 @@ struct
   object
     method _get_spec : string
     method _set_spec : string -> unit
+    method _get_host : string
+    method _set_host : string -> unit
     method resolve : string -> string
   end
 
@@ -445,6 +447,13 @@ struct
     method findLogins : int out -> string -> string -> string -> loginInfo array
   end
 
+  class type permissionManager =
+  object
+    inherit supports
+    method add : uRI -> string -> int -> unit
+    method remove : string -> string -> unit
+  end
+
   class type prefBranch =
   object
     method _get_PREF_BOOL : int
@@ -591,6 +600,7 @@ struct
   let passwordManagerInternal = ci "nsIPasswordManagerInternal"
   let loginInfo = ci "nsILoginInfo"
   let loginManager = ci "nsILoginManager"
+  let permissionManager = ci "nsIPermissionManager"
   let prefService = ci "nsIPrefService"
   let prefBranch2 = ci "nsIPrefBranch2"
   let properties = ci "nsIProperties"
@@ -626,6 +636,7 @@ struct
   let network_simple_uri = cc "@mozilla.org/network/simple-uri;1"
   let observer_service = cc "@mozilla.org/observer-service;1"
   let passwordmanager = cc "@mozilla.org/passwordmanager;1"
+  let permissionmanager = cc "@mozilla.org/permissionmanager;1"
   let preferences_service = cc "@mozilla.org/preferences-service;1"
   let scriptableinputstream = cc "@mozilla.org/scriptableinputstream;1"
   let toolkit_app_startup = cc "@mozilla.org/toolkit/app-startup;1"
@@ -646,6 +657,7 @@ struct
   let getService_observer_service () = getService observer_service observerService
   let getService_passwordmanager_passwordManager () = getService passwordmanager passwordManager
   let getService_passwordmanager_passwordManagerInternal () = getService passwordmanager passwordManagerInternal
+  let getService_permissionmanager () = getService permissionmanager permissionManager
   let getService_preferences_service() = getService preferences_service prefService
   let getService_preferences_branch () = getService preferences_service prefBranch2
   let getService_toolkit_app_startup () = getService toolkit_app_startup appStartup
