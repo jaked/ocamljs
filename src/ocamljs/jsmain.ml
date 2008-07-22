@@ -105,6 +105,7 @@ module Options = Jsmain_args.Make_options (struct
   let _o s = output_name := Some s
   let _output_obj () = output_c_object := true; custom_runtime := true
   let _pack = set make_package
+  let _patch = set Jslink.patch
   let _pp s = preprocessor := Some s
   let _principal = set principal
   let _rectypes = set recursive_types
