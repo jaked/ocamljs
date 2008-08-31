@@ -148,12 +148,13 @@ let link_compunit output_fun inchan file_name compunit =
   if not !patch
   then check_consistency file_name compunit;
   seek_in inchan compunit.cu_pos;
-  let code_block = (input_value inchan : Js.stmt) in
+  let code_block = (input_value inchan : Jslib_ast.stmt) in
   let code_block =
     if !patch
     then
       match code_block with
-        | Js.Jvars (id, exp) -> Js.Jexps (Js.Jassign (Js.Jvar id, exp))
+        | Jslib_ast.Jvars (loc, [id, Some exp]) ->
+            Jslib_ast.Jexps (loc, Jslib_ast.Jbinop (loc, Jslib_ast.Jassign, Jslib_ast.Jvar (loc, id), exp))
         | _ -> code_block
     else code_block in
 
@@ -166,7 +167,7 @@ let link_compunit output_fun inchan file_name compunit =
   let buf = Buffer.create 1024 in
   let ppf = Format.formatter_of_buffer buf in
   Format.pp_set_margin ppf 132;
-  Printjs.stmts ppf [ code_block ];
+  Jslib_pp.stmts ppf [ code_block ];
   Format.fprintf ppf "\n";
   Format.pp_print_flush ppf ();
   output_fun (Buffer.contents buf);

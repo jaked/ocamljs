@@ -1,0 +1,10 @@
+name = "jslib"
+version = "0.1"
+description = "Javascript parsing, prettyprinting, tools"
+requires = "camlp4.lib,ulex"
+requires(syntax,preprocessor) = "ulex"
+
+archive(byte) = "jslib.cma"
+archive(native) = "jslib.cmxa"
+archive(syntax,preprocessor) = "ulexing.cma,jslib.cma,pa_js.cma"
+archive(syntax,toploop) = "ulexing.cma,jslib.cma,pa_js.cma"

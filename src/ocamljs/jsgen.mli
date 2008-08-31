@@ -15,8 +15,7 @@
 (* Generation of bytecode from lambda terms *)
 
 open Lambda
-open Js
 open Cmo_format
 
-val compile_implementation: string -> lambda -> (stmt * (reloc_info * int) list)
+val compile_implementation: string -> lambda -> (Jslib_ast.stmt * (reloc_info * int) list)
 val jsident_of_ident : Ident.t -> string

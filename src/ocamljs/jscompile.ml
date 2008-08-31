@@ -108,7 +108,7 @@ let implementation ppf sourcefile outputprefix =
       ++ Simplif.simplify_lambda
       ++ print_if ppf Clflags.dump_lambda Printlambda.lambda
       ++ Jsgen.compile_implementation modulename
-      ++ print_if ppf Clflags.dump_instr (fun ppf (js, _) -> Printjs.stmt ppf js)
+      ++ print_if ppf Clflags.dump_instr (fun ppf (js, _) -> Jslib_pp.stmt ppf js)
       ++ Emitjs.to_file oc modulename;
       Warnings.check_fatal ();
       Pparse.remove_preprocessed inputfile;

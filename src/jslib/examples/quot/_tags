@@ -1,0 +1,2 @@
+<*.ml>: syntax_camlp4o,pkg_jslib
+<*.byte>: pkg_jslib
