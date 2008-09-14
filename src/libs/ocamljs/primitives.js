@@ -160,6 +160,8 @@ var caml_greaterthan = function (v1, v2) { return compare_val(v1, v2, 0) > 0; }
 var caml_greaterequal = function (v1, v2) { return compare_val(v1, v2, 0) >= 0; }
 var caml_input_value = function () { throw "caml_input_value"; }
 var caml_install_signal_handler = function () { throw "caml_install_signal_handler"; }
+var caml_int32_compare = function (i1, i2) { return (i1 > i2) - (i1 < i2); }
+var caml_int64_compare = function (i1, i2) { throw "caml_int64_compare"; }
 var caml_int64_float_of_bits = function (s) {
   // see pervasives.ml; int64s are represented by strings
   switch (s) {
@@ -186,6 +188,8 @@ var caml_make_vect = function (l, i) {
     a[j] = i;
   return a;
 }
+var caml_md5_chan = function () { throw "caml_md5_chan"; }
+var caml_md5_string = function () { throw "caml_md5_string"; }
 var caml_ml_channel_size = function () { throw "caml_ml_channel_size"; }
 var caml_ml_channel_size_64 = function () { throw "caml_ml_channel_size_64"; }
 var caml_ml_close_channel = function () { throw "caml_ml_close_channel"; }
@@ -217,6 +221,7 @@ var caml_ml_seek_out = function () { throw "caml_ml_seek_out"; }
 var caml_ml_seek_out_64 = function () { throw "caml_ml_seek_out_64"; }
 var caml_ml_set_binary_mode = function () { throw "caml_ml_set_binary_mode"; }
 var caml_named_value = function (n) { return oc$$nv[n]; }
+var caml_nativeint_compare = function (i1, i2) { return (i1 > i2) - (i1 < i2); }
 var caml_notequal = function (v1, v2) { return compare_val(v1, v2, 0) != 0; }
 var caml_obj_dup = function (a) {
   var l = a.length;
@@ -237,3 +242,4 @@ var caml_sys_exit = function () { throw "caml_sys_exit"; }
 var caml_sys_get_argv = function () { return $("", $()); } // XXX put something here?
 var caml_sys_get_config = function () { return $("js", 32); } // XXX browser name?
 var caml_sys_open = function () { throw "caml_sys_open"; }
+var caml_sys_random_seed = function() { throw "caml_sys_random_seed"; }

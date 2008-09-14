@@ -1,0 +1,4 @@
+name="Lwt-js"
+description="Lightweight threads for Javascript"
+version="0.1"
+archive(js) = "lwt-js.cmjsa"

@@ -1,0 +1,4 @@
+name="Javascript"
+description="Javaascript API bindings"
+version="0.1"
+archive(js) = "javascript.cmjs"

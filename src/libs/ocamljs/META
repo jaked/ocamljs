@@ -1,0 +1,4 @@
+name="Ocamljs"
+description="Ocamljs support"
+version="0.1"
+archive(js) = "ocamljs.cmjs"
