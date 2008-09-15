@@ -57,6 +57,7 @@ lwt-js.cmjsa:
 install:
 	make -C src/jslib install
 	cp bin/ocamljs $(BINDIR)
+	cp bin/ocamlfindjs $(BINDIR)
 	cp $(addprefix _build/ocaml/stdlib/,$(LIBS)) $(LIBDIR)
 	cp src/libs/ocamljs/support.js $(LIBDIR)
 	cp src/libs/ocamljs/primitives.js $(LIBDIR)

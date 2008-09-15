@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cmd=$1
+shift
+OCAMLFIND_COMMANDS=ocamlc=ocamljs ocamlfind $cmd -predicates js $*
