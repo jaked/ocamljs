@@ -1,11 +1,11 @@
 <test/**>: -traverse
 <lib/**>: -traverse
 
-<src/ocamljs/emitjs.mli>: pkg_jslib
-<src/ocamljs/emitjs.ml>: pkg_jslib
-<src/ocamljs/jsgen.mli>: pkg_jslib
-<src/ocamljs/jsgen.ml>: syntax_camlp4o,pkg_jslib
-<src/ocamljs/jscompile.ml>: pkg_jslib
-<src/ocamljs/jslink.ml>: pkg_jslib
+<src/jscomp/emitjs.mli>: pkg_jslib
+<src/jscomp/emitjs.ml>: pkg_jslib
+<src/jscomp/jsgen.mli>: pkg_jslib
+<src/jscomp/jsgen.ml>: syntax_camlp4o,pkg_jslib
+<src/jscomp/jscompile.ml>: pkg_jslib
+<src/jscomp/jslink.ml>: pkg_jslib
 
-<src/ocamljs/jsmain.byte>: pkg_jslib
+<src/jscomp/jsmain.byte>: pkg_jslib

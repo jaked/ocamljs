@@ -1,9 +1,5 @@
 include ocaml/config/Makefile
 
-LIBS=\
-stdlib.cmjsa \
-std_exit.cmjs
-
 PKGS=\
 ocamljs.cmjs \
 javascript.cmjs \
@@ -12,7 +8,7 @@ lwt-js.cmjsa
 
 OCAMLBUILD=ocamlbuild -no-links
 
-all: jslib prereqs ocamljs $(LIBS) $(PKGS)
+all: jslib prereqs ocamljs stdlib.cmjsa std_exit.cmjs $(PKGS)
 
 jslib:
 	make -C src/jslib
@@ -24,8 +20,8 @@ prereqs:
 ocamljs:
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
 	OCAMLPATH=`pwd`/src/jslib/_build \
-	$(OCAMLBUILD) src/ocamljs/jsmain.byte
-	cp _build/src/ocamljs/jsmain.byte bin/ocamljs
+	$(OCAMLBUILD) src/jscomp/jsmain.byte
+	cp _build/src/jscomp/jsmain.byte bin/ocamljs
 
 # not sure how to get the right link stuff for this
 #ocamljs.opt:
@@ -36,40 +32,44 @@ ocamljs:
 # so we don't have to put everything in the top level
 
 stdlib.cmjsa:
+	cp ocaml/stdlib/stdlib.mllib src/stdlib; \
 	export OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR); \
-	$(OCAMLBUILD) ocaml/stdlib/stdlib.cmjsa
+	$(OCAMLBUILD) src/stdlib/stdlib.cmjsa
 
 std_exit.cmjs:
 	$(OCAMLBUILD) ocaml/stdlib/std_exit.cmjs
 
 ocamljs.cmjs:
-	$(OCAMLBUILD) src/libs/ocamljs/ocamljs.cmjs
+	$(OCAMLBUILD) src/ocamljs/ocamljs.cmjs
 
 javascript.cmjs:
-	$(OCAMLBUILD) src/libs/javascript/javascript.cmjs
+	$(OCAMLBUILD) src/javascript/javascript.cmjs
 
 mozilla.cmjs:
-	$(OCAMLBUILD) src/libs/mozilla/mozilla.cmjs
+	$(OCAMLBUILD) src/mozilla/mozilla.cmjs
 
 lwt-js.cmjsa:
-	$(OCAMLBUILD) src/libs/lwt-js/lwt-js.cmjsa
+	$(OCAMLBUILD) src/lwt-js/lwt-js.cmjsa
 
 install:
 	make -C src/jslib install
 	cp bin/ocamljs $(BINDIR)
 	cp bin/ocamlfindjs $(BINDIR)
-	cp $(addprefix _build/ocaml/stdlib/,$(LIBS)) $(LIBDIR)
-	cp src/libs/ocamljs/support.js $(LIBDIR)
-	cp src/libs/ocamljs/primitives.js $(LIBDIR)
-	ocamlfind install ocamljs src/libs/ocamljs/META _build/src/libs/ocamljs/*.cmi _build/src/libs/ocamljs/*.cmjs
-	ocamlfind install javascript src/libs/javascript/META _build/src/libs/javascript/*.cmi _build/src/libs/javascript/*.cmjs
-	ocamlfind install mozilla src/libs/mozilla/META _build/src/libs/mozilla/*.cmi _build/src/libs/mozilla/*.cmjs
-	ocamlfind install lwt-js src/libs/lwt-js/META _build/src/libs/lwt-js/*.cmi _build/src/libs/lwt-js/*.cmjsa
+	cp _build/src/stdlib/stdlib.cmjsa $(LIBDIR)
+	cp _build/ocaml/stdlib/std_exit.cmjs $(LIBDIR)
+	cp src/ocamljs/support.js $(LIBDIR)
+	cp src/ocamljs/primitives.js $(LIBDIR)
+	ocamlfind install ocamljs src/ocamljs/META _build/src/ocamljs/*.cmi _build/src/ocamljs/*.cmjs
+	ocamlfind install javascript src/javascript/META _build/src/javascript/*.cmi _build/src/javascript/*.cmjs
+	ocamlfind install mozilla src/mozilla/META _build/src/mozilla/*.cmi _build/src/mozilla/*.cmjs
+	ocamlfind install lwt-js src/lwt-js/META _build/src/lwt-js/*.cmi _build/src/lwt-js/*.cmjsa
 
 uninstall:
 	make -C src/jslib uninstall
 	rm $(BINDIR)/ocamljs
-	rm $(addprefix $(LIBDIR)/,$(LIBS))
+	rm $(BINDIR)/ocamlfindjs
+	rm $(LIBDIR)/stdlib.cmjsa
+	rm $(LIBDIR)/std_exit.cmjs
 	rm $(LIBDIR)/*.js
 	ocamlfind remove ocamljs
 	ocamlfind remove javascript
@@ -77,9 +77,10 @@ uninstall:
 	ocamlfind remove lwt-js
 
 clean:
+	rm src/stdlib/stdlib.mllib
 	make -C src/jslib clean
 	$(OCAMLBUILD) -clean
-	rm -rf bin/ocamljs
+	rm -f bin/ocamljs
 	make -C test clean
 
 test:

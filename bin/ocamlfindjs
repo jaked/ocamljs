@@ -1,5 +1,8 @@
 #!/bin/sh
 
-cmd=$1
-shift
-OCAMLFIND_COMMANDS=ocamlc=ocamljs ocamlfind $cmd -predicates js $*
+if [ $1 = ocamljs ]; then
+  shift
+  OCAMLFIND_COMMANDS=ocamlc=ocamljs ocamlfind ocamlc -predicates js $*
+else
+  ocamlfind $cmd $*
+fi
