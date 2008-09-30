@@ -1,8 +1,10 @@
 #!/bin/sh
 
+OCAMLJS=`echo $OCAMLFIND_COMMANDS | sed 's/ocamljs=\([^ ]*\)/\1/'`
+
 if [ $1 = ocamljs ]; then
   shift
-  OCAMLFIND_COMMANDS=ocamlc=ocamljs ocamlfind ocamlc -predicates js $*
+  OCAMLFIND_COMMANDS=ocamlc=${OCAMLJS:-ocamljs} ocamlfind ocamlc -predicates js $*
 else
   ocamlfind $cmd $*
 fi

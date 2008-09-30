@@ -1,0 +1,26 @@
+Pathname.define_context "."              ["ocaml/bytecomp"; "ocaml/driver"; "ocaml/parsing"; "ocaml/typing"; "ocaml/utils"];
+Pathname.define_context "ocaml/bytecomp" ["."; "ocaml/parsing"; "ocaml/typing"; "ocaml/utils"];
+Pathname.define_context "ocaml/driver"   ["ocaml/parsing"; "ocaml/utils"];
+Pathname.define_context "ocaml/parsing"  ["ocaml/utils"];
+Pathname.define_context "ocaml/typing"   ["ocaml/parsing"; "ocaml/utils"];
+Pathname.define_context "ocaml/utils"    ["ocaml"];
+
+(* from ocaml/myocamlbuild.ml *)
+copy_rule "Temporary rule, waiting for a full usage of ocamlbuild" "%.mlbuild" "%.ml";;
+
+(* The numeric opcodes *)
+rule "The numeric opcodes"
+  ~prod:"ocaml/bytecomp/opcodes.ml"
+  ~dep:"ocaml/byterun/instruct.h"
+  ~insert:`top
+	begin fun _ _ ->
+	  Cmd(Sh "sed -n -e '/^enum/p' -e 's/,//g' -e '/^  /p' ocaml/byterun/instruct.h | \
+        awk -f ../ocaml/tools/make-opcodes > ocaml/bytecomp/opcodes.ml")
+  end;;
+
+rule "ocaml/bytecomp/runtimedef.ml"
+  ~prod:"ocaml/bytecomp/runtimedef.ml"
+  ~deps:["ocaml/byterun/primitives"; "ocaml/byterun/fail.h"]
+  begin fun _ _ ->
+    Cmd(S[A"../../../build/mkruntimedef.sh";Sh">"; Px"ocaml/bytecomp/runtimedef.ml"])
+  end;;

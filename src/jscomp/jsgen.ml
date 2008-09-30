@@ -225,8 +225,9 @@ let comp_prim p es =
 
     | Poffsetint n, [e] -> << $jnum_of_int n$ + $e$ >>
 
-    | Poffsetref 1, [e] -> << $e$++ >>
-    | Poffsetref n, [e] -> << $e$ = $jnum_of_int n$ + $e$ >> (* XXX bind e to var? *)
+    | Poffsetref 1, [e] -> << $e$[0]++ >>
+    | Poffsetref -1, [e] -> << $e$[0]-- >>
+    | Poffsetref n, [e] -> << $e$[0] = $jnum_of_int n$ + $e$[0] >> (* XXX bind e to var? *)
 
     | Pstringlength, [e] -> << $e$.length >>
     | Parraylength _, [e] -> << $e$.length >>

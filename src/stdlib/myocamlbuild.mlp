@@ -1,0 +1,14 @@
+(* The version number *)
+rule "ocaml/stdlib/sys.ml"
+  ~prod:"ocaml/stdlib/sys.ml"
+  ~deps:["ocaml/stdlib/sys.mlp"; "ocaml/VERSION"]
+  begin fun _ _ ->
+    let version = with_input_file "ocaml/VERSION" input_line in
+    Seq [rm_f "ocaml/stdlib/sys.ml";
+         Cmd (S[A"sed"; A"-e";
+                A(Printf.sprintf "s,%%%%VERSION%%%%,%s," version);
+                Sh"<"; P"ocaml/stdlib/sys.mlp"; Sh">"; Px"ocaml/stdlib/sys.ml"]);
+         chmod (A"-w") "ocaml/stdlib/sys.ml"]
+  end;;
+
+Pathname.define_context "." ["."; "ocaml/stdlib"]

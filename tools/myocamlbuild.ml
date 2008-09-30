@@ -6,16 +6,16 @@ open Ocamlbuild_pack.Tools
 
 ;;
 
-let ocamljs = A"../bin/ocamljs"
+let ocamljs = ref (A"ocamljs")
 
 let ocamljs_c tags arg out =
   let tags = tags++"ocaml"++"js" in
-  Cmd (S [ocamljs; A"-c"; T(tags++"compile");
+  Cmd (S [!ocamljs; A"-c"; T(tags++"compile");
           ocaml_ppflags tags; flags_of_pathname arg;
           ocaml_include_flags arg; A"-o"; Px out; P arg])
 
 let ocamljs_link flag tags deps out =
-  Cmd (S [ocamljs; flag; T tags;
+  Cmd (S [!ocamljs; flag; T tags;
           atomize_paths deps; flags_of_pathname out; A"-o"; Px out])
 
 let ocamljs_link_lib = ocamljs_link (A"-a")
@@ -30,7 +30,7 @@ let js_lib_linker tags =
 let js_lib_linker_tags tags = tags++"ocaml"++"link"++"js"++"library"
 
 let ocamljs_p tags deps out =
-  Cmd (S [ocamljs; A"-pack"; T tags;
+  Cmd (S [!ocamljs; A"-pack"; T tags;
           atomize_paths deps; flags_of_pathname out; A"-o"; Px out])
 
 let js_compile_ocaml_implem ?tag ml cmjs env build =
@@ -138,50 +138,6 @@ flag ["ocaml"; "js"; "link"] begin
   S (List.map (fun x -> A (x^".cmjsa")) !Options.ocaml_libs)
 end;;
 
-Pathname.define_context "src/jscomp"     ["ocaml/bytecomp"; "ocaml/driver"; "ocaml/parsing"; "ocaml/typing"; "ocaml/utils"];
-Pathname.define_context "ocaml/bytecomp" ["src/jscomp"; "ocaml/parsing"; "ocaml/typing"; "ocaml/utils"];
-Pathname.define_context "ocaml/driver"   ["ocaml/parsing"; "ocaml/utils"];
-Pathname.define_context "ocaml/parsing"  ["ocaml/utils"];
-Pathname.define_context "ocaml/typing"   ["ocaml/parsing"; "ocaml/utils"];
-Pathname.define_context "ocaml/utils"    ["ocaml"];
-
-Pathname.define_context "src/stdlib"     ["ocaml/stdlib"];
-Pathname.define_context "src/javascript" ["src/ocamljs"];
-Pathname.define_context "src/mozilla"    ["src/ocamljs"];
-
-(* from ocaml/myocamlbuild.ml *)
-copy_rule "Temporary rule, waiting for a full usage of ocamlbuild" "%.mlbuild" "%.ml";;
-
-(* The numeric opcodes *)
-rule "The numeric opcodes"
-  ~prod:"ocaml/bytecomp/opcodes.ml"
-  ~dep:"ocaml/byterun/instruct.h"
-  ~insert:`top
-	begin fun _ _ ->
-	  Cmd(Sh "sed -n -e '/^enum/p' -e 's/,//g' -e '/^  /p' ocaml/byterun/instruct.h | \
-        awk -f ../ocaml/tools/make-opcodes > ocaml/bytecomp/opcodes.ml")
-  end;;
-
-(* The version number *)
-rule "ocaml/stdlib/sys.ml"
-  ~prod:"ocaml/stdlib/sys.ml"
-  ~deps:["ocaml/stdlib/sys.mlp"; "ocaml/VERSION"]
-  begin fun _ _ ->
-    let version = with_input_file "ocaml/VERSION" input_line in
-    Seq [rm_f "ocaml/stdlib/sys.ml";
-         Cmd (S[A"sed"; A"-e";
-                A(Printf.sprintf "s,%%%%VERSION%%%%,%s," version);
-                Sh"<"; P"ocaml/stdlib/sys.mlp"; Sh">"; Px"ocaml/stdlib/sys.ml"]);
-         chmod (A"-w") "ocaml/stdlib/sys.ml"]
-  end;;
-
-rule "ocaml/bytecomp/runtimedef.ml"
-  ~prod:"ocaml/bytecomp/runtimedef.ml"
-  ~deps:["ocaml/byterun/primitives"; "ocaml/byterun/fail.h"]
-  begin fun _ _ ->
-    Cmd(S[A"../build/mkruntimedef.sh";Sh">"; Px"ocaml/bytecomp/runtimedef.ml"])
-  end;;
-
 (* ocamlfind integration following http://www.nabble.com/forum/ViewPost.jtp?post=15979274 *)
 
 (* these functions are not really officially exported *)
@@ -198,7 +154,7 @@ let find_packages () =
 let find_syntaxes () = ["camlp4o"; "camlp4r"]
 
 (* ocamlfind command *)
-let ocamlfind x = S[A"ocamlfind"; x]
+let ocamlfind x = S[Sh"OCAMLFIND_COMMANDS=ocamljs=../../../src/jscomp/_build/jsmain.byte"; A"../../../bin/ocamlfindjs"; x]
 
 ;;
 
@@ -209,7 +165,8 @@ dispatch begin function
        Options.ocamlc   := ocamlfind & A"ocamlc";
        Options.ocamlopt := ocamlfind & A"ocamlopt";
        Options.ocamldep := ocamlfind & A"ocamldep";
-       Options.ocamldoc := ocamlfind & A"ocamldoc"
+       Options.ocamldoc := ocamlfind & A"ocamldoc";
+       ocamljs := ocamlfind & A"ocamljs";
 
   | After_rules ->
 
@@ -237,3 +194,5 @@ dispatch begin function
 
   | _ -> ()
 end
+
+;;

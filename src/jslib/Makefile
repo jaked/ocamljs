@@ -7,14 +7,10 @@ jslib_pp.mli jslib_pp.cmi \
 
 BFILES=$(addprefix _build/,$(FILES))
 
-all: build tmp-install
-
-build:
+all: myocamlbuild.ml
 	ocamlbuild jslib.cma jslib.cmxa pa_js.cma
-
-tmp-install: $(BFILES)
-	ocamlfind remove -destdir _build jslib
-	ocamlfind install -destdir _build jslib META $(BFILES)
+	ocamlfind remove -destdir ../../stage jslib
+	ocamlfind install -destdir ../../stage jslib META $(BFILES)
 
 install:
 	ocamlfind install jslib META $(BFILES)
@@ -24,3 +20,7 @@ uninstall:
 
 clean:
 	ocamlbuild -clean
+	rm -f myocamlbuild.ml
+
+myocamlbuild.ml:
+	ln -s ../../tools/myocamlbuild.ml .
