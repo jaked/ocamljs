@@ -173,6 +173,7 @@ dispatch begin function
       (* When one link an OCaml library/binary/package, one should use -linkpkg *)
        flag ["ocaml"; "byte"; "link"] & A"-linkpkg";
        flag ["ocaml"; "native"; "link"] & A"-linkpkg";
+       flag ["ocaml"; "js"; "link"] & A"-linkpkg";
 
        (* For each ocamlfind package one inject the -package option when
         * compiling, computing dependencies, generating documentation and

@@ -23,7 +23,7 @@ struct
   let nativeint _ _ = Nativeint.zero
   let int64 _ _ = Int64.zero
   let float _ _ = 0.
-  let bool _ _ = false
+  let bool _ = false
 end
 
 let get_state = ignore
