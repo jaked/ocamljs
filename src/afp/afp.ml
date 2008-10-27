@@ -80,6 +80,8 @@ let read t =
 let add_edge t e = t.edges <- e::t.edges
 
 let apply f x = try f x with e -> make (Fail e)
+let apply2 f x1 x2 = try f x1 x2 with e -> make (Fail e)
+let apply3 f x1 x2 x3 = try f x1 x2 x3 with e -> make (Fail e)
 
 let connect t t' =
   (* prerr_endline "connect"; *)
@@ -127,6 +129,38 @@ let bind t f =
 
 let (>>=) = bind
 
+let bind2 t1 t2 f =
+  let res = make (Fail Unset) in
+  let rec read () =
+    match t1.state, t2.state with
+      | Value v1, Value v2 ->
+          let start = tick () in
+          connect res (apply2 f v1 v2);
+          let e = { read = read; start = start; finish = !now } in
+          t1.edges <- e::t1.edges;
+          t2.edges <- e::t2.edges;
+      | Fail e, _
+      | _, Fail e -> write_exn res e in
+  read ();
+  res
+
+let bind3 t1 t2 t3 f =
+  let res = make (Fail Unset) in
+  let rec read () =
+    match t1.state, t2.state, t3.state with
+      | Value v1, Value v2, Value v3 ->
+          let start = tick () in
+          connect res (apply3 f v1 v2 v3);
+          let e = { read = read; start = start; finish = !now } in
+          t1.edges <- e::t1.edges;
+          t2.edges <- e::t2.edges;
+          t3.edges <- e::t3.edges;
+      | Fail e, _, _
+      | _, Fail e, _
+      | _, _, Fail e -> write_exn res e in
+  read ();
+  res
+
 let bind_lift t f =
   let res = make (Fail Unset) in
   let rec read () =
@@ -141,6 +175,38 @@ let bind_lift t f =
   res
 
 let (>>) = bind_lift
+
+let bind_lift2 t1 t2 f =
+  let res = make (Fail Unset) in
+  let rec read () =
+    match t1.state, t2.state with
+      | Value v1, Value v2 ->
+          let start = tick () in
+          (try write res (f v1 v2) with e -> write_exn res e);
+          let e = { read = read; start = start; finish = !now } in
+          t1.edges <- e::t1.edges;
+          t2.edges <- e::t2.edges;
+      | Fail e, _
+      | _, Fail e -> write_exn res e in
+  read ();
+  res
+
+let bind_lift3 t1 t2 t3 f =
+  let res = make (Fail Unset) in
+  let rec read () =
+    match t1.state, t2.state, t3.state with
+      | Value v1, Value v2, Value v3 ->
+          let start = tick () in
+          (try write res (f v1 v2 v3) with e -> write_exn res e);
+          let e = { read = read; start = start; finish = !now } in
+          t1.edges <- e::t1.edges;
+          t2.edges <- e::t2.edges;
+          t3.edges <- e::t3.edges;
+      | Fail e, _, _
+      | _, Fail e, _
+      | _, _, Fail e -> write_exn res e in
+  read ();
+  res
 
 let try_bind f succ fail =
   let t = apply f () in
