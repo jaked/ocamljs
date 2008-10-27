@@ -3,6 +3,14 @@ and 'a at = 'a t Afp.t
 
 open Afp
 
+let rec exists p l =
+  l >>= function
+    | Nil -> return false
+    | Cons (h, t) ->
+        if p h
+        then return true
+        else exists p t
+
 let rec filter p l =
   l >>= function
     | Nil -> return Nil
@@ -11,6 +19,11 @@ let rec filter p l =
         if p h
         then return (Cons (h, ft))
         else ft
+
+let rec map f l =
+  l >>= function
+    | Nil -> return Nil
+    | Cons (h, t) -> return (Cons (f h, map f t))
 
 (*
   bad adaptive behavior: we bind the recursive call, so a change to

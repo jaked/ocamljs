@@ -4,11 +4,6 @@ type edge = {
   finish : Timestamp.t;
 }
 
-type notify = {
-  nid : int;
-  notify : unit -> unit;
-}
-
 type 'a state = Value of 'a | Fail of exn
 
 type 'a t = {
@@ -16,8 +11,8 @@ type 'a t = {
   mutable state : 'a state;
   mutable edges : edge list;
   mutable repr : 'a t option;
-  mutable reprs : 'a t list;
-  mutable notifys : notify list;
+  mutable reprs : ('a t * Timestamp.t) list;
+  mutable notifys : (int * (unit -> unit)) list;
 }
 
 module PQ = Pqueue.Make(struct
@@ -54,18 +49,17 @@ let return v = make (Value v)
 let fail e = make (Fail e)
 
 let write_state t s =
-  (* prerr_endline "write_state"; *)
   if compare t.state s <> 0 (* total *)
   then
     let rec ws t =
       t.state <- s;
-      (* prerr_endline "write_state: notify"; *)
-      List.iter (fun n -> n.notify ()) t.notifys;
-      (* prerr_endline "write_state: reprs"; *)
-      List.iter ws t.reprs;
-      (* prerr_endline "write_state: edges"; *)
+      List.iter (fun (_, notify) -> notify ()) t.notifys;
+      t.reprs <-
+        List.fold_left
+          (fun reprs ((t, ts) as r) -> if Timestamp.is_spliced_out ts then reprs else (ws t; r::reprs))
+          []
+          t.reprs;
       List.iter (fun e -> pq := PQ.add e !pq) t.edges;
-      (* prerr_endline "write_state: done"; *)
       t.edges <- [] in
     ws t
 
@@ -83,44 +77,43 @@ let apply f x = try f x with e -> make (Fail e)
 let apply2 f x1 x2 = try f x1 x2 with e -> make (Fail e)
 let apply3 f x1 x2 x3 = try f x1 x2 x3 with e -> make (Fail e)
 
-let connect t t' =
-  (* prerr_endline "connect"; *)
+let connect t ts t' =
   (*
     XXX
-    we have a space leak because when a t is forgotten, it remains
-    linked from its repr. I can't think how to fix it though.
+    space leak: if a repr node is abandoned it is still referenced by
+    its repr. not sure how often this comes up in real code but here
+    is an example:
+
+      let x = return 0
+      let y = return 1
+
+      let z = x >>= fun _ ->
+        ignore(x >>= fun _ -> y);
+        return 2
+
+    this is partially fixed by timestamping repr nodes then cleaning up
+    spliced out ones in write_state. maybe too lazy?
   *)
-  begin
-  if not (t.id = t'.id) (* can this happen? *)
-  then
-    match t.repr with
-      | Some r when r.id = t'.id -> ()
-      | tr ->
-          (* prerr_endline "connect: write_state"; *)
-          write_state t t'.state;
-          (* prerr_endline "connect: repr"; *)
-          t.repr <- Some t';
-          (* prerr_endline "connect: reprs"; *)
-          t'.reprs <- t::t'.reprs;
-          (* prerr_endline "connect: r.reprs"; *)
-          match tr with
-            | Some r ->
-                (* prerr_endline "connect: filter"; *)
-                r.reprs <- List.filter (fun t' -> t'.id <> t.id) r.reprs;
-                (* prerr_endline "connect: after filter"; *)
-            | None -> ()
-  end;
-  (* prerr_endline "connect done"; *)
+  match t.repr with
+    | Some r when r.id = t'.id -> ()
+    | tr ->
+        write_state t t'.state;
+        t.repr <- Some t';
+        t'.reprs <- (t, ts)::t'.reprs;
+        match tr with
+          | Some r ->  r.reprs <- List.filter (fun (t', _) -> t'.id <> t.id) r.reprs
+          | None -> ()
 
 exception Unset
 
 let bind t f =
   let res = make (Fail Unset) in
+  let time = !now in
   let rec read () =
     match t.state with
       | Value v ->
           let start = tick () in
-          connect res (apply f v);
+          connect res time (apply f v);
           let e = { read = read; start = start; finish = !now } in
           t.edges <- e::t.edges
       | Fail e -> write_exn res e in
@@ -131,11 +124,12 @@ let (>>=) = bind
 
 let bind2 t1 t2 f =
   let res = make (Fail Unset) in
+  let time = !now in
   let rec read () =
     match t1.state, t2.state with
       | Value v1, Value v2 ->
           let start = tick () in
-          connect res (apply2 f v1 v2);
+          connect res time (apply2 f v1 v2);
           let e = { read = read; start = start; finish = !now } in
           t1.edges <- e::t1.edges;
           t2.edges <- e::t2.edges;
@@ -146,11 +140,12 @@ let bind2 t1 t2 f =
 
 let bind3 t1 t2 t3 f =
   let res = make (Fail Unset) in
+  let time = !now in
   let rec read () =
     match t1.state, t2.state, t3.state with
       | Value v1, Value v2, Value v3 ->
           let start = tick () in
-          connect res (apply3 f v1 v2 v3);
+          connect res time (apply3 f v1 v2 v3);
           let e = { read = read; start = start; finish = !now } in
           t1.edges <- e::t1.edges;
           t2.edges <- e::t2.edges;
@@ -221,7 +216,6 @@ let propagate () =
     if not (PQ.is_empty !pq)
     then
       begin
-        (* prerr_endline "propagate: find_min"; *)
         let e = PQ.find_min !pq in
         pq := PQ.remove_min !pq;
         if not (Timestamp.is_spliced_out e.start)
@@ -229,7 +223,6 @@ let propagate () =
           begin
             Timestamp.splice_out e.start e.finish;
             now := e.start;
-            (* prerr_endline "propagate: edge read"; *)
             e.read ();
           end;
         prop ()
@@ -238,11 +231,13 @@ let propagate () =
   prop ();
   now := now'
 
+type notify = int
+
 let add_notify_state t f =
   let notify () = try f t.state with _ -> () in
-  let n = { nid = next_id (); notify = notify } in
-  t.notifys <- n::t.notifys;
-  n
+  let id = next_id () in
+  t.notifys <- (id, notify)::t.notifys;
+  id
 
 let add_notify t f =
   add_notify_state t (function Value v -> f v | _ -> ())
@@ -250,5 +245,5 @@ let add_notify t f =
 let add_notify_exn t f =
   add_notify_state t (function Fail e -> f e | _ -> ())
 
-let remove_notify t n =
-  t.notifys <- List.filter (fun n' -> n'.nid <> n.nid) t.notifys
+let remove_notify t id =
+  t.notifys <- List.filter (fun (id', _) -> id' <> id) t.notifys
