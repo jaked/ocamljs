@@ -92,7 +92,7 @@ let connect t t' =
   if not (t.id = t'.id) (* can this happen? *)
   then
     match t.repr with
-      | Some r when r = t' -> ()
+      | Some r when r.id = t'.id -> ()
       | tr ->
           (* prerr_endline "connect: write_state"; *)
           write_state t t'.state;
