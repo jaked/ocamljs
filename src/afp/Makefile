@@ -7,6 +7,8 @@ BFILES=$(addprefix _build/,$(FILES))
 
 all: myocamlbuild.ml
 	ocamlbuild afp.cma afp.cmxa afp.cmjsa
+	ocamlfind remove -destdir ../../stage afp
+	ocamlfind install -destdir ../../stage afp META $(BFILES)
 
 install:
 	ocamlfind install afp META $(BFILES)

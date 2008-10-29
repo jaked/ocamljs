@@ -1,0 +1,7 @@
+name="Froc"
+version="0.1"
+description="Functional reactive programming in the style of FrTime"
+requires = "afp"
+archive(byte) = "froc.cma"
+archive(native) = "froc.cmxa"
+archive(js) = "froc.cmjsa"
