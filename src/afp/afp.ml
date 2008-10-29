@@ -4,15 +4,15 @@ type edge = {
   finish : Timestamp.t;
 }
 
-type 'a state = Value of 'a | Fail of exn
+type 'a result = Value of 'a | Fail of exn
 
 type 'a t = {
   id : int;
-  mutable state : 'a state;
+  mutable state : 'a result;
   mutable edges : edge list;
   mutable repr : 'a t option;
   mutable reprs : ('a t * Timestamp.t) list;
-  mutable notifys : (int * (unit -> unit)) list;
+  mutable notifys : (int * ('a result -> unit)) list;
 }
 
 module PQ = Pqueue.Make(struct
@@ -48,12 +48,14 @@ let make s = {
 let return v = make (Value v)
 let fail e = make (Fail e)
 
+let handle_exn = ref (fun e -> raise e)
+
 let write_state t s =
   if compare t.state s <> 0 (* total *)
   then
     let rec ws t =
       t.state <- s;
-      List.iter (fun (_, notify) -> notify ()) t.notifys;
+      List.iter (fun (_, f) -> try f t.state with e -> !handle_exn e) t.notifys;
       t.reprs <-
         List.fold_left
           (fun reprs ((t, ts) as r) -> if Timestamp.is_spliced_out ts then reprs else (ws t; r::reprs))
@@ -233,17 +235,12 @@ let propagate () =
 
 type notify = int
 
-let add_notify_state t f =
-  let notify () = try f t.state with _ -> () in
-  let id = next_id () in
-  t.notifys <- (id, notify)::t.notifys;
-  id
-
 let add_notify t f =
-  add_notify_state t (function Value v -> f v | _ -> ())
-
-let add_notify_exn t f =
-  add_notify_state t (function Fail e -> f e | _ -> ())
+  let id = next_id () in
+  t.notifys <- (id, f)::t.notifys;
+  id
 
 let remove_notify t id =
   t.notifys <- List.filter (fun (id', _) -> id' <> id) t.notifys
+
+let set_exn_handler h = handle_exn := h
