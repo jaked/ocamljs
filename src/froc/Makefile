@@ -1,8 +1,6 @@
 FILES=\
 froc.cma froc.cmxa froc.a froc.cmjsa \
 froc.mli froc.cmi \
-froc_behavior.mli froc_behavior.cmi \
-froc_event.mli froc_event.cmi
 
 BFILES=$(addprefix _build/,$(FILES))
 
