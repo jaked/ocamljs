@@ -90,15 +90,16 @@ let connect t t' =
     its repr. not sure how often this comes up in real code but here
     is an example:
 
-    let x = return 0
-    let y = return 1
+      let x = return 0
+      let y = return 1
 
-    let z = x >>= fun _ ->
-    ignore(x >>= fun _ -> y);
-    return 2
+      let z = x >>= fun _ ->
+        ignore(x >>= fun _ -> y);
+        return 2
 
-    this is partially fixed by timestamping repr nodes then cleaning up
-    spliced out ones in write_state. maybe too lazy?
+    this is partially fixed by timestamping repr nodes then cleaning
+    up spliced out ones in write_state. maybe too lazy? also doesn't
+    handle abandoned nodes that are never spliced out.
   *)
   match t.repr with
     | Some r when r.id = t'.id -> ()
@@ -123,8 +124,10 @@ let disconnect t v = disconnect_result t (Value v)
 
 exception Unset
 
+let make () = make (Fail Unset)
+
 let bind t f =
-  let res = make (Fail Unset) in
+  let res = make () in
   add_edge t (fun () ->
     match t.state with
       | Fail e -> disconnect_exn res e
@@ -136,7 +139,7 @@ let bind t f =
 let (>>=) = bind
 
 let bind_lift t f =
-  let res = make (Fail Unset) in
+  let res = make () in
   add_edge t (fun () ->
     match t.state with
       | Fail e -> write_exn res e
@@ -145,41 +148,41 @@ let bind_lift t f =
 
 let (>>) = bind_lift
 
-let try_bind f succ fail =
-  let t = try f () with e -> make (Fail e) in
-  let res = make (Fail Unset) in
+let try_bind f succ err =
+  let t = try f () with e -> fail e in
+  let res = make () in
   add_edge t (fun () ->
-    try connect res (match t.state with Value v -> succ v | Fail e -> fail e)
+    try connect res (match t.state with Value v -> succ v | Fail e -> err e)
     with e -> disconnect_exn res e);
   res
 
-let try_bind_lift f succ fail =
-  let t = try f () with e -> make (Fail e) in
-  let res = make (Fail Unset) in
+let try_bind_lift f succ err =
+  let t = try f () with e -> fail e in
+  let res = make () in
   add_edge t (fun () ->
-    try write res (match t.state with Value v -> succ v | Fail e -> fail e)
+    try write res (match t.state with Value v -> succ v | Fail e -> err e)
     with e -> write_exn res e);
   res
 
-let catch f fail =
-  let t = try f () with e -> make (Fail e) in
-  let res = make (Fail Unset) in
+let catch f err =
+  let t = try f () with e -> fail e in
+  let res = make () in
   add_edge t (fun () ->
     match t.state with
       | Value v -> disconnect res v
       | Fail e ->
-          try connect res (fail e)
+          try connect res (err e)
           with e -> disconnect_exn res e);
   res
 
-let catch_lift f fail =
-  let t = try f () with e -> make (Fail e) in
-  let res = make (Fail Unset) in
+let catch_lift f err =
+  let t = try f () with e -> fail e in
+  let res = make () in
   add_edge t (fun () ->
     match t.state with
       | Value v -> write res v
       | Fail e ->
-          try write res (fail e)
+          try write res (err e)
           with e -> write_exn res e);
   res
 

@@ -23,3 +23,6 @@ val write_result : 'a t -> 'a result -> unit
 val add_notify : 'a t -> ('a result -> unit) -> notify
 val remove_notify : 'a t -> notify -> unit
 val set_exn_handler : (exn -> unit) -> unit
+val make : unit -> 'a t
+val connect : 'a t -> 'a t -> unit
+val disconnect_result : 'a t -> 'a result -> unit

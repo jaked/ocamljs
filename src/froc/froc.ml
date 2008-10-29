@@ -105,7 +105,8 @@ struct
       let f = Queue.take q in
       f ();
       Behavior.propagate ()
-    done
+    done;
+    running := false
 
   let enqueue f =
     Queue.add f q;
@@ -128,7 +129,17 @@ let changes b =
     (Behavior.add_notify b (Event.send_result e));
   e
 
-let switch init e = failwith "unimplemented"
+let switch init e =
+  let res = Behavior.make () in
+  Behavior.connect res init;
+  ignore
+    (Event.add_notify e (function
+      | Event.Fail e -> Behavior.disconnect_result res (Behavior.Fail e)
+      | Event.Value v -> Behavior.connect res v));
+  res
+
+let when_true b =
+  Event.map (fun b -> ()) (Event.filter (fun b -> b) (changes b))
 
 let init () =
   Event.init ();

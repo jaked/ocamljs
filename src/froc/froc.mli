@@ -37,3 +37,4 @@ end
 val hold : 'a -> 'a Event.t -> 'a Behavior.t
 val changes : 'a Behavior.t -> 'a Event.t
 val switch : 'a Behavior.t -> 'a Behavior.t Event.t -> 'a Behavior.t
+val when_true : bool Behavior.t -> unit Event.t
