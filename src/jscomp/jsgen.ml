@@ -492,6 +492,26 @@ and comp_expr_st tail expr k =
 
     | _ -> [ k (comp_expr tail expr) ]
 
+and backpatch bs =
+  let rec range from upto =
+    if from = upto
+    then []
+    else from::range (from +1) upto in
+  let rec bp path e bps =
+    match e with
+      | Lvar id ->
+          if List.mem_assoc id bs
+          then <:stmt< $path$ = $id:jsident_of_ident id$; >>::bps
+          else bps
+      | Lprim (Pmakeblock _, args) ->
+          List.fold_right2
+            (fun i e bps -> bp << $path$[$jnum_of_int i$] >> e bps)
+            (range 0 (List.length args))
+            args
+            bps
+      | _ -> bps in
+  List.fold_right (fun (id, e) bps -> bp << $id:jsident_of_ident id$ >> e bps) bs []
+
 (* compile nested let/letrecs into a Js.stmt list *)
 (* k is called on the AST of exps in tail position *)
 and comp_letrecs_st tail expr k =
@@ -500,7 +520,7 @@ and comp_letrecs_st tail expr k =
       | Llet (_, i, e1, e2) -> <:stmt< var $id:jsident_of_ident i$ = $comp_expr false e1$; >> :: cl e2
       | Lletrec (bs, e) ->
 	  let cb (id, e) = <:stmt< var $id:jsident_of_ident id$ = $comp_expr false e$; >> in
-	  List.map cb bs @ cl e
+	  List.map cb bs @ backpatch bs @ cl e
       | e -> comp_expr_st tail e k in
    cl expr
 
