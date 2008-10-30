@@ -1,0 +1,2 @@
+<clicks.ml> : pkg_ocamljs,pkg_froc
+<clicks.js> : pkg_ocamljs,pkg_froc

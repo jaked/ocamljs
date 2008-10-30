@@ -1,6 +1,6 @@
 name="Afp"
 version="0.1"
 description="Adaptive functional programming, monad-style"
+archive(js) = "afp.cmjsa"
 archive(byte) = "afp.cma"
 archive(native) = "afp.cmxa"
-archive(js) = "afp.cmjsa"
