@@ -1,0 +1,5 @@
+name="Froc-DOM"
+version="0.1"
+description="Froc with generic DOM bindings"
+requires = "froc,dom"
+archive(js) = "froc-dom.cmjsa"

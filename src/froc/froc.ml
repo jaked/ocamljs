@@ -141,6 +141,8 @@ let switch init e =
 let when_true b =
   Event.map (fun b -> ()) (Event.filter (fun b -> b) (changes b))
 
+let count e = hold 0 (Event.collect (fun n _ -> n + 1) 0 e)
+
 let init () =
   Event.init ();
   Behavior.init ();

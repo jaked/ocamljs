@@ -1,8 +1,6 @@
-val init : unit -> unit
-
 module Behavior :
 sig
-  type 'a t
+  type 'a t = 'a Froc.Behavior.t
 
   val return : 'a -> 'a t
   val fail : exn -> 'a t
@@ -12,11 +10,13 @@ sig
   val (>>) : 'a t -> ('a -> 'b) -> 'b t
   val catch : (unit -> 'a t) -> (exn -> 'a t) -> 'a t
   val try_bind : (unit -> 'a t) -> ('a -> 'b t) -> (exn -> 'b t) -> 'b t
+
+  val attach_innerHTML : #Dom.element -> string t -> unit
 end
 
 module Event :
 sig
-  type 'a t
+  type 'a t = 'a Froc.Event.t
 
   val make : unit -> 'a t
   val send : 'a t -> 'a -> unit
@@ -32,6 +32,9 @@ sig
   val map : ('a -> 'b) -> 'a t -> 'b t
   val filter : ('a -> bool) -> 'a t -> 'a t
   val collect : ('b -> 'a -> 'b) -> 'b -> 'a t -> 'b t
+
+  val clicks : #Dom.button -> unit t
+  val ticks : float -> unit t
 end
 
 val hold : 'a -> 'a Event.t -> 'a Behavior.t
