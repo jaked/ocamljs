@@ -355,6 +355,8 @@ and stmt ppf = function
         (expp p) e cases (cs, fss)
 
   | Jthrow (_, e) -> fprintf ppf "@[throw %a;@]" (expp p) e
+
+  | Jexps (_, (Jcall (_, Jfun _, _) as e)) -> fprintf ppf "@[(%a);@]" (expp p) e
   | Jexps (_, e) -> fprintf ppf "@[%a;@]" (expp p) e
 
   | Jtrycatch (_, ss, ci, css) ->

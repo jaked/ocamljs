@@ -1,7 +1,15 @@
+type interval_id
+type timeout_id
+
 class type window =
 object
   method _set_onload : (unit -> unit) Ocamljs.jsfun -> unit
-  method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> unit
+
+  method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> interval_id
+  method clearInterval : interval_id -> unit
+
+  method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> timeout_id
+  method clearTimeout : timeout_id -> unit
 end
 
 class type document =

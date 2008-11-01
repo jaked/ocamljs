@@ -1,3 +1,7 @@
+val init : unit -> unit
+
+type 'a result = Value of 'a | Fail of exn
+
 module Behavior :
 sig
   type 'a t = 'a Froc.Behavior.t
@@ -12,6 +16,9 @@ sig
   val try_bind : (unit -> 'a t) -> ('a -> 'b t) -> (exn -> 'b t) -> 'b t
 
   val attach_innerHTML : #Dom.element -> string t -> unit
+
+  val delay : 'a t -> float -> 'a t
+  val delayb : 'a t -> float t -> 'a t
 end
 
 module Event :
@@ -21,9 +28,9 @@ sig
   val make : unit -> 'a t
   val send : 'a t -> 'a -> unit
   val send_exn : 'a t -> exn -> unit
+  val send_result : 'a t -> 'a result -> unit
 
   type notify
-  type 'a result = Value of 'a | Fail of exn
   val add_notify : 'a t -> ('a result -> unit) -> notify
   val remove_notify : 'a t -> notify -> unit
   val set_exn_handler : (exn -> unit) -> unit
@@ -34,7 +41,12 @@ sig
   val collect : ('b -> 'a -> 'b) -> 'b -> 'a t -> 'b t
 
   val clicks : #Dom.button -> unit t
+
   val ticks : float -> unit t
+  val ticksb : float Behavior.t -> unit t
+
+  val delay : 'a t -> float -> 'a t
+  val delayb : 'a t -> float Behavior.t -> 'a t
 end
 
 val hold : 'a -> 'a Event.t -> 'a Behavior.t

@@ -37,7 +37,7 @@ let tick () =
   now := Timestamp.add_after now';
   now'
 
-let make s = {
+let make_result s = {
   id = next_id ();
   time = !now;
   state = s;
@@ -47,8 +47,8 @@ let make s = {
   notifys = [];
 }
 
-let return v = make (Value v)
-let fail e = make (Fail e)
+let return v = make_result (Value v)
+let fail e = make_result (Fail e)
 
 let handle_exn = ref (fun e -> raise e)
 
@@ -69,6 +69,8 @@ let write_result t s =
 
 let write t v = write_result t (Value v)
 let write_exn t e = write_result t (Fail e)
+
+let read_result t = t.state
 
 let read t =
   match t.state with
@@ -124,7 +126,7 @@ let disconnect t v = disconnect_result t (Value v)
 
 exception Unset
 
-let make () = make (Fail Unset)
+let make () = make_result (Fail Unset)
 
 let bind t f =
   let res = make () in

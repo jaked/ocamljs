@@ -1,3 +1,5 @@
+type 'a result = 'a Afp.result = Value of 'a | Fail of exn
+
 module Behavior =
 struct
   include Afp
@@ -5,8 +7,6 @@ end
 
 module Event =
 struct
-
-  type 'a result = 'a Behavior.result = Value of 'a | Fail of exn
 
   let handle_exn = ref (fun e -> raise e)
 
@@ -38,15 +38,15 @@ struct
     notifys = [];
   }
 
-  let send_result t r =
+  let send_result_imm t r =
     List.iter (fun (_, f) -> try f r with e -> !handle_exn e) t.notifys
 
-  let send t v = send_result t (Value v)
-  let send_exn t e = send_result t (Fail e)
+  let send_imm t v = send_result_imm t (Value v)
+  let send_exn_imm t e = send_result_imm t (Fail e)
 
   let merge ts =
     let t = make () in
-    List.iter (fun t' -> ignore (add_notify t' (send_result t))) ts;
+    List.iter (fun t' -> ignore (add_notify t' (send_result_imm t))) ts;
     t
 
   let map f t =
@@ -60,7 +60,7 @@ struct
                 | Value v ->
                     try Value (f v)
                     with e -> Fail e in
-            send_result t' r));
+            send_result_imm t' r));
     t'
 
   let filter p t =
@@ -74,7 +74,7 @@ struct
                 | Value v ->
                     try if p v then Some (Value v) else None
                     with e -> Some (Fail e) in (* ? *)
-            match r with Some r -> send_result t' r | _ -> ()));
+            match r with Some r -> send_result_imm t' r | _ -> ()));
     t'
 
   let collect f init t =
@@ -90,7 +90,7 @@ struct
                 | Value sv, Value v ->
                     try Some (Value (f sv v))
                     with e -> Some (Fail e) in
-            match r with Some r -> s := r; send_result t' r | _ -> ()));
+            match r with Some r -> s := r; send_result_imm t' r | _ -> ()));
     t'
 
   let q = Queue.create ()
@@ -113,15 +113,18 @@ struct
     if not !running
     then run_queue ()
 
-  let send t v = enqueue (fun () -> send t v)
-  let send_exn t e = enqueue (fun () -> send_exn t e)
+  let send_result t r = enqueue (fun () -> send_result_imm t r)
+  let send t v = send_result t (Value v)
+  let send_exn t e = send_result t (Fail e)
 end
 
-let hold init e =
-  let b = Behavior.return init in
+let hold_result init e =
+  let b = Behavior.make_result init in
   ignore
     (Event.add_notify e (Behavior.write_result b));
   b
+
+let hold init e = hold_result (Value init) e
 
 let changes b =
   let e = Event.make () in
@@ -134,8 +137,8 @@ let switch init e =
   Behavior.connect res init;
   ignore
     (Event.add_notify e (function
-      | Event.Fail e -> Behavior.disconnect_result res (Behavior.Fail e)
-      | Event.Value v -> Behavior.connect res v));
+      | Fail e -> Behavior.disconnect_result res (Fail e)
+      | Value v -> Behavior.connect res v));
   res
 
 let when_true b =

@@ -17,9 +17,11 @@ val write_exn : 'a t -> exn -> unit
 val init : unit -> unit
 val propagate : unit -> unit
 
-type notify
 type 'a result = Value of 'a | Fail of exn
+val read_result : 'a t -> 'a result
 val write_result : 'a t -> 'a result -> unit
+val make_result : 'a result -> 'a t
+type notify
 val add_notify : 'a t -> ('a result -> unit) -> notify
 val remove_notify : 'a t -> notify -> unit
 val set_exn_handler : (exn -> unit) -> unit

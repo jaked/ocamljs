@@ -1,5 +1,7 @@
 val init : unit -> unit
 
+type 'a result = Value of 'a | Fail of exn
+
 module Behavior :
 sig
   type 'a t
@@ -12,6 +14,9 @@ sig
   val (>>) : 'a t -> ('a -> 'b) -> 'b t
   val catch : (unit -> 'a t) -> (exn -> 'a t) -> 'a t
   val try_bind : (unit -> 'a t) -> ('a -> 'b t) -> (exn -> 'b t) -> 'b t
+
+  val read : 'a t -> 'a
+  val read_result : 'a t -> 'a result
 end
 
 module Event :
@@ -21,9 +26,9 @@ sig
   val make : unit -> 'a t
   val send : 'a t -> 'a -> unit
   val send_exn : 'a t -> exn -> unit
+  val send_result : 'a t -> 'a result -> unit
 
   type notify
-  type 'a result = Value of 'a | Fail of exn
   val add_notify : 'a t -> ('a result -> unit) -> notify
   val remove_notify : 'a t -> notify -> unit
   val set_exn_handler : (exn -> unit) -> unit
@@ -35,6 +40,7 @@ sig
 end
 
 val hold : 'a -> 'a Event.t -> 'a Behavior.t
+val hold_result : 'a result -> 'a Event.t -> 'a Behavior.t
 val changes : 'a Behavior.t -> 'a Event.t
 val switch : 'a Behavior.t -> 'a Behavior.t Event.t -> 'a Behavior.t
 val when_true : bool Behavior.t -> unit Event.t
