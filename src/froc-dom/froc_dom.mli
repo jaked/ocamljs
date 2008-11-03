@@ -15,6 +15,8 @@ sig
   val catch : (unit -> 'a t) -> (exn -> 'a t) -> 'a t
   val try_bind : (unit -> 'a t) -> ('a -> 'b t) -> (exn -> 'b t) -> 'b t
 
+  val mouse : (int * int) t
+
   val attach_innerHTML : #Dom.element -> string t -> unit
 
   val delay : 'a t -> float -> 'a t
@@ -39,6 +41,8 @@ sig
   val map : ('a -> 'b) -> 'a t -> 'b t
   val filter : ('a -> bool) -> 'a t -> 'a t
   val collect : ('b -> 'a -> 'b) -> 'b -> 'a t -> 'b t
+
+  val mouse : (int * int) t
 
   val clicks : #Dom.button -> unit t
 
