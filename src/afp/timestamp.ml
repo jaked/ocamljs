@@ -1,3 +1,6 @@
+let debug = ref (fun _ -> ())
+let set_debug f = debug := f
+
 type t = {
   mutable id : int;
   mutable next : t;
@@ -15,8 +18,7 @@ let next_id =
 
 let init () =
   let rec s = { id = 0; next = s } in
-  let t = { id = next_id (); next = s } in
-  t
+  { id = next_id (); next = s }
 
 let add_after t =
   check t;
@@ -28,7 +30,6 @@ let splice_out t1 t2 =
   check t1;
   check t2;
   let rec loop t =
-    (* prerr_endline "splice_out loop"; *)
     match t.id with
       | -1 -> assert false
       | 0 -> raise (Invalid_argument "t1 >= t2")
@@ -52,7 +53,6 @@ let compare t1 t2 =
     | _, -1 -> 1
     | _, _ ->
         let rec loop t =
-          (* prerr_endline "compare loop"; *)
           match t.id with
             | -1 -> assert false
             | 0 -> 1
