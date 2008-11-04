@@ -1,3 +1,6 @@
+let debug = ref (fun _ -> ())
+let set_debug f = debug := f
+
 type edge = {
   read : unit -> unit;
   start : Timestamp.t;

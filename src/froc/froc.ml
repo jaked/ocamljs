@@ -1,3 +1,6 @@
+let debug = ref (fun _ -> ())
+let set_debug f = debug := f
+
 type 'a result = 'a Afp.result = Value of 'a | Fail of exn
 
 module Behavior =

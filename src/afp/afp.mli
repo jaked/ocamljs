@@ -28,3 +28,5 @@ val set_exn_handler : (exn -> unit) -> unit
 val make : unit -> 'a t
 val connect : 'a t -> 'a t -> unit
 val disconnect_result : 'a t -> 'a result -> unit
+
+val set_debug : (string -> unit) -> unit

@@ -1,3 +1,6 @@
+let debug = ref (fun _ -> ())
+let set_debug f = debug := f
+
 module F = Froc
 module B = Froc.Behavior
 module E = Froc.Event
@@ -42,9 +45,12 @@ let delay_eventb t msb =
 
 let mouse_event =
   let e = E.make () in
+  let hf me =
+    let tf () = E.send e (me#_get_clientX, me#_get_clientY) in
+    ignore (Dom.window#setTimeout (Ocamljs.jsfun tf) 0.) in
   Dom.document#addEventListener_mouseEvent_
     "mousemove"
-    (Ocamljs.jsfun (fun me -> E.send e (me#_get_clientX, me#_get_clientY)))
+    (Ocamljs.jsfun hf)
     false;
   e
 

@@ -1,2 +1,2 @@
-<where.ml> : pkg_froc-dom
-<where.js> : pkg_froc-dom
+<where.ml> : pkg_froc-dom,pkg_javascript
+<where.js> : pkg_froc-dom,pkg_javascript

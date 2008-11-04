@@ -58,3 +58,5 @@ val changes : 'a Behavior.t -> 'a Event.t
 val switch : 'a Behavior.t -> 'a Behavior.t Event.t -> 'a Behavior.t
 val when_true : bool Behavior.t -> unit Event.t
 val count : 'a Event.t -> int Behavior.t
+
+val set_debug : (string -> unit) -> unit
