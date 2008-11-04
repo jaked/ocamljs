@@ -150,7 +150,7 @@ let comp_ccall c es =
     | "$fieldref", [e; Jslib_ast.Jstring (_loc, id, _)] -> << $e$.$id$ >>
     | "$function", [Jslib_ast.Jcall (_loc, Jslib_ast.Jvar _, Jslib_ast.Jexp_list (_, [Jslib_ast.Jfun _ as f]))] -> f
     | "$hashref", [e1; e2] -> << $e1$[$e2$] >>
-    | "$new", (Jslib_ast.Jstring _ as id)::es -> << new $id$($es$) >>
+    | "$new", (Jslib_ast.Jstring (_, id, _))::es -> << new $id:id$($es$) >>
     | "$null", _ -> << null >>
     | "$this", _ -> << this >>
     | "$throw", [e] -> exp_of_stmts [ <:stmt< throw $e$; >> ]
