@@ -1,8 +1,8 @@
 let debug = ref (fun _ -> ())
-let set_debug f = debug := f
+let set_debug f = debug := f; Timestamp.set_debug f
 
 type edge = {
-  read : unit -> unit;
+  read : edge -> unit;
   start : Timestamp.t;
   finish : Timestamp.t;
 }
@@ -36,13 +36,12 @@ let next_id =
   fun () -> let id = !next_id in incr next_id; id
 
 let tick () =
-  let now' = !now in
-  now := Timestamp.add_after now';
-  now'
+  now := Timestamp.add_after !now;
+  !now
 
 let make_result s = {
   id = next_id ();
-  time = !now;
+  time = tick ();
   state = s;
   edges = [];
   repr = None;
@@ -81,12 +80,14 @@ let read t =
     | Fail e -> raise e
 
 let add_edge t f =
-  let rec read () =
-    let start = tick () in
+  let start = tick () in
+  f ();
+  let finish = tick () in
+  let read e =
     f ();
-    let e = { read = read; start = start; finish = !now } in
     t.edges <- e::t.edges in
-  read ()
+  let e = { read = read; start = start; finish = finish } in
+  t.edges <- e::t.edges
 
 let connect t t' =
   (*
@@ -203,7 +204,7 @@ let propagate () =
           begin
             Timestamp.splice_out e.start e.finish;
             now := e.start;
-            e.read ();
+            e.read e;
           end;
         prop ()
       end in
