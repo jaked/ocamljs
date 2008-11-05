@@ -19,6 +19,9 @@ sig
 
   val attach_innerHTML : #Dom.element -> string t -> unit
 
+  val appendChild : #Dom.node -> #Dom.node t -> unit
+  val replaceNode : #Dom.node -> #Dom.node t -> unit
+
   val delay : 'a t -> float -> 'a t
   val delayb : 'a t -> float t -> 'a t
 end

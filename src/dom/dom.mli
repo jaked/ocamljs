@@ -1,26 +1,25 @@
 type interval_id
 type timeout_id
 
-class type window =
+class type node =
 object
-  method _set_onload : (unit -> unit) Ocamljs.jsfun -> unit
-
-  method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> interval_id
-  method clearInterval : interval_id -> unit
-
-  method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> timeout_id
-  method clearTimeout : timeout_id -> unit
-end
-
-class type eventTarget =
-object
+  method appendChild : node -> node
+  method removeChild : node -> node
+  method replaceChild : node -> node -> node
+  method _get_parentNode : node
 end
 
 class type abstractView =
 object
 end
 
-class type event =
+class type eventTarget =
+object
+  method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
+  method addEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
+end
+
+and event =
 object
   method _get_bubbles : bool
   method _get_cancelable : bool
@@ -34,7 +33,7 @@ object
   method stopPropagation : unit
 end
 
-class type uIEvent =
+and uIEvent =
 object
   inherit event
 
@@ -43,7 +42,7 @@ object
   method initUIEvent : string -> bool -> bool -> abstractView -> int -> unit
 end
 
-class type mouseEvent =
+and mouseEvent =
 object
   inherit uIEvent
 
@@ -62,11 +61,34 @@ end
 
 class type element =
 object
+  inherit node
+  inherit eventTarget
+
   method _get_innerHTML : string
   method _set_innerHTML : string -> unit
+end
 
-  method addEventListener : string -> (#event -> unit) Ocamljs.jsfun -> bool -> unit
-  method addEventListener_mouseEvent_ : string -> (#mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
+class type characterData =
+object
+  inherit node
+
+  method _get_data : string
+end
+
+class type text =
+object
+  inherit characterData
+end
+
+class type window =
+object
+  method _set_onload : (unit -> unit) Ocamljs.jsfun -> unit
+
+  method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> interval_id
+  method clearInterval : interval_id -> unit
+
+  method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> timeout_id
+  method clearTimeout : timeout_id -> unit
 end
 
 class type body =
@@ -81,7 +103,9 @@ class type document =
 object
   inherit element
 
-  method getElementById : string -> < ..>
+  method createElement : string -> #element
+  method createTextNode : string -> text
+  method getElementById : string -> #element
   method _get_body : body
 end
 

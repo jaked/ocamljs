@@ -61,6 +61,38 @@ struct
     let e = F.changes b in
     ignore (E.add_notify e (function Value s -> elem#_set_innerHTML s | _ -> ()))
 
+  let node_of_result = function
+    | Value v -> (v :> Dom.node)
+    | Fail e -> (* ? *)
+        let s = (Dom.document#createElement "span" :> Dom.node) in
+        let t = (Dom.document#createTextNode ("exception") :> Dom.node) in (* XXX get Printexc working *)
+        ignore (s#appendChild t);
+        s
+
+  let appendChild n nb =
+    let n = (n :> Dom.node) in
+    let old = ref None in
+    let update r =
+      let c = node_of_result r in
+      ignore
+        (match !old with
+          | None -> n#appendChild c
+          | Some oc -> n#replaceChild c oc);
+      old := Some c in
+    update (B.read_result nb);
+    ignore (E.add_notify (F.changes nb) update)
+
+  let replaceNode n nb =
+    let n = (n :> Dom.node) in
+    let p = n#_get_parentNode in
+    let old = ref n in
+    let update r =
+      let c = node_of_result r in
+      ignore (p#replaceChild c !old);
+      old := c in
+    update (B.read_result nb);
+    ignore (E.add_notify (F.changes nb) update)
+
   let delayb t msb =
     t |> F.changes |> (fun e -> delay_eventb e msb) |> F.hold_result (read_result t)
 
