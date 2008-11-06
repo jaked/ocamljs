@@ -42,9 +42,10 @@ let onload () =
         [ D.document#createTextNode "the mouse!" ]);
 
   let mouse_offset = (D.document#getElementById "themouse")#_get_offsetWidth in
+  let tail_pos = B.delay B.mouse delay >> fun (x, y) -> (x + mouse_offset, y) in
 
   B.appendChild body
-    ((B.delay B.mouse delay >> fun (x, y) -> (x + mouse_offset, y)) >> fun (x, y) ->
+    (tail_pos >> fun (x, y) ->
       div
         ~id:"tail"
         ~color:"#FF0000"
@@ -57,21 +58,22 @@ let onload () =
 
   let wag_delay = delay *. 1.5 in
   let mouseandtail_offset = mouse_offset + (D.document#getElementById "tail")#_get_offsetWidth in
-  let wagging = F.hold 0 (E.collect (fun _ _ -> (Random.int 10) - 5) 0 (E.ticks 100.)) in
+  let wag_offset = F.hold 0 (E.collect (fun _ _ -> (Random.int 10) - 5) 0 (E.ticks 100.)) in
+  let wag_pos =
+    B.delay B.mouse wag_delay >>= fun (x, y) ->
+      wag_offset >> fun wag_offset -> (x + mouseandtail_offset, y + wag_offset) in
 
   B.appendChild body
-    (B.delay B.mouse wag_delay >>= fun (x, y) ->
-      (wagging >> fun wag ->
-        (x + mouseandtail_offset, y + wag)) >> fun (x, y) ->
-        div
-          ~id:"wagging"
-          ~color:"#FFFF00"
-          ~backgroundColor:"#000000"
-          ~position:"absolute"
-          ~left:(string_of_int x)
-          ~top:(string_of_int y)
-          ~padding:"10px"
-          [ D.document#createTextNode "is happy!" ]);
+    (wag_pos >> fun (x, y) ->
+      div
+        ~id:"wagging"
+        ~color:"#FFFF00"
+        ~backgroundColor:"#000000"
+        ~position:"absolute"
+        ~left:(string_of_int x)
+        ~top:(string_of_int y)
+        ~padding:"10px"
+        [ D.document#createTextNode "is happy!" ]);
 
 ;;
 
