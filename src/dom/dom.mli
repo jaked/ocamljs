@@ -59,10 +59,27 @@ object
   method initMouseEvent : string -> bool -> bool -> abstractView -> int -> int -> int -> int -> int -> bool -> bool -> bool -> bool -> int -> eventTarget -> unit
 end
 
+class type style =
+object
+  method _set_color : string -> unit
+  method _set_backgroundColor : string -> unit
+  method _set_position : string -> unit
+  method _set_left : string -> unit
+  method _set_top : string -> unit
+  method _set_padding : string -> unit
+end
+
 class type element =
 object
   inherit node
   inherit eventTarget
+
+  method getAttribute : string -> string
+  method setAttribute : string -> string -> unit
+
+  method _get_style : style
+
+  method _get_offsetWidth : int
 
   method _get_innerHTML : string
   method _set_innerHTML : string -> unit
