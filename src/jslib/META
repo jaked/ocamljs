@@ -2,9 +2,19 @@ name = "jslib"
 version = "0.1"
 description = "Javascript parsing, prettyprinting, tools"
 requires = "camlp4.lib,ulex"
-requires(syntax,preprocessor) = "ulex"
-
 archive(byte) = "jslib.cma"
 archive(native) = "jslib.cmxa"
-archive(syntax,preprocessor) = "ulexing.cma,jslib.cma,pa_js.cma"
-archive(syntax,toploop) = "ulexing.cma,jslib.cma,pa_js.cma"
+
+package "quotations" (
+  description = "Syntax extension: Quotations to create AST nodes"
+  requires = "jslib"
+  requires(syntax,preprocessor) = "ulex"
+  archive(syntax,preprocessor) = "ulexing.cma,jslib.cma,syntax_quotations.cmo"
+  archive(syntax,toploop) = "ulexing.cma,jslib.cma,syntax_quotations.cmo"
+)
+
+package "inline" (
+  description = "Syntax extension: quotations for inline Javascript"
+  requires(syntax,preprocessor) = "ulex"
+  archive(syntax,preprocessor) = "ulexing.cma,jslib.cma,syntax_inline.cmo"
+)

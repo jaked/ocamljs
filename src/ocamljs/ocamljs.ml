@@ -57,3 +57,19 @@ let jsfun2 f = function_ (fun a1 a2 -> caml_callback2 f a1 a2)
 let jsfun3 f = function_ (fun a1 a2 a3 -> caml_callback3 f a1 a2 a3)
 let jsfun4 f = function_ (fun a1 a2 a3 a4 -> caml_callback4 f a1 a2 a3 a4)
 let jsfun5 f = function_ (fun a1 a2 a3 a4 a5 -> caml_callback5 f a1 a2 a3 a4 a5)
+
+module Inline =
+struct
+  module Jslib_ast =
+  struct
+    type loc = unit
+    INCLUDE "../../jslib/jslib_ast.incl"
+  end
+
+  external inline_exp : Jslib_ast.exp -> 'a = "$inline_exp"
+  external inline_stmt : Jslib_ast.stmt -> 'a = "$inline_stmt"
+  external inline_antiexp : 'a -> Jslib_ast.exp = "$inline_antiexp"
+  external inline_antistmt : 'a -> Jslib_ast.stmt = "$inline_antistmt"
+
+  let _loc = ()
+end

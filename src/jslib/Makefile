@@ -1,6 +1,7 @@
 FILES=\
 jslib.cma jslib.cmxa jslib.a \
-pa_js.cma \
+syntax_quotations.cmo \
+syntax_inline.cmo \
 jslib_ast.mli jslib_ast.cmi \
 jslib_parse.mli jslib_parse.cmi \
 jslib_pp.mli jslib_pp.cmi \
@@ -8,7 +9,7 @@ jslib_pp.mli jslib_pp.cmi \
 BFILES=$(addprefix _build/,$(FILES))
 
 all: myocamlbuild.ml
-	ocamlbuild jslib.cma jslib.cmxa pa_js.cma
+	ocamlbuild jslib.cma jslib.cmxa syntax_quotations.cmo syntax_inline.cmo
 	ocamlfind remove -destdir ../../stage jslib
 	ocamlfind install -destdir ../../stage jslib META $(BFILES)
 

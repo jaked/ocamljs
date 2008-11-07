@@ -272,6 +272,32 @@ let maybe_block ss =
     | [s] -> s
     | _ -> Jslib_ast.Jblock (_loc, ss)
 
+let inline_string = function
+  | Lconst (Const_base (Const_string s)) -> s
+  | _ -> raise (Failure "bad inline string")
+
+let inline_bool = function
+  | Lconst (Const_pointer 0) -> false
+  | Lconst (Const_pointer 1) -> true
+  | _ -> raise (Failure "bad inline bool")
+
+let makeblock_of_const = function
+  | Lconst (Const_block (tag, cs)) ->
+      Lprim (Pmakeblock (tag, Asttypes.Mutable), List.map (fun c -> Lconst c) cs)
+  | _ -> assert false
+
+let rec inline_option inline = function
+  | Lconst (Const_block _) as cb -> inline_option inline (makeblock_of_const cb)
+  | Lconst (Const_pointer 0) -> None
+  | Lprim (Pmakeblock (0, _), [v]) -> Some (inline v)
+  | _ -> raise (Failure "bad inline option")
+
+let rec inline_list inline = function
+  | Lconst (Const_block _) as cb -> inline_list inline (makeblock_of_const cb)
+  | Lconst (Const_pointer 0) -> []
+  | Lprim (Pmakeblock (0, _), [h; t]) -> inline h :: inline_list inline t
+  | _ -> raise (Failure "bad inline list")
+
 (* compile a lambda as a Js.exp *)
 (* tail is true if the expression is in tail position *)
 let rec comp_expr tail expr =
@@ -305,6 +331,9 @@ let rec comp_expr tail expr =
     | Lsequence (e1, e2) -> << $comp_expr false e1$, $comp_expr tail e2$ >>
 
     | Lassign (i, e) -> << $id:jsident_of_ident i$ = $comp_expr false e$ >> (* XXX *)
+
+    | Lprim (Pccall { prim_name = "$inline_exp" }, [e]) -> inline_exp e
+
     | Lprim (p, args) -> comp_prim p (List.map (comp_expr false) args)
 
     | Lsend (_, Lconst(Const_immstring m), o, args) ->
@@ -523,6 +552,75 @@ and comp_letrecs_st tail expr k =
 	  List.map cb bs @ backpatch bs @ cl e
       | e -> comp_expr_st tail e k in
    cl expr
+
+(* XXX annoying, would be nice to Camlp4-generate this *)
+and inline_exp = function
+    (* XXX actually we never get these because of the _loc arg *)
+  | Lconst (Const_block _) as cb -> inline_exp (makeblock_of_const cb)
+
+  | Lprim (Pmakeblock (tag, _), args) ->
+      begin
+        match tag, args with
+          | 0, [_] -> Jthis _loc
+          | 1, [_; v] -> Jvar (_loc, inline_string v)
+          | 2, [_; el] -> Jarray (_loc, inline_exp_list el)
+          | 3, [_; kvs] ->
+              let rec inline_kv = function
+                | Lconst (Const_block _) as cb -> inline_kv (makeblock_of_const cb)
+                | Lprim (Pmakeblock (0, _), [k; v]) -> (inline_exp k, inline_exp v)
+                | _ -> raise (Failure "bad inline kv") in
+              Jobject (_loc, inline_list inline_kv kvs)
+          | 4, [_; s; qq] -> Jstring (_loc, inline_string s, inline_bool qq)
+          | 5, [_; s] -> Jnum (_loc, inline_string s)
+          | 6, [_] -> Jnull _loc
+          | 7, [_; b] -> Jbool (_loc, inline_bool b)
+          | 8, [_; so; sl; stl] ->
+              Jfun (_loc,
+                   inline_option inline_string so,
+                   inline_list inline_string sl,
+                   inline_list inline_stmt stl)
+          | 9, [_; e; s] -> Jfieldref (_loc, inline_exp e, inline_string s)
+          | 10, [_; u; e] -> Junop (_loc, inline_unop u, inline_exp e)
+          | 11, [_; b; e1; e2] -> Jbinop (_loc, inline_binop b, inline_exp e1, inline_exp e2)
+          | 12, [_; i; t; e] -> Jite (_loc, inline_exp i, inline_exp t, inline_exp e)
+          | 13, [_; e; el] -> Jcall (_loc, inline_exp e, inline_exp_list el)
+          | 14, [_; e; elo] -> Jnew (_loc, inline_exp e, inline_option inline_exp_list elo)
+          | _ -> raise (Failure "bad inline exp")
+      end
+
+  | Lprim (Pccall { prim_name = "$inline_antiexp" }, [e]) -> comp_expr false e
+
+  | _ -> raise (Failure "bad inline exp")
+
+and inline_exp_list = function
+  | Lconst (Const_block _) as cb -> inline_exp_list (makeblock_of_const cb)
+  | Lprim (Pmakeblock (0, _), [_; el]) -> Jexp_list (_loc, inline_list inline_exp el)
+  | _ -> raise (Failure "bad inline exp_list")
+
+and inline_stmt = function
+  | _ -> raise (Failure "bad inline stmt")
+
+and inline_unop = function
+  | Lconst (Const_pointer tag) ->
+      let unops = [|
+        Jdelete; Jvoid; Jtypeof; Jadd2_pre; Jsub2_pre; Jadd_pre; Jsub_pre; Jtilde; Jnot; Jadd2_post; Jsub2_post
+      |] in
+      if tag < Array.length unops
+      then unops.(tag)
+      else raise (Failure "bad inline unop")
+  | _ -> raise (Failure "bad inline unop")
+
+and inline_binop = function
+  | Lconst (Const_pointer tag) ->
+      let binops = [|
+        Jhashref; Jmul; Jdiv; Jmod; Jadd; Jsub; Jlt; Jgt; Jleq; Jgeq; Jlsr; Jlsl; Jasr; Jeq; Jneq; Jinstanceof; Jseq;
+        Jsneq; Jland; Jlor; Jand; Jxor; Jor; Jcomma; Jassign; Jmul_assign; Jdiv_assign; Jmod_assign; Jadd_assign; Jsub_assign;
+        Jlsl_assign; Jlsr_assign; Jasr_assign; Jand_assign; Jxor_assign; Jor_assign
+      |] in
+      if tag < Array.length binops
+      then binops.(tag)
+      else raise (Failure "bad inline binop")
+  | _ -> raise (Failure "bad inline binop")
 
 (**** Compilation of a lambda phrase ****)
 

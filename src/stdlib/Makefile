@@ -2,6 +2,7 @@ include ../../ocaml/config/Makefile
 
 all: myocamlbuild.ml ocaml stdlib.mllib
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
+	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild stdlib.cmjsa std_exit.cmjs
 
 install:

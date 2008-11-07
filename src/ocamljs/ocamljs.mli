@@ -46,3 +46,19 @@ val jsfun2 : ('a1 -> 'a2 -> 'b) -> ('a1 -> 'a2 -> 'b) jsfun
 val jsfun3 : ('a1 -> 'a2 -> 'a3 -> 'b) -> ('a1 -> 'a2 -> 'a3 -> 'b) jsfun
 val jsfun4 : ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'b) -> ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'b) jsfun
 val jsfun5 : ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b) -> ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b) jsfun
+
+module Inline :
+sig
+  module Jslib_ast :
+  sig
+    type loc = unit
+    INCLUDE "../../jslib/jslib_ast.incl"
+  end
+
+  external inline_exp : Jslib_ast.exp -> 'a = "$inline_exp"
+  external inline_stmt : Jslib_ast.stmt -> 'a = "$inline_stmt"
+  external inline_antiexp : 'a -> Jslib_ast.exp = "$inline_antiexp"
+  external inline_antistmt : 'a -> Jslib_ast.stmt = "$inline_antistmt"
+
+  val _loc : Jslib_ast.loc
+end
