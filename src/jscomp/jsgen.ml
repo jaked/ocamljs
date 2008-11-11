@@ -298,6 +298,11 @@ let rec inline_list inline = function
   | Lprim (Pmakeblock (0, _), [h; t]) -> inline h :: inline_list inline t
   | _ -> raise (Failure "bad inline list")
 
+let rec inline_pair inline1 inline2 = function
+  | Lconst (Const_block _) as cb -> inline_pair inline1 inline2 (makeblock_of_const cb)
+  | Lprim (Pmakeblock (0, _), [c1; c2]) -> (inline1 c1, inline2 c2)
+  | _ -> raise (Failure "bad inline pair")
+
 (* compile a lambda as a Js.exp *)
 (* tail is true if the expression is in tail position *)
 let rec comp_expr tail expr =
@@ -557,19 +562,13 @@ and comp_letrecs_st tail expr k =
 and inline_exp = function
     (* XXX actually we never get these because of the _loc arg *)
   | Lconst (Const_block _) as cb -> inline_exp (makeblock_of_const cb)
-
   | Lprim (Pmakeblock (tag, _), args) ->
       begin
         match tag, args with
           | 0, [_] -> Jthis _loc
           | 1, [_; v] -> Jvar (_loc, inline_string v)
           | 2, [_; el] -> Jarray (_loc, inline_exp_list el)
-          | 3, [_; kvs] ->
-              let rec inline_kv = function
-                | Lconst (Const_block _) as cb -> inline_kv (makeblock_of_const cb)
-                | Lprim (Pmakeblock (0, _), [k; v]) -> (inline_exp k, inline_exp v)
-                | _ -> raise (Failure "bad inline kv") in
-              Jobject (_loc, inline_list inline_kv kvs)
+          | 3, [_; kvl] -> Jobject (_loc, inline_list (inline_pair inline_exp inline_exp) kvl)
           | 4, [_; s; qq] -> Jstring (_loc, inline_string s, inline_bool qq)
           | 5, [_; s] -> Jnum (_loc, inline_string s)
           | 6, [_] -> Jnull _loc
@@ -587,9 +586,7 @@ and inline_exp = function
           | 14, [_; e; elo] -> Jnew (_loc, inline_exp e, inline_option inline_exp_list elo)
           | _ -> raise (Failure "bad inline exp")
       end
-
   | Lprim (Pccall { prim_name = "$inline_antiexp" }, [e]) -> comp_expr false e
-
   | _ -> raise (Failure "bad inline exp")
 
 and inline_exp_list = function
@@ -598,6 +595,50 @@ and inline_exp_list = function
   | _ -> raise (Failure "bad inline exp_list")
 
 and inline_stmt = function
+  | Lconst (Const_block _) as cb -> inline_stmt (makeblock_of_const cb)
+  | Lprim (Pmakeblock (tag, _), args) ->
+      begin
+        match tag, args with
+          | 0, [_] -> Jempty _loc
+          | 1, [_; seol] ->
+              Jvars (_loc, inline_list (inline_pair inline_string (inline_option inline_exp)) seol)
+          | 2, [_; s; sl; stl] ->
+              Jfuns (_loc, inline_string s, inline_list inline_string sl, inline_list inline_stmt stl)
+          | 3, [_; eo] -> Jreturn (_loc, inline_option inline_exp eo)
+          | 4, [_; so] -> Jcontinue (_loc, inline_option inline_string so)
+          | 5, [_; so] -> Jbreak (_loc, inline_option inline_string so)
+          | 6, [_; e; esll; slo] ->
+              Jswitch (_loc,
+                      inline_exp e,
+                      inline_list (inline_pair inline_exp (inline_list inline_stmt)) esll,
+                      inline_option (inline_list inline_stmt) slo)
+          | 7, [_; e; s; so] -> Jites (_loc, inline_exp e, inline_stmt s, inline_option inline_stmt so)
+          | 8, [_; e] -> Jthrow (_loc, inline_exp e)
+          | 9, [_; e] -> Jexps (_loc, inline_exp e)
+          | 10, [_; sl1; s; sl2] ->
+              Jtrycatch (_loc, inline_list inline_stmt sl1, inline_string s, inline_list inline_stmt sl2)
+          | 11, [_; sl1; sl2] ->
+              Jtryfinally (_loc, inline_list inline_stmt sl1, inline_list inline_stmt sl2)
+          | 12, [_; sl1; s; sl2; sl3] ->
+              Jtrycatchfinally (_loc,
+                               inline_list inline_stmt sl1,
+                               inline_string s,
+                               inline_list inline_stmt sl2,
+                               inline_list inline_stmt sl3)
+          | 13, [_; eo1; eo2; eo3; s] ->
+              Jfor (_loc,
+                   inline_option inline_exp eo1,
+                   inline_option inline_exp eo2,
+                   inline_option inline_exp eo3,
+                   inline_stmt s)
+          | 14, [_; s; e] -> Jdowhile (_loc, inline_stmt s, inline_exp e)
+          | 15, [_; e; s] -> Jwhile (_loc, inline_exp e, inline_stmt s)
+          | 16, [_; sl] -> Jblock (_loc, inline_list inline_stmt sl)
+          | 17, [_; e; s] -> Jwith (_loc, inline_exp e, inline_stmt s)
+          | 18, [_; s; st] -> Jlabel (_loc, inline_string s, inline_stmt st)
+          | _ -> raise (Failure "bad inline stmt")
+      end
+(*| Lprim (Pccall { prim_name = "$inline_antistmt" }, [s]) -> *)(* XXX *)
   | _ -> raise (Failure "bad inline stmt")
 
 and inline_unop = function
