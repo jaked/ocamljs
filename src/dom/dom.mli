@@ -138,5 +138,23 @@ object
   method _set_onclick : (unit -> unit) Ocamljs.jsfun -> unit
 end
 
+class type xMLHttpRequest =
+object
+  method _set_onreadystatechange : (unit -> unit) Ocamljs.jsfun -> unit
+  method _get_readyState : int
+  (* method _get_responseXML : Dom.document ? *)
+  method _get_responseText : string
+  method _get_status : int
+  method _get_statusText : string
+  method abort : unit
+  method getAllResponseHeaders : string
+  method getResponseHeader : string -> string
+  method open_ : string -> string -> bool -> unit
+  method send : string -> unit
+  method setRequestHeader : string -> string -> unit
+end
+
+external new_XMLHttpRequest : unit -> xMLHttpRequest = "$new" "XMLHttpRequest"
+
 val window : window
 val document : document

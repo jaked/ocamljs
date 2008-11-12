@@ -159,6 +159,7 @@ var caml_format_int = function(f, a) {
 var caml_greaterthan = function (v1, v2) { return compare_val(v1, v2, 0) > 0; }
 var caml_greaterequal = function (v1, v2) { return compare_val(v1, v2, 0) >= 0; }
 var caml_input_value = function () { throw "caml_input_value"; }
+var caml_input_value_from_string = function () { throw "caml_input_value_from_string"; }
 var caml_install_signal_handler = function () { throw "caml_install_signal_handler"; }
 var caml_int32_compare = function (i1, i2) { return (i1 > i2) - (i1 < i2); }
 var caml_int64_compare = function (i1, i2) { throw "caml_int64_compare"; }
@@ -188,6 +189,7 @@ var caml_make_vect = function (l, i) {
     a[j] = i;
   return a;
 }
+var caml_marshal_data_size = function () { throw "caml_marshal_data_size"; }
 var caml_md5_chan = function () { throw "caml_md5_chan"; }
 var caml_md5_string = function () { throw "caml_md5_string"; }
 var caml_ml_channel_size = function () { throw "caml_ml_channel_size"; }
@@ -231,7 +233,14 @@ var caml_obj_dup = function (a) {
   d.t = a.t;
   return d;
 }
+var caml_obj_is_block = function (o) { return !(typeof o == 'number') }
+var caml_obj_tag = function(o) { return o.t; }
+var caml_obj_set_tag = function(o, t) { o.$t = t; }
+var caml_obj_block = function(t, s) { if (s == 0) return t; else { var a = new Array(s); a.$t = t; return a; } }
+var caml_obj_truncate = function(o, s) { o.length = s; }
 var caml_output_value = function () { throw "caml_output_value"; }
+var caml_output_value_to_string = function () { throw "caml_output_value_to_string"; }
+var caml_output_value_to_buffer = function () { throw "caml_output_value_to_buffer"; }
 var caml_register_named_value = function (n, v) { oc$$nv[n] = v; }
 var caml_string_compare = function (s1, s2) {
   if (oc$$slt(s1, s2)) return -1;

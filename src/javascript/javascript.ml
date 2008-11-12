@@ -18,66 +18,77 @@
  * MA 02111-1307, USA
  *)
 
+open Ocamljs.Inline
+
 external encodeURIComponent : string -> string = "@encodeURIComponent"
 external decodeURIComponent : string -> string = "@decodeURIComponent"
 external dump : string -> unit = "@dump"
 external eval : string -> 'a = "@eval"
 
-let true_ = Ocamljs.var "true"
-let false_ = Ocamljs.var "false"
+let typeof o = << typeof $o$ >>
 
-module Date =
-  struct
+let true_ = << true >>
+let false_ = << false >>
 
-    type t
+class type ['a] js_array =
+object
+  method _get_length : int
+  method _set_length : int -> unit
+  (* method concat : ? *)
+  method join : string -> string
+  method pop : 'a
+  method push : 'a -> int
+  method reverse : unit
+  method shift : 'a
+  method slice : int -> int -> 'a js_array
+  method sort : 'a js_array
+  method sort_compare_ : ('a -> 'a -> int) Ocamljs.jsfun -> 'a js_array
+  (* method splice : ? *)
+  method toLocaleString : string
+  method toString : string
+  method unshift : 'a -> int
+end
 
-    external _new_noargs : string -> t = "$new"
+external new_Array : unit -> 'a js_array = "$new" "Array"
+external new_Array_length : int -> 'a js_array = "$new" "Array"
 
-    let new_ () = _new_noargs "Date"
-    external new_milliseconds : float -> t = "$new" "Date"
-    external new_parts : int -> int -> int -> int -> int -> int -> int -> t = "$new" "Date"
+class type date =
+object
+  method getTime : float
+  method getDate : int
+  method getMonth : int
+  method getHours : int
+  method getMinutes : int
+  method getFullYear : int
 
-    external getTime : t -> float = "#getTime"
-    external getDate : t -> int = "#getDate"
-    external getMonth : t -> int = "#getMonth"
-    external getHours : t -> int = "#getHours"
-    external getMinutes : t -> int = "#getMinutes"
-    external getFullYear : t -> int = "#getFullYear"
+  method setDate : int -> unit
+  method setMonth : int -> unit
+  method setHours : int -> unit
+  method setMinutes : int -> unit
 
-    external setDate : t -> int -> unit = "#setDate"
-    external setMonth : t -> int -> unit = "#setMonth"
-    external setHours : t -> int -> unit = "#setHours"
-    external setMinutes : t -> int -> unit = "#setMinutes"
+  method toString : string
+  method toDateString : string
+  method toLocaleString : string
+end
 
-    external toString : t -> string = "#toString"
-    external toDateString : t -> string = "#toDateString"
-    external toLocaleString : t -> string = "#toLocaleString"
+external new_Date_milliseconds : float -> date = "$new" "Date"
+external new_Date_parts : int -> int -> int -> int -> int -> int -> int -> date = "$new" "Date"
 
-  end
+class type regexp =
+object
+  method exec : string -> string array option
+  method test : string -> bool
+end
 
-module RegExp =
-  struct
+external new_RegExp : string -> regexp = "$new" "RegExp"
+external new_RegExp_attributes : string -> string -> regexp = "$new" "RegExp"
 
-    type t
+class type js_string =
+object
+  method match_ : regexp -> string array
+  method split : string -> string array
+  method indexOf : string -> int
+  method replace : regexp -> string -> string
+end
 
-    external new_ : string -> t = "$new" "RegExp"
-    external new_attributes : string -> string -> t = "$new" "RegExp"
-
-    external _exec : t -> string -> string array = "#exec"
-    let exec r s = Ocamljs.option_of_nullable (_exec r s)
-    external test : t -> string -> bool = "#test"
-
-  end
-
-module String =
-  struct
-
-    type t = string
-
-    external _match : t -> RegExp.t -> string array = "#match"
-    let match_ s r = Ocamljs.option_of_nullable (_match s r)
-    external split : t -> string -> string array = "#split"
-    external indexOf : t -> string -> int = "#indexOf"
-    external replace : t -> RegExp.t -> t -> t = "#replace"
-
-  end
+external js_string_of_string : string -> js_string = "%id"

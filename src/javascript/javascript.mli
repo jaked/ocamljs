@@ -23,57 +23,70 @@ external decodeURIComponent : string -> string = "@decodeURIComponent"
 external dump : string -> unit = "@dump"
 external eval : string -> 'a = "@eval"
 
+val typeof : 'a -> string
+
 val true_ : bool
 val false_ : bool
 
-module Date :
-  sig
+class type ['a] js_array =
+object
+  method _get_length : int
+  method _set_length : int -> unit
+  (* method concat : ? *)
+  method join : string -> string
+  method pop : 'a
+  method push : 'a -> int
+  method reverse : unit
+  method shift : 'a
+  method slice : int -> int -> 'a js_array
+  method sort : 'a js_array
+  method sort_compare_ : ('a -> 'a -> int) Ocamljs.jsfun -> 'a js_array
+  (* method splice : ? *)
+  method toLocaleString : string
+  method toString : string
+  method unshift : 'a -> int
+end
 
-    type t
+external new_Array : unit -> 'a js_array = "$new" "Array"
+external new_Array_length : int -> 'a js_array = "$new" "Array"
 
-    val new_ : unit -> t
-    external new_milliseconds : float -> t = "$new" "Date"
-    external new_parts : int -> int -> int -> int -> int -> int -> int -> t = "$new" "Date"
+class type date =
+object
+  method getTime : float
+  method getDate : int
+  method getMonth : int
+  method getHours : int
+  method getMinutes : int
+  method getFullYear : int
 
-    external getTime : t -> float = "#getTime"
-    external getDate : t -> int = "#getDate"
-    external getMonth : t -> int = "#getMonth"
-    external getHours : t -> int = "#getHours"
-    external getMinutes : t -> int = "#getMinutes"
-    external getFullYear : t -> int = "#getFullYear"
+  method setDate : int -> unit
+  method setMonth : int -> unit
+  method setHours : int -> unit
+  method setMinutes : int -> unit
 
-    external setDate : t -> int -> unit = "#setDate"
-    external setMonth : t -> int -> unit = "#setMonth"
-    external setHours : t -> int -> unit = "#setHours"
-    external setMinutes : t -> int -> unit = "#setMinutes"
+  method toString : string
+  method toDateString : string
+  method toLocaleString : string
+end
 
-    external toString : t -> string = "#toString"
-    external toDateString : t -> string = "#toDateString"
-    external toLocaleString : t -> string = "#toLocaleString"
+external new_Date_milliseconds : float -> date = "$new" "Date"
+external new_Date_parts : int -> int -> int -> int -> int -> int -> int -> date = "$new" "Date"
 
-  end
+class type regexp =
+object
+  method exec : string -> string array option
+  method test : string -> bool
+end
 
-module RegExp :
-  sig
+external new_RegExp : string -> regexp = "$new" "RegExp"
+external new_RegExp_attributes : string -> string -> regexp = "$new" "RegExp"
 
-    type t
+class type js_string =
+object
+  method match_ : regexp -> string array
+  method split : string -> string array
+  method indexOf : string -> int
+  method replace : regexp -> string -> string
+end
 
-    external new_ : string -> t = "$new" "RegExp"
-    external new_attributes : string -> string -> t = "$new" "RegExp"
-
-    val exec : t -> string -> string array option
-    val test : t -> string -> bool
-
-  end
-
-module String :
-  sig
-
-    type t = string
-
-    val match_ : t -> RegExp.t -> string array option
-    external split : t -> string -> string array = "#split"
-    external indexOf : t -> string -> int = "#indexOf"
-    external replace : t -> RegExp.t -> t -> t = "#replace"
-
-  end
+external js_string_of_string : string -> js_string = "%id"
