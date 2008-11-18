@@ -13,8 +13,6 @@
 open Format
 open Jslib_ast
 
-exception Unimplemented of string
-
 (* XXX figure out how Format works *)
 
 (*
@@ -391,3 +389,5 @@ and stmts ppf ss =
         stmt ppf s;)
       ss in
   fprintf ppf "@[<v>%a@]" sl ss
+
+let escaped = JSString.escaped

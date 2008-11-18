@@ -90,3 +90,8 @@ object
 end
 
 external js_string_of_string : string -> js_string = "%id"
+
+module Js_string :
+sig
+  external fromCharCode : int -> string = "@String.fromCharCode"
+end

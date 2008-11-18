@@ -92,3 +92,8 @@ object
 end
 
 external js_string_of_string : string -> js_string = "%id"
+
+module Js_string =
+struct
+  external fromCharCode : int -> string = "@String.fromCharCode"
+end
