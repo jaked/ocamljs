@@ -1,8 +1,41 @@
+module Dlist =
+struct
+
+  type 'a t = {
+    data : 'a;
+    mutable prev : 'a t;
+    mutable next : 'a t;
+  }
+
+  let empty () =
+    let rec t = { data = Obj.magic None; prev = t; next = t } in
+    t
+
+  let add_after t d =
+    t.next <- { data = d; prev = t; next = t.next };
+    t.next
+
+  let remove t =
+    t.next.prev <- t.prev;
+    t.prev.next <- t.next
+
+  let clear d =
+    d.prev <- d;
+    d.next <- d
+
+  let iter f d =
+    let rec loop t =
+      if not (t == d)
+      then (f t.data; loop t.next) in
+    loop d.next
+
+end
+
 let debug = ref (fun _ -> ())
 let set_debug f = debug := f; Timestamp.set_debug f
 
 type edge = {
-  read : edge -> unit;
+  read : unit -> unit;
   start : Timestamp.t;
   finish : Timestamp.t;
 }
@@ -13,7 +46,7 @@ type 'a t = {
   id : int;
   time : Timestamp.t;
   mutable state : 'a result;
-  mutable edges : edge list;
+  edges : edge Dlist.t;
   mutable repr : 'a t option;
   mutable reprs : 'a t list;
   mutable notifys : (int * ('a result -> unit)) list;
@@ -43,7 +76,7 @@ let make_result s = {
   id = next_id ();
   time = tick ();
   state = s;
-  edges = [];
+  edges = Dlist.empty ();
   repr = None;
   reprs = [];
   notifys = [];
@@ -65,8 +98,8 @@ let write_result t s =
           (fun reprs t -> if Timestamp.is_spliced_out t.time then reprs else (ws t; t::reprs))
           []
           t.reprs;
-      List.iter (fun e -> pq := PQ.add e !pq) t.edges;
-      t.edges <- [] in
+      Dlist.iter (fun e -> pq := PQ.add e !pq) t.edges;
+      Dlist.clear t.edges in
     ws t
 
 let write t v = write_result t (Value v)
@@ -83,11 +116,13 @@ let add_edge t f =
   let start = tick () in
   f ();
   let finish = tick () in
-  let read e =
+  let rec e = { read = read; start = start; finish = finish }
+  and read () =
     f ();
-    t.edges <- e::t.edges in
-  let e = { read = read; start = start; finish = finish } in
-  t.edges <- e::t.edges
+    let dl = Dlist.add_after t.edges e in
+    ignore (Timestamp.add_after ~cleanup:(fun () -> Dlist.remove dl) start) in
+  let dl = Dlist.add_after t.edges e in
+  ignore (Timestamp.add_after ~cleanup:(fun () -> Dlist.remove dl) start)
 
 let connect t t' =
   (*
@@ -204,7 +239,7 @@ let propagate () =
           begin
             Timestamp.splice_out e.start e.finish;
             now := e.start;
-            e.read e;
+            e.read ();
           end;
         prop ()
       end in

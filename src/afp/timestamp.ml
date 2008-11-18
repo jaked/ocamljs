@@ -4,6 +4,7 @@ let set_debug f = debug := f
 type t = {
   mutable id : int;
   mutable next : t;
+  mutable cleanup : unit -> unit;
 }
 
 let is_spliced_out t = t.id = -1
@@ -17,12 +18,12 @@ let next_id =
   fun () -> let id = !next_id in incr next_id; id
 
 let init () =
-  let rec s = { id = 0; next = s } in
-  { id = next_id (); next = s }
+  let rec s = { id = 0; next = s; cleanup = ignore } in
+  { id = next_id (); next = s; cleanup = ignore }
 
-let add_after t =
+let add_after ?(cleanup=ignore) t =
   check t;
-  let t' = { id = next_id (); next = t.next } in
+  let t' = { id = next_id (); next = t.next; cleanup = cleanup } in
   t.next <- t';
   t'
 
@@ -34,7 +35,7 @@ let splice_out t1 t2 =
       | -1 -> assert false
       | 0 -> raise (Invalid_argument "t1 >= t2")
       | id when id = t2.id -> ()
-      | _ -> t.id <- -1; loop t.next in
+      | _ -> t.id <- -1; t.cleanup (); t.cleanup <- ignore; loop t.next in
   loop t1.next;
   t1.next <- t2
 
