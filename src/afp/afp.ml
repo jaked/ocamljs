@@ -16,12 +16,8 @@ struct
     t.next
 
   let remove t =
-    t.next.prev <- t.prev;
-    t.prev.next <- t.next
-
-  let clear d =
-    d.prev <- d;
-    d.next <- d
+    t.next.prev <- t.prev; t.prev.next <- t.next;
+    t.next <- t; t.prev <- t
 
   let iter f d =
     let rec loop t =
@@ -34,22 +30,18 @@ end
 let debug = ref (fun _ -> ())
 let set_debug f = debug := f; Timestamp.set_debug f
 
-type edge = {
-  read : unit -> unit;
-  start : Timestamp.t;
-  finish : Timestamp.t;
-}
-
 type 'a result = Value of 'a | Fail of exn
 
 type 'a t = {
   id : int;
-  time : Timestamp.t;
   mutable state : 'a result;
-  edges : edge Dlist.t;
-  mutable repr : 'a t option;
-  mutable reprs : 'a t list;
-  mutable notifys : (int * ('a result -> unit)) list;
+  mutable deps : ('a result -> unit) Dlist.t;
+}
+
+type edge = {
+  read : unit -> unit;
+  start : Timestamp.t;
+  finish : Timestamp.t;
 }
 
 module PQ = Pqueue.Make(struct
@@ -74,12 +66,8 @@ let tick () =
 
 let make_result s = {
   id = next_id ();
-  time = tick ();
   state = s;
-  edges = Dlist.empty ();
-  repr = None;
-  reprs = [];
-  notifys = [];
+  deps = Dlist.empty ();
 }
 
 let return v = make_result (Value v)
@@ -90,17 +78,10 @@ let handle_exn = ref (fun e -> raise e)
 let write_result t s =
   if compare t.state s <> 0 (* total *)
   then
-    let rec ws t =
+    begin
       t.state <- s;
-      List.iter (fun (_, f) -> try f t.state with e -> !handle_exn e) t.notifys;
-      t.reprs <-
-        List.fold_left
-          (fun reprs t -> if Timestamp.is_spliced_out t.time then reprs else (ws t; t::reprs))
-          []
-          t.reprs;
-      Dlist.iter (fun e -> pq := PQ.add e !pq) t.edges;
-      Dlist.clear t.edges in
-    ws t
+      Dlist.iter (fun f -> try f t.state with e -> !handle_exn e) t.deps
+    end
 
 let write t v = write_result t (Value v)
 let write_exn t e = write_result t (Fail e)
@@ -112,120 +93,63 @@ let read t =
     | Value v -> v
     | Fail e -> raise e
 
-let add_edge t f =
+let add_dep ts t dep =
+  let dl = Dlist.add_after t.deps dep in
+  Timestamp.set_cleanup ts (fun () -> Dlist.remove dl)
+
+let add_edge t read =
   let start = tick () in
-  f ();
-  let finish = tick () in
-  let rec e = { read = read; start = start; finish = finish }
-  and read () =
-    f ();
-    let dl = Dlist.add_after t.edges e in
-    ignore (Timestamp.add_after ~cleanup:(fun () -> Dlist.remove dl) start) in
-  let dl = Dlist.add_after t.edges e in
-  ignore (Timestamp.add_after ~cleanup:(fun () -> Dlist.remove dl) start)
+  read ();
+  let e = { read = read; start = start; finish = tick () } in
+  add_dep start t (fun _ -> pq := PQ.add e !pq)
+
+let add_notify t notify =
+  add_dep (tick ()) t notify
 
 let connect t t' =
-  (*
-    XXX
-    space leak: if a repr node is abandoned it is still referenced by
-    its repr. not sure how often this comes up in real code but here
-    is an example:
-
-      let x = return 0
-      let y = return 1
-
-      let z = x >>= fun _ ->
-        ignore(x >>= fun _ -> y);
-        return 2
-
-    this is partially fixed by timestamping repr nodes then cleaning
-    up spliced out ones in write_state. maybe too lazy? also doesn't
-    handle abandoned nodes that are never spliced out.
-  *)
-  match t.repr with
-    | Some r when r.id = t'.id -> ()
-    | tr ->
-        write_result t t'.state;
-        t.repr <- Some t';
-        t'.reprs <- t::t'.reprs;
-        match tr with
-          | Some r ->  r.reprs <- List.filter (fun t' -> t'.id <> t.id) r.reprs
-          | None -> ()
-
-let disconnect_result t result =
-  write_result t result;
-  match t.repr with
-    | None -> ()
-    | Some r ->
-        t.repr <- None;
-        r.reprs <- List.filter (fun t' -> t'.id <> t.id) r.reprs
-
-let disconnect_exn t e = disconnect_result t (Fail e)
-let disconnect t v = disconnect_result t (Value v)
+  let notify _ = write_result t t'.state in
+  notify ();
+  add_notify t' notify
 
 exception Unset
 
 let make () = make_result (Fail Unset)
 
-let bind t f =
-  let res = make () in
-  add_edge t (fun () ->
-    match t.state with
-      | Fail e -> disconnect_exn res e
-      | Value v ->
-          try connect res (f v)
-          with e -> disconnect_exn res e);
-  res
-
-let (>>=) = bind
-
-let bind_lift t f =
+let bind_gen assign t f =
   let res = make () in
   add_edge t (fun () ->
     match t.state with
       | Fail e -> write_exn res e
-      | Value v -> try write res (f v) with e -> write_exn res e);
+      | Value v -> try assign res (f v) with e -> write_exn res e);
   res
 
+let bind t f = bind_gen connect t f
+let (>>=) = bind
+let bind_lift t f = bind_gen write t f
 let (>>) = bind_lift
 
-let try_bind f succ err =
+let try_bind_gen assign f succ err =
   let t = try f () with e -> fail e in
   let res = make () in
   add_edge t (fun () ->
-    try connect res (match t.state with Value v -> succ v | Fail e -> err e)
-    with e -> disconnect_exn res e);
-  res
-
-let try_bind_lift f succ err =
-  let t = try f () with e -> fail e in
-  let res = make () in
-  add_edge t (fun () ->
-    try write res (match t.state with Value v -> succ v | Fail e -> err e)
+    try assign res (match t.state with Value v -> succ v | Fail e -> err e)
     with e -> write_exn res e);
   res
 
-let catch f err =
+let try_bind f succ err = try_bind_gen connect f succ err
+let try_bind_lift f succ err = try_bind_gen write f succ err
+
+let catch_gen assign f err =
   let t = try f () with e -> fail e in
   let res = make () in
   add_edge t (fun () ->
     match t.state with
-      | Value v -> disconnect res v
-      | Fail e ->
-          try connect res (err e)
-          with e -> disconnect_exn res e);
+      | Value v -> write_result res t.state
+      | Fail e -> try assign res (err e) with e -> write_exn res e);
   res
 
-let catch_lift f err =
-  let t = try f () with e -> fail e in
-  let res = make () in
-  add_edge t (fun () ->
-    match t.state with
-      | Value v -> write res v
-      | Fail e ->
-          try write res (err e)
-          with e -> write_exn res e);
-  res
+let catch f err = catch_gen connect f err
+let catch_lift f err = catch_gen write f err
 
 let propagate () =
   let rec prop () =
@@ -246,15 +170,5 @@ let propagate () =
   let now' = !now in
   prop ();
   now := now'
-
-type notify = int
-
-let add_notify t f =
-  let id = next_id () in
-  t.notifys <- (id, f)::t.notifys;
-  id
-
-let remove_notify t id =
-  t.notifys <- List.filter (fun (id', _) -> id' <> id) t.notifys
 
 let set_exn_handler h = handle_exn := h

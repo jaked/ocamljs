@@ -21,11 +21,15 @@ let init () =
   let rec s = { id = 0; next = s; cleanup = ignore } in
   { id = next_id (); next = s; cleanup = ignore }
 
-let add_after ?(cleanup=ignore) t =
+let add_after t =
   check t;
-  let t' = { id = next_id (); next = t.next; cleanup = cleanup } in
+  let t' = { id = next_id (); next = t.next; cleanup = ignore } in
   t.next <- t';
   t'
+
+let set_cleanup t cleanup =
+  check t;
+  t.cleanup <- cleanup
 
 let splice_out t1 t2 =
   check t1;

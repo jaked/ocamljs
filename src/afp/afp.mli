@@ -21,12 +21,9 @@ type 'a result = Value of 'a | Fail of exn
 val read_result : 'a t -> 'a result
 val write_result : 'a t -> 'a result -> unit
 val make_result : 'a result -> 'a t
-type notify
-val add_notify : 'a t -> ('a result -> unit) -> notify
-val remove_notify : 'a t -> notify -> unit
+val add_notify : 'a t -> ('a result -> unit) -> unit
 val set_exn_handler : (exn -> unit) -> unit
 val make : unit -> 'a t
 val connect : 'a t -> 'a t -> unit
-val disconnect_result : 'a t -> 'a result -> unit
 
 val set_debug : (string -> unit) -> unit
