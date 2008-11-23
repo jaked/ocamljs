@@ -12,8 +12,16 @@ struct
     t
 
   let add_after t d =
-    t.next <- { data = d; prev = t; next = t.next };
-    t.next
+    let n = { data = d; prev = t; next = t.next } in
+    t.next.prev <- n;
+    t.next <- n;
+    n
+
+  let add_before t d =
+    let n = { data = d; prev = t.prev; next = t } in
+    t.prev.next <- n;
+    t.prev <- n;
+    n
 
   let remove t =
     t.next.prev <- t.prev; t.prev.next <- t.next;
@@ -47,10 +55,44 @@ type edge = {
   finish : TS.t;
 }
 
+(*
 module PQ = Pqueue.Make(struct
   type t = edge
   let compare t1 t2 = TS.compare t1.start t2.start
 end)
+*)
+
+module PQ : sig
+  type elt = edge
+  type t
+  val empty : t
+  val is_empty : t -> bool
+  val add : elt -> t -> t
+  val find_min : t -> elt
+  val remove_min : t -> t
+end =
+struct
+  type elt = edge
+  type t = elt Dlist.t
+  let empty = Dlist.empty ()
+  let is_empty t = t.Dlist.prev == t && t.Dlist.next == t
+  let add elt d =
+    let rec loop t =
+      if t == d || TS.compare elt.start t.Dlist.data.start = -1
+      then ignore (Dlist.add_before t elt)
+      else loop t.Dlist.next in
+    loop d.Dlist.next;
+    d
+  let find_min t =
+    if is_empty t
+    then raise Not_found
+    else t.Dlist.next.Dlist.data
+  let remove_min t =
+    if is_empty t
+    then ()
+    else Dlist.remove t.Dlist.next;
+    t
+end
 
 let now = ref (TS.init ())
 let pq = ref (PQ.empty)
