@@ -1,4 +1,6 @@
 val init : unit -> unit
+val set_debug : (string -> unit) -> unit
+val set_exn_handler : (exn -> unit) -> unit
 
 type 'a result = Value of 'a | Fail of exn
 
@@ -17,6 +19,9 @@ sig
 
   val read : 'a t -> 'a
   val read_result : 'a t -> 'a result
+  val add_notify : 'a t -> ('a result -> unit) -> unit
+
+  val switch : 'a t t -> 'a t
 end
 
 module Event :
@@ -28,10 +33,7 @@ sig
   val send_exn : 'a t -> exn -> unit
   val send_result : 'a t -> 'a result -> unit
 
-  type notify
-  val add_notify : 'a t -> ('a result -> unit) -> notify
-  val remove_notify : 'a t -> notify -> unit
-  val set_exn_handler : (exn -> unit) -> unit
+  val add_notify : 'a t -> ('a result -> unit) -> unit
 
   val merge : 'a t list -> 'a t
   val map : ('a -> 'b) -> 'a t -> 'b t
@@ -42,8 +44,5 @@ end
 val hold : 'a -> 'a Event.t -> 'a Behavior.t
 val hold_result : 'a result -> 'a Event.t -> 'a Behavior.t
 val changes : 'a Behavior.t -> 'a Event.t
-val switch : 'a Behavior.t -> 'a Behavior.t Event.t -> 'a Behavior.t
 val when_true : bool Behavior.t -> unit Event.t
 val count : 'a Event.t -> int Behavior.t
-
-val set_debug : (string -> unit) -> unit

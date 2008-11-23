@@ -1,15 +1,28 @@
-let debug = ref (fun _ -> ())
-let set_debug f = debug := f
+(* mask out Event and Behavior so we can override them *)
+(* XXX not sure if this is any better than assigning individual fields *)
+module F :
+sig
+  val init : unit -> unit
+  val set_debug : (string -> unit) -> unit
+  val set_exn_handler : (exn -> unit) -> unit
 
-module F = Froc
+  type 'a result = 'a Froc.result = Value of 'a | Fail of exn
+
+  val hold : 'a -> 'a Froc.Event.t -> 'a Froc.Behavior.t
+  val hold_result : 'a result -> 'a Froc.Event.t -> 'a Froc.Behavior.t
+  val changes : 'a Froc.Behavior.t -> 'a Froc.Event.t
+  val when_true : bool Froc.Behavior.t -> unit Froc.Event.t
+  val count : 'a Froc.Event.t -> int Froc.Behavior.t
+end =
+struct
+  include Froc
+end
+include F
+
 module B = Froc.Behavior
 module E = Froc.Event
 
 let (|>) x f = f x
-
-let init = F.init
-
-type 'a result = 'a F.result = Value of 'a | Fail of exn
 
 type 'a link = {
   l_val : 'a;
@@ -132,10 +145,3 @@ struct
 
   let delay t ms = delayb t (B.return ms)
 end
-
-(* modules can't be multiply defined *)
-let hold = F.hold
-let changes = F.changes
-let switch = F.switch
-let when_true = F.when_true
-let count = F.count

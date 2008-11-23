@@ -170,6 +170,8 @@ dispatch begin function
 
   | After_rules ->
 
+      flag ["ocaml"; "compile"; "dtypes"] & A"-dtypes";
+
       (* When one link an OCaml library/binary/package, one should use -linkpkg *)
        flag ["ocaml"; "byte"; "link"] & A"-linkpkg";
        flag ["ocaml"; "native"; "link"] & A"-linkpkg";

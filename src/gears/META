@@ -1,0 +1,5 @@
+name="Gears"
+version="0.1"
+description="Google Gears binding"
+requires = "ocamljs"
+archive(js) = "gears.cmjsa"
