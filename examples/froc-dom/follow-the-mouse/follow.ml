@@ -1,10 +1,9 @@
 module D = Dom
-module F = Froc_dom
-module E = Froc_dom.Event
-module B = Froc_dom.Behavior
+module F = Froc
+module Fd = Froc_dom
 
-let (>>=) = B.(>>=)
-let (>>) = B.(>>)
+let (>>=) = F.(>>=)
+let (>>) = F.(>>)
 
 let onload () =
 
@@ -29,8 +28,8 @@ let onload () =
     List.iter (fun c -> ignore(div#appendChild c)) (cs :> D.node list);
     div in
 
-  B.appendChild body
-    (B.mouse >> fun (x, y) ->
+  Fd.appendChild body
+    (Fd.mouse_b >> fun (x, y) ->
       div
         ~id:"themouse"
         ~color:"#FFFFFF"
@@ -42,9 +41,9 @@ let onload () =
         [ D.document#createTextNode "the mouse!" ]);
 
   let mouse_offset = (D.document#getElementById "themouse")#_get_offsetWidth in
-  let tail_pos = B.delay B.mouse delay >> fun (x, y) -> (x + mouse_offset, y) in
+  let tail_pos = Fd.delay_b Fd.mouse_b delay >> fun (x, y) -> (x + mouse_offset, y) in
 
-  B.appendChild body
+  Fd.appendChild body
     (tail_pos >> fun (x, y) ->
       div
         ~id:"tail"
@@ -58,12 +57,12 @@ let onload () =
 
   let wag_delay = delay *. 1.5 in
   let mouseandtail_offset = mouse_offset + (D.document#getElementById "tail")#_get_offsetWidth in
-  let wag_offset = F.hold 0 (E.collect (fun _ _ -> (Random.int 10) - 5) 0 (E.ticks 100.)) in
+  let wag_offset = F.hold 0 (F.collect (fun _ _ -> (Random.int 10) - 5) 0 (Fd.ticks 100.)) in
   let wag_pos =
-    B.delay B.mouse wag_delay >>= fun (x, y) ->
+    Fd.delay_b Fd.mouse_b wag_delay >>= fun (x, y) ->
       wag_offset >> fun wag_offset -> (x + mouseandtail_offset, y + wag_offset) in
 
-  B.appendChild body
+  Fd.appendChild body
     (wag_pos >> fun (x, y) ->
       div
         ~id:"wagging"

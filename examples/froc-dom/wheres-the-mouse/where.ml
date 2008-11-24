@@ -1,24 +1,23 @@
 module D = Dom
-module F = Froc_dom
-module E = Froc_dom.Event
-module B = Froc_dom.Behavior
+module F = Froc
+module Fd = Froc_dom
 
-let (>>) = B.(>>)
+let (>>) = F.(>>)
 
 let onload () =
 
   let span_of_string s =
-    let sp = Dom.document#createElement "span" in
-    let t = (Dom.document#createTextNode s :> Dom.node) in
+    let sp = D.document#createElement "span" in
+    let t = (D.document#createTextNode s :> D.node) in
     ignore (sp#appendChild t);
     sp in
 
-  B.replaceNode
+  Fd.replaceNode
     (D.document#getElementById "Mleft")
-    (B.mouse >> fun (x, y) -> span_of_string (string_of_int x));
-  B.replaceNode
+    (Fd.mouse_b >> fun (x, y) -> span_of_string (string_of_int x));
+  Fd.replaceNode
     (D.document#getElementById "Mtop")
-    (B.mouse >> fun (x, y) -> span_of_string (string_of_int y))
+    (Fd.mouse_b >> fun (x, y) -> span_of_string (string_of_int y))
 
 ;;
 

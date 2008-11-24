@@ -19,7 +19,7 @@ val write : 'a t -> 'a -> unit
 val write_exn : 'a t -> exn -> unit
 val write_result : 'a t -> 'a result -> unit
 
-val add_notify : 'a t -> ('a result -> unit) -> unit
+val notify : 'a t -> ('a result -> unit) -> unit
 
 val make_result : 'a result -> 'a t
 val make_unset : ?event:bool -> unit -> 'a t

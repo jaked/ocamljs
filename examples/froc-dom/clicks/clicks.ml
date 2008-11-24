@@ -1,23 +1,22 @@
 module D = Dom
-module F = Froc_dom
-module E = Froc_dom.Event
-module B = Froc_dom.Behavior
+module F = Froc
+module Fd = Froc_dom
 
-let (>>=) = B.(>>=)
+let (>>=) = F.(>>=)
 
 let onload () =
-  let clicks = F.count (E.clicks (D.document#getElementById "click")) in
-  let ticks = F.count (E.ticks 1000.) in
+  let clicks = F.count (Fd.clicks (D.document#getElementById "click")) in
+  let ticks = F.count (Fd.ticks 1000.) in
 
-  B.attach_innerHTML
+  Fd.attach_innerHTML
     (D.document#getElementById "clicks")
-    (clicks >>= fun c -> B.return (string_of_int c));
+    (clicks >>= fun c -> F.return (string_of_int c));
 
-  B.attach_innerHTML
+  Fd.attach_innerHTML
     (D.document#getElementById "seconds")
-    (ticks >>= fun s -> B.return (string_of_int s));
+    (ticks >>= fun s -> F.return (string_of_int s));
 
-  B.attach_innerHTML
+  Fd.attach_innerHTML
     (D.document#getElementById "difference")
     (clicks >>= fun clicks ->
       ticks >>= fun ticks ->
@@ -27,7 +26,7 @@ let onload () =
           else if clicks > ticks
           then string_of_int (clicks - ticks) ^ " more clicks than ticks"
           else string_of_int (ticks - clicks) ^ " more ticks than clicks" in
-        B.return s)
+        F.return s)
 
 ;;
 

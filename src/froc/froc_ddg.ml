@@ -160,13 +160,13 @@ let add_edge t read =
   let e = { read = read; start = start; finish = tick () } in
   add_dep start t (fun _ -> pq := PQ.add e !pq)
 
-let add_notify t notify =
-  add_dep (tick ()) t notify
+let notify t f =
+  add_dep (tick ()) t f
 
 let connect t t' =
-  let notify _ = write_result t t'.state in
-  notify ();
-  add_notify t' notify
+  let f _ = write_result t t'.state in
+  f ();
+  notify t' f
 
 let bind_gen assign t f =
   let res = make_unset () in
