@@ -79,7 +79,7 @@ external new_Date_parts : int -> int -> int -> int -> int -> int -> int -> date 
 
 class type regexp =
 object
-  method exec : string -> string array option
+  method exec : string -> string array
   method test : string -> bool
 end
 
