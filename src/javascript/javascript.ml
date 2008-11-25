@@ -94,7 +94,7 @@ object
   method replace : regexp -> string -> string
 end
 
-external js_string_of_string : string -> js_string = "%id"
+external js_string_of_string : string -> js_string = "%identity"
 
 module Js_string =
 struct
