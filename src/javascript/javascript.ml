@@ -71,6 +71,9 @@ object
   method toLocaleString : string
 end
 
+external new0 : string -> 'a = "$new"
+
+let new_Date () = new0 "Date"
 external new_Date_milliseconds : float -> date = "$new" "Date"
 external new_Date_parts : int -> int -> int -> int -> int -> int -> int -> date = "$new" "Date"
 

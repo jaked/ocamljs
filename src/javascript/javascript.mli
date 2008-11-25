@@ -69,6 +69,7 @@ object
   method toLocaleString : string
 end
 
+val new_Date : unit -> date
 external new_Date_milliseconds : float -> date = "$new" "Date"
 external new_Date_parts : int -> int -> int -> int -> int -> int -> int -> date = "$new" "Date"
 
