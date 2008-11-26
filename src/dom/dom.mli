@@ -97,9 +97,16 @@ object
   inherit characterData
 end
 
+class type location =
+object
+  method _get_href : string
+  method _set_href : string -> unit
+end
+
 class type window =
 object
   method _set_onload : (unit -> unit) Ocamljs.jsfun -> unit
+  method _get_location : location
 
   method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> interval_id
   method clearInterval : interval_id -> unit
@@ -124,6 +131,23 @@ object
   method createTextNode : string -> text
   method getElementById : string -> #element
   method _get_body : body
+  method _get_cookie : string
+  method _set_cookie : string -> unit
+end
+
+class type form =
+object
+  inherit element
+
+  method _set_onsubmit : (unit -> bool) Ocamljs.jsfun -> unit
+end
+
+class type input =
+object
+  inherit element
+
+  method _get_value : string
+  method _set_value : string -> unit
 end
 
 class type span =

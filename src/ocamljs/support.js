@@ -70,6 +70,64 @@ function ___m(m, t, a)
   }
 }
 
+/*@cc_on @if (@_win32 && @_jscript_version >= 5)
+function ___m(m, t, a)
+{
+  function ap(a1, a2) {
+    var a = new Array();
+    for (var i=0; i < a1.length; i++) a.push(a1[i]);
+    for (var i=0; i < a2.length; i++) a.push(a2[i]);
+    return a;
+  }
+
+  while (true) {
+    // non-ocamljs functions can't be under/over-applied
+    if (!m.$oc) {
+      if (m.apply)
+        return m.apply(t, a);
+      else
+        // IE < 8 doesn't support apply for DOM methods, but does support "cached" methods bound to an object
+        switch (a.length) {
+        case 0: return m();
+        case 1: return m(a[0]);
+        case 2: return m(a[0], a[1]);
+        case 3: return m(a[0], a[1], a[2]);
+        case 4: return m(a[0], a[1], a[2], a[3]);
+        case 5: return m(a[0], a[1], a[2], a[3], a[4]);
+        case 6: return m(a[0], a[1], a[2], a[3], a[4], a[5]);
+        case 7: return m(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
+        default: throw "unimplemented";
+        }
+    }
+
+    var al = a.length;
+    var ml = m.length;
+
+    if (al < ml)
+    {
+      switch (ml - al) {
+      case 1: return _f(function (z) { return m.apply(t, ap(a, arguments)) });
+      case 2: return _f(function (z,y) { return m.apply(t, ap(a, arguments)) });
+      case 3: return _f(function (z,y,x) { return m.apply(t, ap(a, arguments)) });
+      case 4: return _f(function (z,y,x,w) { return m.apply(t, ap(a, arguments)) });
+      case 5: return _f(function (z,y,x,w,v) { return m.apply(t, ap(a, arguments)) });
+      case 6: return _f(function (z,y,x,w,v,u) { return m.apply(t, ap(a, arguments)) });
+      case 7: return _f(function (z,y,x,w,v,u,s) { return m.apply(t, ap(a, arguments)) });
+      default: throw "unimplemented";
+      }
+    }
+    else if (al == ml)
+      return m.apply(t, a);
+    else // al > ml
+    {
+      m = _m(m, t, a.slice(0, ml));
+      t = m;
+      a = a.slice(ml);
+    }
+  }
+}
+@end @*/
+
 // tail call
 function __m(m, t, args)
 {
