@@ -105,5 +105,5 @@ let replaceNode n nb =
 
 let clicks elem =
   let e = make () in
-  elem#_set_onclick (Ocamljs.jsfun (fun () -> send e ()));
+  elem#_set_onclick (Ocamljs.jsfun (fun _ -> send e (); false));
   e

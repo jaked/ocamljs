@@ -176,8 +176,8 @@ let comp_ccall c es =
 
 let comp_comparison c e1 e2 =
   match c with
-    | Ceq -> << $e1$ == $e2$ >>
-    | Cneq -> << $e1$ != $e2$ >>
+    | Ceq -> << $e1$ === $e2$ >>
+    | Cneq -> << $e1$ !== $e2$ >>
     | Clt -> << $e1$ < $e2$ >>
     | Cgt -> << $e1$ > $e2$ >>
     | Cle -> << $e1$ <= $e2$ >>
