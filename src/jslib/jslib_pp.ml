@@ -320,7 +320,7 @@ and stmt ppf = function
   | Jfuns (_, i, is, ss) ->
       fprintf ppf "@[<hv>function %s (@[%a@]) %a@]" i ids is block ss
 
-  | Jreturn (_, e) -> fprintf ppf "@[return%a;@]" (opt_nbsp (expp p)) e
+  | Jreturn (_, e) -> fprintf ppf "@[<h>return%a;@]" (opt_nbsp (expp p)) e
   | Jcontinue (_, i) -> fprintf ppf "@[continue%a;@]" (opt_nbsp id) i
   | Jbreak (_, i) -> fprintf ppf "@[break%a;@]" (opt_nbsp id) i
 

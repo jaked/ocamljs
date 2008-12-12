@@ -422,6 +422,18 @@ and comp_expr_st tail expr k =
                          maybe_block (comp_expr_st tail t k),
                          None)) :: (comp_expr_st tail e k)
 
+    | Lifthenelse (i, (Lifthenelse _ as t), e) when k == kreturn ->
+        (Jslib_ast.Jites (_loc,
+                         << !$comp_expr false i$ >>,
+                         maybe_block (comp_expr_st tail e k),
+                         None)) :: (comp_expr_st tail t k)
+
+    | Lifthenelse (i, t, e) when k == kreturn ->
+        (Jslib_ast.Jites (_loc,
+                         comp_expr false i,
+                         maybe_block (comp_expr_st tail t k),
+                         None)) :: (comp_expr_st tail e k)
+
     | Lifthenelse (i, t, e) ->
 	[ Jslib_ast.Jites (_loc,
                           comp_expr false i,
