@@ -132,7 +132,8 @@ function ___m(m, t, a)
 function __m(m, t, args)
 {
   args.$m = m;
-  args.$tr = t;
+  args.$t = t;
+  args.$tr = true;
   return args;
 }
 function __(t, args) { return __m(t, t, args); }
@@ -142,7 +143,7 @@ function _m(m, t, args)
 {
   var v = __m(m, t, args);
   while (v && v.$tr)
-    v = ___m(v.$m, v.$tr, v);
+    v = ___m(v.$m, v.$t, v);
   return v;
 }
 function _(t, args) { return _m(t, t, args); }
