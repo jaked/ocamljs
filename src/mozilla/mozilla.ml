@@ -157,6 +157,8 @@ struct
     inherit supports
     method addEventListener : string -> #dOMEventListener -> bool -> unit
     method removeEventListener : string -> #dOMEventListener -> bool -> unit
+    method addEventListener_fun_ : string -> (#dOMEvent -> unit) Ocamljs.jsfun -> bool -> unit
+    method removeEventListener_fun_ : string -> (#dOMEvent -> unit) Ocamljs.jsfun -> bool -> unit
     method dispatchEvent : #dOMEvent -> bool
   end
 
@@ -705,8 +707,6 @@ struct
   class type eventTarget =
   object
     inherit XPCOM.dOMEventTarget
-    method addEventListener_fun_ : string -> (#event -> unit) Ocamljs.jsfun -> bool -> unit
-    method removeEventListener_fun_ : string -> (#event -> unit) Ocamljs.jsfun -> bool -> unit
   end
 
   class type node =

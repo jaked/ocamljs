@@ -84,7 +84,7 @@ external new_RegExp_attributes : string -> string -> regexp = "$new" "RegExp"
 
 class type js_string =
 object
-  method match_ : regexp -> string array
+  method match__ : regexp -> string array
   method split : string -> string array
   method indexOf : string -> int
   method replace : regexp -> string -> string
