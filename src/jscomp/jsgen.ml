@@ -489,7 +489,8 @@ and comp_expr_st tail expr k =
 
     | Lprim (Praise, [e]) -> [ Jslib_ast.Jthrow (_loc, comp_expr false e) ]
 
-    | Lprim (Pignore, [e]) -> comp_expr_st false e keffect
+    | Lprim (Pignore, [e]) ->
+        comp_expr_st tail (Lsequence (e, Lconst (Const_pointer 0))) k
 
     | Lstaticcatch (e1, (lab, args), e2) ->
         (* The raised flag indicates whether e1 exits normally or via
