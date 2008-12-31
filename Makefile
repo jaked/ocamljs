@@ -24,9 +24,13 @@ clean:
 		$(MAKE) -C src/$$pkg clean || exit; \
 	done
 	make -C test clean
+	make -C examples clean
 	rm -rf stage/*
 
 test:
 	make -C test
 
-.PHONY: test
+examples:
+	make -C examples
+
+.PHONY: test examples
