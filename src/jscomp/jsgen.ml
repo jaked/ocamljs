@@ -398,7 +398,8 @@ and comp_expr_st tail expr k =
 	  match d with
 	    | Upto -> << $jv$ <= $ce2$ >>, << $jv$++ >>
 	    | Downto -> << $jv$ >= $ce2$ >>, << $jv$-- >> in
-	[ Jslib_ast.Jfor (_loc,
+	[ <:stmt< var $id:i$; >>;
+          Jslib_ast.Jfor (_loc,
                          Some << $id:i$ = $ce1$ >>,
                          Some te,
                          Some ie,
