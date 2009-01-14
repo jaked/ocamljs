@@ -354,6 +354,7 @@ end
 class type window =
 object
   method _set_onload : (unit -> unit) Ocamljs.jsfun -> unit
+  method _set_onbeforeunload : (unit -> string) Ocamljs.jsfun -> unit
   method _get_location : location
 
   method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> interval_id
@@ -371,6 +372,18 @@ object
   method _get_scrollTop : int
 end
 
+class type cssRule =
+object
+  method _get_selectorText : string
+  method _get_style : style
+end
+
+class type styleSheet =
+object
+  method _get_href : string
+  method _get_cssRules : cssRule array
+end
+
 class type document =
 object
   inherit element
@@ -381,6 +394,7 @@ object
   method _get_body : body
   method _get_cookie : string
   method _set_cookie : string -> unit
+  method _get_styleSheets : styleSheet array
 end
 
 class type form =
