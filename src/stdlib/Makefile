@@ -28,3 +28,5 @@ ocaml:
 stdlib.mllib:
 	ln -s ocaml/stdlib/stdlib.mllib .
 	ln -s ocaml/stdlib/random.mli .
+	ln -s ocaml/stdlib/camlinternalMod.mli .
+
