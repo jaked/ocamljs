@@ -8,7 +8,7 @@ TESTS=$(basename $(wildcard *.ml))
 all: $(addsuffix .test,$(TESTS))
 
 %.js : %.ml
-	../bin/ocamljs $(COMPFLAGS) -I ../lib -o $@ $<
+	../../src/jscomp/jsmain.byte $(COMPFLAGS) -I ../lib -o $@ $<
 
 %.exp : %.ml
 	ocamlc $(COMPFLAGS) -o $(basename $@) $<; \
