@@ -3,7 +3,7 @@ let (|>) x f = f x
 open Froc
 
 let ticks_b msb =
-  let e = make () in
+  let e = make_event () in
   let id = ref None in
   let set_interval r =
     (match !id with Some i -> Dom.window#clearInterval i; id := None | _ -> ());
@@ -15,7 +15,7 @@ let ticks_b msb =
   e
 
 let ticks ms =
-  let e = make () in
+  let e = make_event () in
   ignore (Dom.window#setInterval (Ocamljs.jsfun (fun () -> send e ())) ms);
   e
 
@@ -36,7 +36,7 @@ let send_delayed_event e de =
   send de
 
 let delay_eb t msb =
-  let e = make () in
+  let e = make_event () in
   let rec de = { l_val = Fail Exit; l_next = de } in
   let de_next = ref de in
   notify_e t (fun r ->
@@ -58,7 +58,7 @@ let delay_bb t msb =
 let delay_b t ms = delay_bb t (return ms)
 
 let mouse_e =
-  let e = make () in
+  let e = make_event () in
   Dom.document#addEventListener_mouseEvent_
     "mousemove"
     (Ocamljs.jsfun (fun me -> send e (me#_get_clientX, me#_get_clientY)))
@@ -104,6 +104,6 @@ let replaceNode n nb =
   notify_b nb update
 
 let clicks elem =
-  let e = make () in
+  let e = make_event () in
   elem#_set_onclick (Ocamljs.jsfun (fun _ -> send e (); false));
   e

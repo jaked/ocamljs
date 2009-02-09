@@ -1,4 +1,4 @@
-DIRS=clicks follow-the-mouse wheres-the-mouse
+DIRS=clicks follow-the-mouse wheres-the-mouse orbit-mouse
 
 all:
 	for dir in $(DIRS); do \

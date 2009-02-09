@@ -1,6 +1,7 @@
 FILES=\
 froc-dom.cmjsa \
-froc_dom.mli froc_dom.cmi
+froc_dom.mli froc_dom.cmi \
+froc_dom_anim.mli froc_dom_anim.cmi
 
 BFILES=$(addprefix _build/,$(FILES))
 

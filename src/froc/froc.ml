@@ -7,15 +7,15 @@ let notify_b = notify
 
 let switch bb = bb >>= fun b -> b
 
-let make () = make_unset ~event:true ()
+let make_event () = make ~event:true ()
 
 let merge ts =
-  let t = make () in
+  let t = make_event () in
   List.iter (fun t' -> notify t' (write_result t)) ts;
   t
 
 let map f t =
-  let t' = make () in
+  let t' = make_event () in
   notify t
     (fun r ->
       let r =
@@ -28,7 +28,7 @@ let map f t =
   t'
 
 let filter p t =
-  let t' = make () in
+  let t' = make_event () in
   notify t
     (fun r ->
       let r =
@@ -41,7 +41,7 @@ let filter p t =
   t'
 
 let collect f init t =
-  let t' = make () in
+  let t' = make_event () in
   let s = ref (Value init) in
   notify t
     (fun r ->
@@ -76,15 +76,15 @@ let send_result t r = enqueue (fun () -> write_result t r)
 let send t v = send_result t (Value v)
 let send_exn t e = send_result t (Fail e)
 
-let hold_result init e =
-  let b = make_result init in
+let hold_result ?eq init e =
+  let b = make ?eq ~result:init () in
   notify e (write_result b);
   b
 
-let hold init e = hold_result (Value init) e
+let hold ?eq init e = hold_result ?eq (Value init) e
 
 let changes b =
-  let e = make () in
+  let e = make_event () in
   notify b (send_result e);
   e
 
