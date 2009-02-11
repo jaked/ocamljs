@@ -2,8 +2,6 @@ module D = Dom
 module F = Froc
 module Fd = Froc_dom
 
-let (>>) = F.(>>)
-
 let onload () =
 
   let span_of_string s =
@@ -14,10 +12,10 @@ let onload () =
 
   Fd.replaceNode
     (D.document#getElementById "Mleft")
-    (Fd.mouse_b >> fun (x, y) -> span_of_string (string_of_int x));
+    (F.blift Fd.mouse_b (fun (x, y) -> span_of_string (string_of_int x)));
   Fd.replaceNode
     (D.document#getElementById "Mtop")
-    (Fd.mouse_b >> fun (x, y) -> span_of_string (string_of_int y))
+    (F.blift Fd.mouse_b (fun (x, y) -> span_of_string (string_of_int y)))
 
 ;;
 

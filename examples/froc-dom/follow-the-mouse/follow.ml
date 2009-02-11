@@ -2,9 +2,6 @@ module D = Dom
 module F = Froc
 module Fd = Froc_dom
 
-let (>>=) = F.(>>=)
-let (>>) = F.(>>)
-
 let onload () =
 
   let delay = 300. in
@@ -29,7 +26,7 @@ let onload () =
     div in
 
   Fd.appendChild body
-    (Fd.mouse_b >> fun (x, y) ->
+    (F.blift Fd.mouse_b (fun (x, y) ->
       div
         ~id:"themouse"
         ~color:"#FFFFFF"
@@ -38,13 +35,13 @@ let onload () =
         ~left:(string_of_int x)
         ~top:(string_of_int y)
         ~padding:"10px"
-        [ D.document#createTextNode "the mouse!" ]);
+        [ D.document#createTextNode "the mouse!" ]));
 
   let mouse_offset = (D.document#getElementById "themouse")#_get_offsetWidth in
-  let tail_pos = Fd.delay_b Fd.mouse_b delay >> fun (x, y) -> (x + mouse_offset, y) in
+  let tail_pos = F.blift (Fd.delay_b Fd.mouse_b delay) (fun (x, y) -> (x + mouse_offset, y)) in
 
   Fd.appendChild body
-    (tail_pos >> fun (x, y) ->
+    (F.blift tail_pos (fun (x, y) ->
       div
         ~id:"tail"
         ~color:"#FF0000"
@@ -53,17 +50,19 @@ let onload () =
         ~left:(string_of_int x)
         ~top:(string_of_int y)
         ~padding:"10px"
-        [ D.document#createTextNode "its tail!" ]);
+        [ D.document#createTextNode "its tail!" ]));
 
   let wag_delay = delay *. 1.5 in
   let mouseandtail_offset = mouse_offset + (D.document#getElementById "tail")#_get_offsetWidth in
   let wag_offset = F.hold 0 (F.collect (fun _ _ -> (Random.int 10) - 5) 0 (Fd.ticks 100.)) in
   let wag_pos =
-    Fd.delay_b Fd.mouse_b wag_delay >>= fun (x, y) ->
-      wag_offset >> fun wag_offset -> (x + mouseandtail_offset, y + wag_offset) in
+    F.blift2
+      (Fd.delay_b Fd.mouse_b wag_delay) wag_offset
+      (fun (x, y) wag_offset ->
+        (x + mouseandtail_offset, y + wag_offset)) in
 
   Fd.appendChild body
-    (wag_pos >> fun (x, y) ->
+    (F.blift wag_pos (fun (x, y) ->
       div
         ~id:"wagging"
         ~color:"#FFFF00"
@@ -72,7 +71,7 @@ let onload () =
         ~left:(string_of_int x)
         ~top:(string_of_int y)
         ~padding:"10px"
-        [ D.document#createTextNode "is happy!" ]);
+        [ D.document#createTextNode "is happy!" ]));
 
 ;;
 

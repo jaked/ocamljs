@@ -18,15 +18,16 @@ let onload () =
 
   Fd.attach_innerHTML
     (D.document#getElementById "difference")
-    (clicks >>= fun clicks ->
-      ticks >>= fun ticks ->
-        let s =
-          if clicks = ticks
-          then "same number of clicks as ticks"
-          else if clicks > ticks
-          then string_of_int (clicks - ticks) ^ " more clicks than ticks"
-          else string_of_int (ticks - clicks) ^ " more ticks than clicks" in
-        F.return s)
+    (F.bind2
+        clicks ticks
+        (fun clicks ticks ->
+          let s =
+            if clicks = ticks
+            then "same number of clicks as ticks"
+            else if clicks > ticks
+            then string_of_int (clicks - ticks) ^ " more clicks than ticks"
+            else string_of_int (ticks - clicks) ^ " more ticks than clicks" in
+          F.return s))
 
 ;;
 
