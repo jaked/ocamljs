@@ -5,6 +5,8 @@ all: myocamlbuild.ml ocaml stdlib.mllib
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild stdlib.cmjsa std_exit.cmjs
 
+doc:
+
 install:
 	cp _build/stdlib.cmjsa $(LIBDIR)
 	cp _build/ocaml/stdlib/std_exit.cmjs $(LIBDIR)

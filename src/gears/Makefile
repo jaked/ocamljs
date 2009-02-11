@@ -11,6 +11,10 @@ all: myocamlbuild.ml
 	ocamlfind remove -destdir ../../stage gears
 	ocamlfind install -destdir ../../stage gears META $(BFILES)
 
+doc:
+	OCAMLPATH=`pwd`/../../stage \
+	ocamlbuild doc.docdir/index.html
+
 install:
 	ocamlfind install gears META $(BFILES)
 

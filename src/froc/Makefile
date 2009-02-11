@@ -13,6 +13,10 @@ all: myocamlbuild.ml
 	ocamlfind remove -destdir ../../stage froc
 	ocamlfind install -destdir ../../stage froc META $(BFILES)
 
+doc:
+	OCAMLPATH=`pwd`/../../stage \
+	ocamlbuild doc.docdir/index.html
+
 install:
 	ocamlfind install froc META $(BFILES)
 

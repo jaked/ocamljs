@@ -13,6 +13,10 @@ all: myocamlbuild.ml
 	ocamlfind remove -destdir ../../stage jslib
 	ocamlfind install -destdir ../../stage jslib META $(BFILES)
 
+doc:
+	OCAMLPATH=`pwd`/../../stage \
+	ocamlbuild doc.docdir/index.html
+
 install:
 	ocamlfind install jslib META $(BFILES)
 

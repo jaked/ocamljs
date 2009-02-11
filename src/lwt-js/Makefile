@@ -1,6 +1,10 @@
 all: myocamlbuild.ml
 	ocamlbuild lwt-js.cmjsa
 
+doc:
+	OCAMLPATH=`pwd`/../../stage \
+	ocamlbuild doc.docdir/index.html
+
 install:
 	ocamlfind install lwt-js META _build/*.cmi _build/*.cmjsa
 

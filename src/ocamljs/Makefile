@@ -5,6 +5,10 @@ all: myocamlbuild.ml
 	ocamlfind remove -destdir ../../stage ocamljs
 	ocamlfind install -destdir ../../stage ocamljs META _build/*.cmi _build/*.cmjs
 
+doc:
+	OCAMLPATH=`pwd`/../../stage \
+	ocamlbuild doc.docdir/index.html
+
 install:
 	cp support.js $(LIBDIR)
 	cp primitives.js $(LIBDIR)

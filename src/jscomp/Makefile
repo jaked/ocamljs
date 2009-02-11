@@ -2,6 +2,8 @@ include ../../ocaml/config/Makefile
 
 all: myocamlbuild.ml ocaml prereqs ocamljs # ocamljs.opt
 
+doc:
+
 prereqs:
 	./ocaml/build/mkmyocamlbuild_config.sh
 	make -C ocaml/byterun primitives # how does this get built for regular OCaml?
