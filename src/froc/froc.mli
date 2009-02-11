@@ -41,3 +41,93 @@ val hold_result : ?eq:('a -> 'a -> bool) -> 'a result -> 'a event -> 'a behavior
 val changes : 'a behavior -> 'a event
 val when_true : bool behavior -> unit event
 val count : 'a event -> int behavior
+
+val bind2 :
+  'a1 behavior -> 'a2 behavior ->
+  ('a1 -> 'a2 -> 'b behavior) ->
+  'b behavior
+val lift2 :
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'b) ->
+  'a1 behavior -> 'a2 behavior ->
+  'b behavior
+val blift2 :
+  'a1 behavior -> 'a2 behavior ->
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'b) ->
+  'b behavior
+
+val bind3 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior ->
+  ('a1 -> 'a2 -> 'a3 -> 'b behavior) ->
+  'b behavior
+val lift3 :
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'b) ->
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior ->
+  'b behavior
+val blift3 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior ->
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'b) ->
+  'b behavior
+
+val bind4 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'b behavior) ->
+  'b behavior
+val lift4 :
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'b) ->
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior ->
+  'b behavior
+val blift4 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior ->
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'b) ->
+  'b behavior
+
+val bind5 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior -> 'a5 behavior ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b behavior) ->
+  'b behavior
+val lift5 :
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b) ->
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior -> 'a5 behavior ->
+  'b behavior
+val blift5 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior -> 'a5 behavior ->
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b) ->
+  'b behavior
+
+val bind6 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior -> 'a5 behavior -> 'a6 behavior ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'a6 -> 'b behavior) ->
+  'b behavior
+val lift6 :
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'a6 -> 'b) ->
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior -> 'a5 behavior -> 'a6 behavior ->
+  'b behavior
+val blift6 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior -> 'a5 behavior -> 'a6 behavior ->
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'a6 -> 'b) ->
+  'b behavior
+
+val bind7 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior -> 'a5 behavior -> 'a6 behavior -> 'a7 behavior ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'a6 -> 'a7 -> 'b behavior) ->
+  'b behavior
+val lift7 :
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'a6 -> 'a7 -> 'b) ->
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior -> 'a5 behavior -> 'a6 behavior -> 'a7 behavior ->
+  'b behavior
+val blift7 :
+  'a1 behavior -> 'a2 behavior -> 'a3 behavior -> 'a4 behavior -> 'a5 behavior -> 'a6 behavior -> 'a7 behavior ->
+  ?eq:('b -> 'b -> bool) ->
+  ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'a6 -> 'a7 -> 'b) ->
+  'b behavior
