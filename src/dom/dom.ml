@@ -9,6 +9,11 @@ object
   method _get_parentNode : node
 end
 
+class type documentFragment =
+object
+  inherit node
+end
+
 class type abstractView =
 object
 end
@@ -359,6 +364,8 @@ object
   method _set_onbeforeunload : (unit -> string) Ocamljs.jsfun -> unit
   method _get_location : location
 
+  method alert : string -> unit
+
   method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> interval_id
   method clearInterval : interval_id -> unit
 
@@ -390,6 +397,7 @@ class type document =
 object
   inherit element
 
+  method createDocumentFragment : documentFragment
   method createElement : string -> #element
   method createTextNode : string -> text
   method getElementById : string -> #element
@@ -530,6 +538,12 @@ end
 
 class type image =
 object
+  inherit element
+
+  method _get_src : string
+  method _set_src : string -> unit
+
+  method _set_onclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
 end
 
 class type canvas =
@@ -551,8 +565,8 @@ and canvasRenderingContext2D =
 object
   method _get_canvas : canvas
 
-  method save : unit -> unit
-  method restore : unit -> unit
+  method save : unit
+  method restore : unit
 
   method scale : float -> float -> unit
   method rotate : float -> unit

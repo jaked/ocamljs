@@ -1,4 +1,4 @@
-DIRS=canvas
+DIRS=canvas minesweeper
 
 all:
 	for dir in $(DIRS); do \

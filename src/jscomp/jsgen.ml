@@ -399,11 +399,16 @@ and comp_expr_st tail expr k =
 	    | Upto -> << $jv$ <= $ce2$ >>, << $jv$++ >>
 	    | Downto -> << $jv$ >= $ce2$ >>, << $jv$-- >> in
 	[ <:stmt< var $id:i$; >>;
+          (* wrap loop body in a function / call so closures over loop var work *)
           Jslib_ast.Jfor (_loc,
                          Some << $id:i$ = $ce1$ >>,
                          Some te,
                          Some ie,
-                         maybe_block ce3) ]
+                         Jslib_ast.Jblock(_loc,
+                                         [ Jslib_ast.Jexps (_loc,
+                                                           Jslib_ast.Jcall(_loc,
+                                                                          Jslib_ast.Jfun(_loc, None, [i], ce3),
+                                                                          Jslib_ast.Jexp_list(_loc, [jv]))) ] )) ]
 
     | Lwhile (e1, e2) ->
 	[ Jslib_ast.Jwhile (_loc, comp_expr false e1, maybe_block (comp_expr_st false e2 keffect)) ]
