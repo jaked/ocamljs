@@ -5,18 +5,22 @@ open Froc
 let ticks_b msb =
   let e = make_event () in
   let id = ref None in
+  let clear () =
+    match !id with Some i -> Dom.window#clearInterval i; id := None | _ -> () in
   let set_interval r =
-    (match !id with Some i -> Dom.window#clearInterval i; id := None | _ -> ());
+    clear ();
     match r with
       | Value p -> id := Some (Dom.window#setInterval (Ocamljs.jsfun (fun () -> send e ())) p)
       | Fail _ -> () (* ? *) in
   set_interval (read_result msb);
+  cleanup clear;
   notify_b msb set_interval;
   e
 
 let ticks ms =
   let e = make_event () in
-  ignore (Dom.window#setInterval (Ocamljs.jsfun (fun () -> send e ())) ms);
+  let id = Dom.window#setInterval (Ocamljs.jsfun (fun () -> send e ())) ms in
+  cleanup (fun () -> Dom.window#clearInterval id);
   e
 
 type 'a link = {
@@ -57,19 +61,27 @@ let delay_bb t msb =
 
 let delay_b t ms = delay_bb t (return ms)
 
-let mouse_e =
+let mouse_e () =
   let e = make_event () in
-  Dom.document#addEventListener_mouseEvent_
-    "mousemove"
-    (Ocamljs.jsfun (fun me -> send e (me#_get_clientX, me#_get_clientY)))
-    false;
+  let f = Ocamljs.jsfun (fun me -> send e (me#_get_clientX, me#_get_clientY)) in
+  Dom.document#addEventListener_mouseEvent_ "mousemove" f false;
+  cleanup (fun () -> Dom.document#addEventListener_mouseEvent_ "mousemove" f false);
   e
 
-let mouse_b = hold (0, 0) mouse_e
+let mouse_b () = hold (0, 0) (mouse_e ())
 
 let attach_innerHTML elem b =
   let e = changes b in
   notify_e e (function Value s -> elem#_set_innerHTML s | _ -> ())
+
+let input_value_e input =
+  let e = make_event () in
+  let f = Ocamljs.jsfun (fun _ -> send e input#_get_value) in
+  input#addEventListener "change" f false;
+  cleanup (fun () -> input#addEventListener "change" f false);
+  e
+
+let input_value_b input = hold input#_get_value (input_value_e input)
 
 let node_of_result = function
   | Value v -> (v :> Dom.node)
@@ -103,7 +115,9 @@ let replaceNode n nb =
   update (read_result nb);
   notify_b nb update
 
-let clicks elem =
+let clicks (elem : #Dom.element) =
   let e = make_event () in
-  elem#_set_onclick (Ocamljs.jsfun (fun _ -> send e (); false));
+  let f = Ocamljs.jsfun (fun ev -> ev#preventDefault; send e ()) in
+  elem#addEventListener "click" f false;
+  cleanup (fun () -> elem#removeEventListener "click" f false);
   e

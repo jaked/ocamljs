@@ -17,6 +17,8 @@ class type eventTarget =
 object
   method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
   method addEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
+  method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
+  method removeEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
 end
 
 and event =
@@ -469,6 +471,7 @@ object
   method click : unit
 
   method _set_onclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onchange : (unit -> unit) Ocamljs.jsfun -> unit
 end
 
 class type option =

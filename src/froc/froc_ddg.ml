@@ -170,6 +170,9 @@ let add_edge t read =
 let notify t f =
   add_dep (tick ()) t f
 
+let cleanup f =
+  TS.set_cleanup (tick()) f
+
 let connect t t' =
   let f _ = write_result t t'.state in
   f ();

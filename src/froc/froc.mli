@@ -30,6 +30,7 @@ val send_exn : 'a event -> exn -> unit
 val send_result : 'a event -> 'a result -> unit
 
 val notify_e : 'a event -> ('a result -> unit) -> unit
+val cleanup : (unit -> unit) -> unit
 
 val merge : 'a event list -> 'a event
 val map : ('a -> 'b) -> 'a event -> 'b event

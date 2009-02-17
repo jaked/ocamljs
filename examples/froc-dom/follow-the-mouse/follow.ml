@@ -25,8 +25,10 @@ let onload () =
     List.iter (fun c -> ignore(div#appendChild c)) (cs :> D.node list);
     div in
 
+  let mouse = Fd.mouse_b () in
+
   Fd.appendChild body
-    (F.blift Fd.mouse_b (fun (x, y) ->
+    (F.blift mouse (fun (x, y) ->
       div
         ~id:"themouse"
         ~color:"#FFFFFF"
@@ -38,7 +40,7 @@ let onload () =
         [ D.document#createTextNode "the mouse!" ]));
 
   let mouse_offset = (D.document#getElementById "themouse")#_get_offsetWidth in
-  let tail_pos = F.blift (Fd.delay_b Fd.mouse_b delay) (fun (x, y) -> (x + mouse_offset, y)) in
+  let tail_pos = F.blift (Fd.delay_b mouse delay) (fun (x, y) -> (x + mouse_offset, y)) in
 
   Fd.appendChild body
     (F.blift tail_pos (fun (x, y) ->
@@ -57,7 +59,7 @@ let onload () =
   let wag_offset = F.hold 0 (F.collect (fun _ _ -> (Random.int 10) - 5) 0 (Fd.ticks 100.)) in
   let wag_pos =
     F.blift2
-      (Fd.delay_b Fd.mouse_b wag_delay) wag_offset
+      (Fd.delay_b mouse wag_delay) wag_offset
       (fun (x, y) wag_offset ->
         (x + mouseandtail_offset, y + wag_offset)) in
 

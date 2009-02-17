@@ -10,12 +10,14 @@ let onload () =
     ignore (sp#appendChild t);
     sp in
 
+  let mouse = Fd.mouse_b () in
+
   Fd.replaceNode
     (D.document#getElementById "Mleft")
-    (F.blift Fd.mouse_b (fun (x, y) -> span_of_string (string_of_int x)));
+    (F.blift mouse (fun (x, y) -> span_of_string (string_of_int x)));
   Fd.replaceNode
     (D.document#getElementById "Mtop")
-    (F.blift Fd.mouse_b (fun (x, y) -> span_of_string (string_of_int y)))
+    (F.blift mouse (fun (x, y) -> span_of_string (string_of_int y)))
 
 ;;
 
