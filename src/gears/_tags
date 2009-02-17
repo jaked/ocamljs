@@ -1,1 +1,1 @@
-<*.ml*> : pkg_ocamljs
+<*.ml*> : pkg_ocamljs,pkg_javascript
