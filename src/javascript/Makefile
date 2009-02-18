@@ -1,6 +1,8 @@
 all: myocamlbuild.ml
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild javascript.cmjs
+	ocamlfind remove -destdir ../../stage javascript
+	ocamlfind install -destdir ../../stage javascript META _build/*.cmi _build/*.cmjs
 
 doc:
 	OCAMLPATH=`pwd`/../../stage \

@@ -49,14 +49,10 @@ and binop =
     | Jxor_assign
     | Jor_assign
 
-and exp_list =
-    | Jexp_list of loc * exp list
-    | Jexp_list_Ant of loc * string
-
 and exp =
     | Jthis of     loc
     | Jvar of      loc * string
-    | Jarray of    loc * exp_list
+    | Jarray of    loc * exp
     | Jobject of   loc * (exp * exp) list
     | Jstring of   loc * string * bool (* true if double-quoted *)
     | Jnum of      loc * string
@@ -67,8 +63,10 @@ and exp =
     | Junop of     loc * unop * exp
     | Jbinop of    loc * binop * exp * exp
     | Jite of      loc * exp * exp * exp
-    | Jcall of     loc * exp * exp_list
-    | Jnew of      loc * exp * exp_list option
+    | Jcall of     loc * exp * exp
+    | Jnew of      loc * exp * exp option
+    | Jexp_nil of  loc
+    | Jexp_cons of loc * exp * exp
     | Jexp_Ant of  loc * string
 
 and stmt =

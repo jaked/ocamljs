@@ -30,5 +30,8 @@ ocaml:
 stdlib.mllib:
 	ln -s ocaml/stdlib/stdlib.mllib .
 	ln -s ocaml/stdlib/random.mli .
+	ln -s ocaml/stdlib/buffer.mli .
 	ln -s ocaml/stdlib/camlinternalMod.mli .
-
+	# the following is a hack to get ocamlbuild to link in the right order
+	ln -s ocaml/stdlib/arg.mli .
+	ln -s ocaml/stdlib/arg.ml .

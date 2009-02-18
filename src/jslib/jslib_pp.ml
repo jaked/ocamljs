@@ -216,6 +216,9 @@ let prec = function
   | Jcall _ -> pCall
   | Jexp_Ant _ -> pPrimary
 
+  | Jexp_nil _ -> assert false
+  | Jexp_cons _ -> assert false
+
 let opt f ppf x =
   match x with
     | None -> ()
@@ -291,16 +294,18 @@ and exp ppf = function
   | Jnew (_, e, Some es) -> fprintf ppf "@[new %a(%a)@]" (expp pMember) e exps es
   | Jexp_Ant (_, s) -> fprintf ppf "$%s$" s
 
-and exps ppf es =
-  match es with
-    | Jexp_list (_, es) ->
-        let com = ref false in
-        List.iter
-          (fun e ->
-            if !com then fprintf ppf ",@ " else com := true;
-            fprintf ppf "@[<2>%a@]" (expp pAssignment) e)
-          es
-    | Jexp_list_Ant (_, s) -> fprintf ppf "$%s$" s
+  | Jexp_nil _ -> assert false
+  | Jexp_cons _ -> assert false
+
+and exps ppf e =
+  match e with
+    | Jexp_nil _ -> ()
+    | Jexp_cons (_, e1, e2) ->
+        exps ppf e1;
+        fprintf ppf ",@ ";
+        exps ppf e2;
+    | _ ->
+        fprintf ppf "@[<2>%a@]" (expp pAssignment) e
 
 and stmt ppf = function
   | Jempty _ -> fprintf ppf ";"

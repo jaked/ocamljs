@@ -52,7 +52,7 @@ object
           match n with
             | "`int" -> <:expr< string_of_int $e$ >>
             | "`flo" -> <:expr< string_of_float $e$ >>
-            | "exps" -> <:expr< Jslib_ast.Jexp_list (_loc, $e$) >>
+            | "listexp" -> <:expr< Jslib_ast.exp_of_list $e$ >>
             (* | "`str" -> <:expr< Ast.safe_string_escaped $e$ >> *)
             | _ -> e )
       | e -> super#expr e

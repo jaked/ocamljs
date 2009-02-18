@@ -2,6 +2,10 @@ type loc = Camlp4.PreCast.Loc.t
 
 INCLUDE "../jslib_ast.incl"
 
+val loc_of_exp : exp -> Camlp4.PreCast.Loc.t
+val exp_of_list : exp list -> exp
+val list_of_exp : exp -> exp list -> exp list
+
 module Meta :
   sig
     module type META_LOC =
@@ -67,9 +71,6 @@ module Meta :
               val meta_exp :
                 Camlp4.PreCast.Ast.loc ->
                 exp -> Camlp4.PreCast.Ast.expr
-              val meta_exp_list :
-                Camlp4.PreCast.Ast.loc ->
-                exp_list -> Camlp4.PreCast.Ast.expr
               val meta_stmt :
                 Camlp4.PreCast.Ast.loc ->
                 stmt -> Camlp4.PreCast.Ast.expr
@@ -105,9 +106,6 @@ module Meta :
               val meta_exp :
                 Camlp4.PreCast.Ast.loc ->
                 exp -> Camlp4.PreCast.Ast.patt
-              val meta_exp_list :
-                Camlp4.PreCast.Ast.loc ->
-                exp_list -> Camlp4.PreCast.Ast.patt
               val meta_stmt :
                 Camlp4.PreCast.Ast.loc ->
                 stmt -> Camlp4.PreCast.Ast.patt

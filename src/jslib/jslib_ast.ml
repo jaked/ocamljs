@@ -22,6 +22,19 @@ end
 
 include Jslib_ast
 
+external loc_of_exp : exp -> Loc.t = "%field0"
+
+let rec exp_of_list = function
+  | [] -> Jexp_nil Loc.ghost
+  | [e] -> e
+  | e::es -> Jexp_cons (loc_of_exp e, e, exp_of_list es)
+
+let rec list_of_exp x acc =
+  match x with
+    | Jexp_nil _ -> acc
+    | Jexp_cons (_, e1, e2) -> list_of_exp e1 (list_of_exp e2 acc)
+    | e -> e :: acc
+
 module Meta =
 struct
 

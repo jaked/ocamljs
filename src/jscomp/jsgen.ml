@@ -79,9 +79,9 @@ let jnum_of_int i = Jslib_ast.Jnum (_loc, string_of_int i) (* XXX <:exp $`int:i$
 
 let makeblock tag ces =
   match tag with
-    | 0 -> let id = "$" in << $id:id$($ces$) >>
-    | (1|2|3|4|5|6|7|8|9) -> let id = "$" ^ string_of_int tag in << $id:id$($ces$) >>
-    | _ -> let id = "$N" in << $id:id$($exp:jnum_of_int tag$, [$ces$]) >>
+    | 0 -> let id = "$" in << $id:id$($list:ces$) >>
+    | (1|2|3|4|5|6|7|8|9) -> let id = "$" ^ string_of_int tag in << $id:id$($list:ces$) >>
+    | _ -> let id = "$N" in << $id:id$($exp:jnum_of_int tag$, [$list:ces$]) >>
 
 let exp_of_stmts ss = << $Jslib_ast.Jfun (_loc, None, [], ss)$ () >>
 
@@ -115,42 +115,42 @@ let keffect = function
 
 let comp_ccall c es =
   match c, es with
-    | ("caml_int32_format", _ | "caml_nativeint_format", _ | "caml_int64_format", _) -> << caml_format_int($es$) >>
-    | "caml_format_float", _ -> let id = "oc$$sprintf" in << $id:id$($es$) >>
-    | "caml_string_equal", _ -> let id = "oc$$seq" in << $id:id$($es$) >>
-    | "caml_string_notequal", _ -> let id = "oc$$sneq" in << $id:id$($es$) >>
-    | "caml_string_lessthan", _ -> let id = "oc$$slt" in << $id:id$($es$) >>
-    | "caml_string_greaterthan", _ -> let id = "oc$$sgt" in << $id:id$($es$) >>
-    | "caml_string_lessequal", _ -> let id = "oc$$slte" in << $id:id$($es$) >>
-    | "caml_string_greaterequal", _ -> let id = "oc$$sgte" in << $id:id$($es$) >>
-    | "caml_create_string", _ -> let id = "oc$$cms" in << $id:id$($es$) >>
+    | ("caml_int32_format", _ | "caml_nativeint_format", _ | "caml_int64_format", _) -> << caml_format_int($list:es$) >>
+    | "caml_format_float", _ -> let id = "oc$$sprintf" in << $id:id$($list:es$) >>
+    | "caml_string_equal", _ -> let id = "oc$$seq" in << $id:id$($list:es$) >>
+    | "caml_string_notequal", _ -> let id = "oc$$sneq" in << $id:id$($list:es$) >>
+    | "caml_string_lessthan", _ -> let id = "oc$$slt" in << $id:id$($list:es$) >>
+    | "caml_string_greaterthan", _ -> let id = "oc$$sgt" in << $id:id$($list:es$) >>
+    | "caml_string_lessequal", _ -> let id = "oc$$slte" in << $id:id$($list:es$) >>
+    | "caml_string_greaterequal", _ -> let id = "oc$$sgte" in << $id:id$($list:es$) >>
+    | "caml_create_string", _ -> let id = "oc$$cms" in << $id:id$($list:es$) >>
 
-    | "caml_power_float", _ -> << Math.pow($es$) >>
-    | "caml_exp_float", _ -> << Math.exp($es$) >>
-    | "caml_acos_float", _ -> << Math.acos($es$) >>
-    | "caml_asin_float", _ -> << Math.asin($es$) >>
-    | "caml_atan_float", _ -> << Math.atan($es$) >>
-    | "caml_atan2_float", _ -> << Math.atan2($es$) >>
-    | "caml_cos_float", _ -> << Math.cos($es$) >>
+    | "caml_power_float", _ -> << Math.pow($list:es$) >>
+    | "caml_exp_float", _ -> << Math.exp($list:es$) >>
+    | "caml_acos_float", _ -> << Math.acos($list:es$) >>
+    | "caml_asin_float", _ -> << Math.asin($list:es$) >>
+    | "caml_atan_float", _ -> << Math.atan($list:es$) >>
+    | "caml_atan2_float", _ -> << Math.atan2($list:es$) >>
+    | "caml_cos_float", _ -> << Math.cos($list:es$) >>
     (* | "caml_cosh_float", _ -> ? *)
-    | "caml_log_float", _ -> << Math.log($es$) >>
+    | "caml_log_float", _ -> << Math.log($list:es$) >>
     (* | "caml_log10_float", _ -> ? *)
-    | "caml_sin_float", _ -> << Math.sin($es$) >>
+    | "caml_sin_float", _ -> << Math.sin($list:es$) >>
     (* | "caml_sinh_float", _ -> ? *)
-    | "caml_sqrt_float", _ -> << Math.sqrt($es$) >>
-    | "caml_tan_float", _ -> << Math.tan($es$) >>
+    | "caml_sqrt_float", _ -> << Math.sqrt($list:es$) >>
+    | "caml_tan_float", _ -> << Math.tan($list:es$) >>
     (* | "caml_tanh_float", _ -> ? *)
-    | "caml_ceil_float", _ -> << Math.ceil($es$) >>
-    | "caml_floor_float", _ -> << Math.floor($es$) >>
-    | "caml_abs_float", _ -> << Math.abs($es$) >>
+    | "caml_ceil_float", _ -> << Math.ceil($list:es$) >>
+    | "caml_floor_float", _ -> << Math.floor($list:es$) >>
+    | "caml_abs_float", _ -> << Math.abs($list:es$) >>
 
     | "$assign", [e1; e2] -> << $e1$ = $e2$ >>
-    | "$call", e::es -> << $e$($es$) >>
+    | "$call", e::es -> << $e$($list:es$) >>
     | "$false", _ -> << false >>
     | "$fieldref", [e; Jslib_ast.Jstring (_loc, id, _)] -> << $e$.$id$ >>
-    | "$function", [Jslib_ast.Jcall (_loc, Jslib_ast.Jvar _, Jslib_ast.Jexp_list (_, [Jslib_ast.Jfun _ as f]))] -> f
+    | "$function", [Jslib_ast.Jcall (_loc, Jslib_ast.Jvar _, (Jslib_ast.Jfun _ as f))] -> f
     | "$hashref", [e1; e2] -> << $e1$[$e2$] >>
-    | "$new", (Jslib_ast.Jstring (_, id, _))::es -> << new $id:id$($es$) >>
+    | "$new", (Jslib_ast.Jstring (_, id, _))::es -> << new $id:id$($list:es$) >>
     | "$null", _ -> << null >>
     | "$this", _ -> << this >>
     | "$throw", [e] -> exp_of_stmts [ <:stmt< throw $e$; >> ]
@@ -161,18 +161,18 @@ let comp_ccall c es =
     | "$obj", [e] ->
 	let rec o e l =
 	  match e with
-	    | Jslib_ast.Jcall (_, Jslib_ast.Jvar _, Jslib_ast.Jexp_list (_, [ Jslib_ast.Jcall (_, Jslib_ast.Jvar _, Jslib_ast.Jexp_list (_, [Jslib_ast.Jstring _ as k; v])); e ])) -> o e ((k, v)::l)
+	    | Jslib_ast.Jcall (_, Jslib_ast.Jvar _, Jslib_ast.Jexp_cons (_, Jslib_ast.Jcall (_, Jslib_ast.Jvar _, Jslib_ast.Jexp_cons (_, (Jslib_ast.Jstring _ as k), v)), e)) -> o e ((k, v)::l)
 	    | Jslib_ast.Jnum _ -> List.rev l
 	    | _ -> raise (Unimplemented "bad $obj") in
 	Jslib_ast.Jobject (_loc, o e [])
 
     | _ ->
 	match c.[0], es with
-	  | '#', e::es -> let met = String.sub c 1 (String.length c - 1) in << $e$.$met$($es$) >>
+	  | '#', e::es -> let met = String.sub c 1 (String.length c - 1) in << $e$.$met$($list:es$) >>
 	  | '.', [e] -> let fld = String.sub c 1 (String.length c - 1) in << $e$.$fld$ >>
 	  | '=', [e1; e2] -> let fld = String.sub c 1 (String.length c - 1) in << $e1$.$fld$ = $e2$ >>
-	  | '@', _ -> let id = String.sub c 1 (String.length c - 1) in << $id:id$($es$) >>
-	  | _ -> enter_c_prim c; << $id:c$($es$) >>
+	  | '@', _ -> let id = String.sub c 1 (String.length c - 1) in << $id:id$($list:es$) >>
+	  | _ -> enter_c_prim c; << $id:c$($list:es$) >>
 
 let comp_comparison c e1 e2 =
   match c with
@@ -191,7 +191,7 @@ let comp_prim p es =
     | (Pfield i, [e] | Pfloatfield i, [e]) -> << $e$[$jnum_of_int i$] >>
     | (Psetfield (i, _), [e1; e2] | Psetfloatfield i, [e1; e2]) -> << $e1$[$jnum_of_int i$] = $e2$ >>
     | Pccall { prim_name = "$new"; prim_native_name = "" }, es -> comp_ccall "$new" es
-    | Pccall { prim_name = "$new"; prim_native_name = id }, es -> << new $id:id$($es$) >>
+    | Pccall { prim_name = "$new"; prim_native_name = id }, es -> << new $id:id$($list:es$) >>
     | Pccall { prim_name = n }, es -> comp_ccall n es
     | Pisout, [h; e] -> << $e$ < 0 || $e$ > $h$ >> (* XXX bind e to var? *)
     | Pabsfloat, [e] -> << Math.abs($exp:e$) >>
@@ -234,15 +234,15 @@ let comp_prim p es =
 
     | Pmakearray _, es -> makeblock 0 es
 
-    | Pstringrefu, _ -> let id = "oc$$srefu" in << $id:id$($es$) >>
-    | Pstringsetu, _ -> let id = "oc$$ssetu" in << $id:id$($es$) >>
-    | Pstringrefs, _ -> let id = "oc$$srefs" in << $id:id$($es$) >>
-    | Pstringsets, _ -> let id = "oc$$ssets" in << $id:id$($es$) >>
+    | Pstringrefu, _ -> let id = "oc$$srefu" in << $id:id$($list:es$) >>
+    | Pstringsetu, _ -> let id = "oc$$ssetu" in << $id:id$($list:es$) >>
+    | Pstringrefs, _ -> let id = "oc$$srefs" in << $id:id$($list:es$) >>
+    | Pstringsets, _ -> let id = "oc$$ssets" in << $id:id$($list:es$) >>
 
     | Parrayrefu _, [e1; e2] -> << $e1$[$e2$] >>
     | Parraysetu _, [e1; e2; e3] -> << $e1$[$e2$] = $e3$ >>
-    | Parrayrefs _, _ -> let id = "oc$$arefs" in << $id:id$($es$) >>
-    | Parraysets _, _ -> let id = "oc$$asets" in << $id:id$($es$) >>
+    | Parrayrefs _, _ -> let id = "oc$$arefs" in << $id:id$($list:es$) >>
+    | Parraysets _, _ -> let id = "oc$$asets" in << $id:id$($list:es$) >>
 
     | Pisint, [e] -> << typeof $e$ == 'number' >>
 
@@ -323,7 +323,7 @@ let rec comp_expr tail expr =
 	let app = if tail then "__" else "_" in
         let ce = comp_expr false e in
         let ces = List.map (comp_expr false) es in
-        << $id:app$($exp:ce$, [$ces$]) >>
+        << $id:app$($exp:ce$, [$list:ces$]) >>
 
     | Lifthenelse (i, t, e) ->
         let ci = comp_expr false i in
@@ -365,13 +365,13 @@ let rec comp_expr tail expr =
             | `Call, es ->
                 begin
                   match co with
-                    | Jslib_ast.Jvar _ -> << $id:app$($exp:co$.$m$, $co$, [$es$]) >>
+                    | Jslib_ast.Jvar _ -> << $id:app$($exp:co$.$m$, $co$, [$list:es$]) >>
                     | _ ->
                         let i = jsident_of_ident (Ident.create "v") in
                         (* here we bind i to avoid multiply evaluating co *)
                         exp_of_stmts [
                           <:stmt< var $id:i$ = $co$; >>;
-                          <:stmt< return $id:app$($id:i$.$m$, $id:i$, [$es$]); >>
+                          <:stmt< return $id:app$($id:i$.$m$, $id:i$, [$list:es$]); >>
                         ]
                 end
             | _ -> raise (Failure "bad method call")
@@ -408,7 +408,7 @@ and comp_expr_st tail expr k =
                                          [ Jslib_ast.Jexps (_loc,
                                                            Jslib_ast.Jcall(_loc,
                                                                           Jslib_ast.Jfun(_loc, None, [i], ce3),
-                                                                          Jslib_ast.Jexp_list(_loc, [jv]))) ] )) ]
+                                                                          jv)) ] )) ]
 
     | Lwhile (e1, e2) ->
 	[ Jslib_ast.Jwhile (_loc, comp_expr false e1, maybe_block (comp_expr_st false e2 keffect)) ]
@@ -586,7 +586,7 @@ and inline_exp = function
         match tag, args with
           | 0, [_] -> Jthis _loc
           | 1, [_; v] -> Jvar (_loc, inline_string v)
-          | 2, [_; el] -> Jarray (_loc, inline_exp_list el)
+          | 2, [_; el] -> Jarray (_loc, inline_exp el)
           | 3, [_; kvl] -> Jobject (_loc, inline_list (inline_pair inline_exp inline_exp) kvl)
           | 4, [_; s; qq] -> Jstring (_loc, inline_string s, inline_bool qq)
           | 5, [_; s] -> Jnum (_loc, inline_string s)
@@ -601,17 +601,14 @@ and inline_exp = function
           | 10, [_; u; e] -> Junop (_loc, inline_unop u, inline_exp e)
           | 11, [_; b; e1; e2] -> Jbinop (_loc, inline_binop b, inline_exp e1, inline_exp e2)
           | 12, [_; i; t; e] -> Jite (_loc, inline_exp i, inline_exp t, inline_exp e)
-          | 13, [_; e; el] -> Jcall (_loc, inline_exp e, inline_exp_list el)
-          | 14, [_; e; elo] -> Jnew (_loc, inline_exp e, inline_option inline_exp_list elo)
+          | 13, [_; e; el] -> Jcall (_loc, inline_exp e, inline_exp el)
+          | 14, [_; e; elo] -> Jnew (_loc, inline_exp e, inline_option inline_exp elo)
+          | 15, [_] -> Jexp_nil _loc
+          | 16, [_; e1; e2] -> Jexp_cons (_loc, inline_exp e1, inline_exp e2)
           | _ -> raise (Failure "bad inline exp")
       end
   | Lprim (Pccall { prim_name = "$inline_antiexp" }, [e]) -> comp_expr false e
   | _ -> raise (Failure "bad inline exp")
-
-and inline_exp_list = function
-  | Lconst (Const_block _) as cb -> inline_exp_list (makeblock_of_const cb)
-  | Lprim (Pmakeblock (0, _), [_; el]) -> Jexp_list (_loc, inline_list inline_exp el)
-  | _ -> raise (Failure "bad inline exp_list")
 
 and inline_stmt = function
   | Lconst (Const_block _) as cb -> inline_stmt (makeblock_of_const cb)

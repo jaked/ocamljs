@@ -20,7 +20,7 @@ let a_NUM = Gram.Entry.mk "a_NUM"
 
 (* A.3 Expressions *)
 let expression = Gram.Entry.mk "expression"
-let exp_comma_list = Gram.Entry.mk "exp_comma_list"
+let comma_expr = Gram.Entry.mk "comma_expr"
 
 (* A.4 Statements *)
 let statement = Gram.Entry.mk "statement"
@@ -51,9 +51,11 @@ a_NUM: [[
 | s = INT -> s
 ]];
 
-exp_comma_list: [[
-  `ANTIQUOT ("exps"|""|"anti" as n, s) -> Jexp_list_Ant (_loc, mk_anti ~c:"exps" n s)
-| es = LIST0 (expression LEVEL "AssignmentExpression") SEP "," -> Jexp_list (_loc, es)
+comma_expr: [[
+  e1 = SELF; ","; e2 = SELF -> Jexp_cons (_loc, e1, e2)
+| `ANTIQUOT ("list" as n, s) -> Jexp_Ant (_loc, mk_anti ~c:"exp" n s)
+| e = expression -> e
+| -> Jexp_nil _loc
 ]];
 
 (* A.3 Expressions *)
@@ -161,12 +163,12 @@ expression: [
 | "CallExpression" LEFTA [
     e1 = expression; "["; e2 = expression; "]" -> Jbinop (_loc, Jhashref, e1, e2)
   | e = expression; "."; i = a_IDENT -> Jfieldref (_loc, e, i)
-  | e = expression (* LEVEL "MemberExpression" ?? *); "("; args = exp_comma_list; ")" -> Jcall (_loc, e, args)
+  | e = expression (* LEVEL "MemberExpression" ?? *); "("; args = comma_expr; ")" -> Jcall (_loc, e, args)
   ]
 | "MemberExpression" LEFTA [
     e1 = expression; "["; e2 = expression; "]" -> Jbinop (_loc, Jhashref, e1, e2)
   | e = expression; "."; i = a_IDENT -> Jfieldref (_loc, e, i)
-  | "new"; e = expression LEVEL "MemberExpression"; args = OPT [ "("; args = exp_comma_list; ")" -> args ] -> Jnew (_loc, e, args)
+  | "new"; e = expression LEVEL "MemberExpression"; args = OPT [ "("; args = comma_expr; ")" -> args ] -> Jnew (_loc, e, args)
   | "function"; i = OPT a_IDENT;
     "("; args = LIST0 a_IDENT SEP ","; ")";
     "{"; ss = LIST0 sourceElement; "}" -> Jfun (_loc, i, args, ss)
@@ -181,7 +183,7 @@ expression: [
   | "null" -> Jnull (_loc)
   | "true" -> Jbool (_loc, true)
   | "false" -> Jbool (_loc, false)
-  | "["; es = exp_comma_list; "]" -> Jarray (_loc, es)
+  | "["; es = comma_expr; "]" -> Jarray (_loc, es)
   | "{"; kvs = LIST0 [ k = expression; ":"; v = expression -> (k, v) ] SEP ","; "}" -> Jobject (_loc, kvs)
   | "("; e = expression; ")" -> e
   ]
