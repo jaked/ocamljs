@@ -33,7 +33,7 @@ let create n = {
 
 let contents b =
   match b.string with
-    | None -> let s = << $b.array$.join() >> in b.string <- Some s; s
+    | None -> let s = << $b.array$.join('') >> in b.string <- Some s; s
     | Some s -> s
 
 let sub b ofs len =
@@ -71,7 +71,7 @@ let add_substring b s offset len =
 let add_string b s =
   b.string <- None;
   b.length <- b.length + String.length s;
-  << $b.array$.push($s$) >>
+  (<< $b.array$.push($s$) >> : unit)
 
 let add_buffer b bs =
   add_string b (contents bs)
