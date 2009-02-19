@@ -54,7 +54,7 @@ a_NUM: [[
 comma_expr: [[
   e1 = SELF; ","; e2 = SELF -> Jexp_cons (_loc, e1, e2)
 | `ANTIQUOT ("list" as n, s) -> Jexp_Ant (_loc, mk_anti ~c:"exp" n s)
-| e = expression -> e
+| e = expression LEVEL "AssignmentExpression" -> e
 | -> Jexp_nil _loc
 ]];
 

@@ -19,7 +19,7 @@ clean:
 	ocamlbuild -clean
 	rm -f myocamlbuild.ml
 	rm -f ocaml
-	rm -f stdlib.mllib *.mli
+	rm -f stdlib.mllib *.mli arg.ml
 
 myocamlbuild.ml: ../../tools/myocamlbuild.ml myocamlbuild.mlp
 	cat ../../tools/myocamlbuild.ml myocamlbuild.mlp > myocamlbuild.ml
