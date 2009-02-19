@@ -109,3 +109,134 @@ object
   method getPermission : string -> string -> string -> bool
   method _get_lastPosition : position
 end
+
+class type progressEvent =
+object
+  method _get_total : int
+  method _get_loaded : int
+  method _get_lengthComputatable : bool
+end
+
+class type httpRequestUpload =
+object
+  method _set_onprogress : (progressEvent -> unit) Ocamljs.jsfun -> unit
+  method _get_onprogress : (progressEvent -> unit) Ocamljs.jsfun
+end
+
+class type httpRequest =
+object
+  method open__ : string -> string -> unit
+  method setRequestHeader : string -> string -> unit
+  method send : unit
+  method send_string_ : string -> unit
+  method send_blob_ : blob -> unit
+  method abort : unit
+  method getResponseHeader : string -> string
+  method getAllResponseHeaders : string
+  method _set_onprogress : (progressEvent -> unit) Ocamljs.jsfun -> unit
+  method _get_onprogress : (progressEvent -> unit) Ocamljs.jsfun
+  method _set_onreadystatechange : (unit -> unit) Ocamljs.jsfun -> unit
+  method _get_onreadystatechange : (unit -> unit) Ocamljs.jsfun
+  method _get_readyState : int
+  method _get_responseBlob : blob
+  method _get_responseText : string
+  method _get_status : int
+  method _get_statusText : string
+  method _get_upload : httpRequestUpload
+end
+
+class type managedResourceStore =
+object
+  method _get_name : string
+  method _get_requiredCookie : string
+  method _get_enabled : bool
+  method _set_enabled : bool -> unit
+  method _get_manifestUrl : string
+  method _set_manifestUrl : string -> unit
+  method _get_lastUpdateCheckTime : int
+  method _get_updateStatus : int
+  method _get_lastErrorMessage : string
+  method _get_currentVersion : string
+  method _set_oncomplete : (< _get_newVersion : string > -> unit) Ocamljs.jsfun -> unit
+  method _get_oncomplete : (< _get_newVersion : string > -> unit) Ocamljs.jsfun
+  method _set_onerror : (< _get_message : string > -> unit) Ocamljs.jsfun -> unit
+  method _get_onerror : (< _get_message : string > -> unit) Ocamljs.jsfun
+  method _set_onprogress : (< _get_filesComplete : int; _get_filesTotal : int > -> unit) Ocamljs.jsfun -> unit
+  method _get_onprogress : (< _get_filesComplete : int; _get_filesTotal : int > -> unit) Ocamljs.jsfun
+  method checkForUpdate : unit
+end
+
+type capture_id
+
+class type resourceStore =
+object
+  method _get_name : string
+  method _get_requiredCookie : string
+  method _get_enabled : bool
+  method _set_enabled : bool -> unit
+  method capture : string -> (string -> bool -> capture_id -> unit) Ocamljs.jsfun -> capture_id
+  method capture_array_ : string array -> (string -> bool -> capture_id -> unit) Ocamljs.jsfun -> capture_id
+  method abortCapture : capture_id -> unit
+  method remove : string -> unit
+  method rename : string -> string -> unit
+  method copy : string -> string -> unit
+  method isCaptured : string -> bool
+  method captureBlob : blob -> string -> unit
+  method captureBlob_contentType_ : blob -> string -> string -> unit
+  method getHeader : string -> string -> string
+  method getAllHeaders : string -> string
+  method getAsBlob : string -> blob
+end
+
+class type localServer =
+object
+  method canServeLocally : string -> bool
+  method createStore : string -> resourceStore
+  method createStore_requiredCookie_ : string -> string -> resourceStore
+  method openStore : string -> resourceStore
+  method openStore_requiredCookie_ : string -> string -> resourceStore
+  method removeStore : string -> unit
+  method removeStore_requiredCookie_ : string -> string -> unit
+  method createManagedStore : string -> managedResourceStore
+  method createManagedStore_requiredCookie_ : string -> string -> managedResourceStore
+  method openManagedStore : string -> managedResourceStore
+  method openManagedStore_requiredCookie_ : string -> string -> managedResourceStore
+  method removeManagedStore : string -> unit
+  method removeManagedStore_requiredCookie_ : string -> string -> unit
+end
+
+type timeout_id
+type interval_id
+
+class type timer =
+object
+  method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> timeout_id
+  method setTimeout_eval_ : string -> float -> timeout_id
+  method clearTimeout : timeout_id -> unit
+  method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> interval_id
+  method setInterval_eval_ : string -> float -> interval_id
+  method clearInterval : interval_id -> unit
+end
+
+type worker_id
+
+class type workerPool =
+object
+  method _set_onmessage :
+    (string ->
+     worker_id ->
+     < _get_body : 'a; _get_sender : worker_id; _get_origin : string; _get_text : string > ->
+     unit) Ocamljs.jsfun ->
+    unit
+  method _get_onmessage :
+    (string ->
+     worker_id ->
+     < _get_body : 'a; _get_sender : worker_id; _get_origin : string; _get_text : string > ->
+     unit) Ocamljs.jsfun
+  method _set_onerror : (< _get_message : string; _get_lineNumber : int > -> bool) Ocamljs.jsfun -> unit
+  method _get_onerror : (< _get_message : string; _get_lineNumber : int > -> bool) Ocamljs.jsfun
+  method createWorker : string -> worker_id
+  method createWorkerFromUrl : string -> worker_id
+  method sendMessage : 'a -> worker_id -> unit
+  method allowCrossOrigin : unit
+end
