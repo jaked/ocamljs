@@ -273,7 +273,7 @@ var oc$$sprintf = function () {
 
     /*  parse still to be done format string  */
     var m;
-    while ((m = /^([^%]*)%(\d+$)?([#0 +'-]+)?(\*|\d+)?(\.\*|\.\d+)?([%diouxXfFgGcs])(.*)$/.exec(todo))) {
+    while ((m = /^([^%]*)%(\d+$)?([#0 +'-]+)?(\*|\d+)?(\.\*|\.\d+)?([%dioulLnNxXfFgGcs])(.*)$/.exec(todo))) {
         var pProlog    = m[1],
             pAccess    = m[2],
             pFlags     = m[3],
@@ -356,6 +356,10 @@ var oc$$sprintf = function () {
                     subst = subst.toString(8);
                     break;
                 case 'u':
+                case 'l':
+                case 'L':
+                case 'n':
+                case 'N':
                     subst = arguments[access];
                     if (typeof subst != "number")
                         subst = 0;
