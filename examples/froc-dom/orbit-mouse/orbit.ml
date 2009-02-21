@@ -46,7 +46,6 @@ let onload () =
       (fun balls radius red green blue (mx, my) phase ->
         build_list balls (fun i ->
           let t = 2. *. JM.pi *. float_of_int i /. float_of_int balls +. phase in
-          console#log (string_of_float t);
           Fda.disk
             (float_of_int mx +. cos t *. radius,
             float_of_int my +. sin t *. radius)
@@ -61,27 +60,28 @@ let onload () =
   let cos = F.lift cos in
   let sin = F.lift sin in
   let float_of_int = F.lift float_of_int in
-  let build_list = F.lift2 build_list in
   let disk = F.lift3 Fda.disk in
   let color = F.lift3 Fda.color in
   let fst = F.lift fst in
   let snd = F.lift snd in
   let pair = F.lift2 (fun x y -> x, y) in
 
+  let build_list n f =
+    let f k = f (F.return k) in
+    F.bind balls (fun n ->
+      F.liftN (fun l -> l) (build_list n f)) in
+
   let shapes =
-    build_list balls (F.return (fun i ->
+    build_list balls (fun i ->
       let t =
         (F.return 2.) *. (F.return JM.pi) *.
-          float_of_int (F.return i) /. float_of_int balls +. phase in
+          float_of_int i /. float_of_int balls +. phase in
       disk
         (pair
             (float_of_int (fst mouse) +. cos t *. radius)
             (float_of_int (snd mouse) +. sin t *. radius))
         (F.return 5.)
-        (color red green blue))) in
-
-  (* shape behavior list behavior -> shape list behavior *)
-  let shapes = F.bind shapes (F.liftN (fun l -> l)) in
+        (color red green blue)) in
 *)
 
   Froc_dom_anim.attach canvas shapes
