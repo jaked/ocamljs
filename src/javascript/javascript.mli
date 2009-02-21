@@ -96,3 +96,8 @@ module Js_string :
 sig
   external fromCharCode : int -> string = "@String.fromCharCode"
 end
+
+module Math :
+sig
+  val pi : float
+end

@@ -100,3 +100,8 @@ module Js_string =
 struct
   external fromCharCode : int -> string = "@String.fromCharCode"
 end
+
+module Math =
+struct
+  let pi = << Math.PI >>
+end

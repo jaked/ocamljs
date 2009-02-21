@@ -1,1 +1,1 @@
-<*.ml*> : pkg_froc,pkg_dom
+<*.ml*> : pkg_froc,pkg_javascript,pkg_dom

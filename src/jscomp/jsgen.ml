@@ -188,36 +188,37 @@ let comp_prim p es =
     | Pgetglobal i, [] -> enter_getglobal i; << $id:jsident_of_ident i$ >>
     | Pmakeblock (tag, _), _ -> makeblock tag es
 
-    | (Pfield i, [e] | Pfloatfield i, [e]) -> << $e$[$jnum_of_int i$] >>
-    | (Psetfield (i, _), [e1; e2] | Psetfloatfield i, [e1; e2]) -> << $e1$[$jnum_of_int i$] = $e2$ >>
+    | (Pfield i | Pfloatfield i), [e] -> << $e$[$jnum_of_int i$] >>
+    | (Psetfield (i, _) | Psetfloatfield i), [e1; e2] -> << $e1$[$jnum_of_int i$] = $e2$ >>
     | Pccall { prim_name = "$new"; prim_native_name = "" }, es -> comp_ccall "$new" es
     | Pccall { prim_name = "$new"; prim_native_name = id }, es -> << new $id:id$($list:es$) >>
     | Pccall { prim_name = n }, es -> comp_ccall n es
     | Pisout, [h; e] -> << $e$ < 0 || $e$ > $h$ >> (* XXX bind e to var? *)
     | Pabsfloat, [e] -> << Math.abs($exp:e$) >>
 
-    | (Pintcomp c, [e1; e2] | Pbintcomp (_, c), [e1; e2] | Pfloatcomp c, [e1; e2]) ->
+    | (Pintcomp c | Pbintcomp (_, c) | Pfloatcomp c), [e1; e2] ->
         comp_comparison c e1 e2
 
-    | (Pnegint, [e] | Pnegbint _, [e] | Pnegfloat, [e]) -> << -$e$ >>
-    | (Paddint, [e1; e2] | Paddbint _, [e1; e2] | Paddfloat, [e1; e2]) -> << $e1$ + $e2$ >>
-    | (Psubint, [e1; e2] | Psubbint _, [e1; e2] | Psubfloat, [e1; e2]) -> << $e1$ - $e2$ >>
-    | (Pmulint, [e1; e2] | Pmulbint _, [e1; e2] | Pmulfloat, [e1; e2]) -> << $e1$ * $e2$ >>
-    | (Pdivint, [e1; e2] | Pdivbint _, [e1; e2] | Pdivfloat, [e1; e2]) ->
+    | (Pnegint | Pnegbint _ | Pnegfloat), [e] -> << -$e$ >>
+    | (Paddint | Paddbint _ | Paddfloat), [e1; e2] -> << $e1$ + $e2$ >>
+    | (Psubint | Psubbint _ | Psubfloat), [e1; e2] -> << $e1$ - $e2$ >>
+    | (Pmulint | Pmulbint _ | Pmulfloat), [e1; e2] -> << $e1$ * $e2$ >>
+    | Pdivfloat, [e1; e2] -> << $e1$ / $e2$ >>
+    | (Pdivint | Pdivbint _), [e1; e2] ->
         (* XXX << ($e1$ / $e2$) < < 0 >> *)
         Jslib_ast.Jbinop(_loc,
                         Jslib_ast.Jlsr,
                         << $e1$ / $e2$ >>,
                         << 0 >>)
-    | (Pmodint, [e1; e2] | Pmodbint _, [e1; e2]) -> << $e1$ % $e2$ >>
+    | (Pmodint | Pmodbint _), [e1; e2] -> << $e1$ % $e2$ >>
 
-    | (Plslint, [e1; e2] | Plslbint _, [e1; e2]) -> Jslib_ast.Jbinop(_loc, Jslib_ast.Jlsl, e1, e2)
-    | (Plsrint, [e1; e2] | Plsrbint _, [e1; e2]) -> Jslib_ast.Jbinop(_loc, Jslib_ast.Jlsr, e1, e2)
-    | (Pasrint, [e1; e2] | Pasrbint _, [e1; e2]) -> Jslib_ast.Jbinop(_loc, Jslib_ast.Jasr, e1, e2)
+    | (Plslint | Plslbint _), [e1; e2] -> Jslib_ast.Jbinop(_loc, Jslib_ast.Jlsl, e1, e2)
+    | (Plsrint | Plsrbint _), [e1; e2] -> Jslib_ast.Jbinop(_loc, Jslib_ast.Jlsr, e1, e2)
+    | (Pasrint | Pasrbint _), [e1; e2] -> Jslib_ast.Jbinop(_loc, Jslib_ast.Jasr, e1, e2)
 
-    | (Pandint, [e1; e2] | Pandbint _, [e1; e2]) -> << $e1$ & $e2$ >>
-    | (Porint, [e1; e2] | Porbint _, [e1; e2]) -> << $e1$ | $e2$ >>
-    | (Pxorint, [e1; e2] | Pxorbint _, [e1; e2]) -> << $e1$ ^ $e2$ >>
+    | (Pandint | Pandbint _), [e1; e2] -> << $e1$ & $e2$ >>
+    | (Porint | Porbint _), [e1; e2] -> << $e1$ | $e2$ >>
+    | (Pxorint | Pxorbint _), [e1; e2] -> << $e1$ ^ $e2$ >>
 
     | Pnot, [e] -> << !$e$ >>
     | Psequand, [e1; e2] -> << $e1$ && $e2$ >>
@@ -246,10 +247,8 @@ let comp_prim p es =
 
     | Pisint, [e] -> << typeof $e$ == 'number' >>
 
-    | (Pidentity, [e] | Pignore, [e] |
-       Pfloatofint, [e] | Pintoffloat, [e] |
-       Pintofbint _, [e] | Pbintofint _, [e] |
-       Pcvtbint _, [e]) ->
+    | (Pidentity | Pignore | Pfloatofint | Pintoffloat |
+       Pintofbint _ | Pbintofint _ | Pcvtbint _), [e] ->
 	e
 
     | Pduprecord _, [e] -> << caml_obj_dup($exp:e$) >>

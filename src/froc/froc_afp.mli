@@ -110,3 +110,7 @@ val blift7 :
   ?eq:('b -> 'b -> bool) ->
   ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'a6 -> 'a7 -> 'b) ->
   'b t
+
+val bindN : 'a t list -> ('a list -> 'b t) -> 'b t
+val liftN : ?eq:('b -> 'b -> bool) -> ('a list -> 'b) -> 'a t list -> 'b t
+val bliftN : 'a t list -> ?eq:('b -> 'b -> bool) -> ('a list -> 'b) -> 'b t

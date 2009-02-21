@@ -1,5 +1,6 @@
 froc-dom
   finish orbit-mouse example
+  fill out Froc_dom_anim
   other examples? something with box2d-js would be cool
 
 gears
@@ -16,6 +17,9 @@ jslib
   check pattern quotations
   examples
 
+javascript
+  go through JS spec and wrap all the standard objects
+
 jscomp
   cleanup
 
@@ -24,16 +28,24 @@ jscomp
   camlp4-generate inlining code
   stmt inlining
 
-  better heap rep (arrays, tag in last elem)
+  cleaner heap rep (arrays, tag in last elem)
 
   object system
   some way to implement js objects with properties
 
   more stdlib work--other things to implement natively?
   clean up printf
+  check float format (e.g. float_of_string) JS vs. OCaml
+  make Pervasives.^ do native string concat
+
+  check .js linking with libraries
 
   can we do better interoperating with exceptions? would be nice to be
   able to declare, catch, and match exceptions from JS libs.
 
   can we avoid Ocamljs.jsfun wrapper? maybe make trampolining / partial
   application the responsibility of the callee instead of the caller?
+
+all
+  docs, wiki
+  build docs and examples to gcode site

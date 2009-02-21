@@ -132,3 +132,7 @@ val blift7 :
   ?eq:('b -> 'b -> bool) ->
   ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'a6 -> 'a7 -> 'b) ->
   'b behavior
+
+val bindN : 'a behavior list -> ('a list -> 'b behavior) -> 'b behavior
+val liftN : ?eq:('b -> 'b -> bool) -> ('a list -> 'b) -> 'a behavior list -> 'b behavior
+val bliftN : 'a behavior list -> ?eq:('b -> 'b -> bool) -> ('a list -> 'b) -> 'b behavior

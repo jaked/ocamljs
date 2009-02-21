@@ -148,7 +148,10 @@ var caml_fill_string = function(s, o, l, c) {
   for (var i = 0; i < l; i++)
     oc$$ssetu(s, o + i, c);
 }
-var caml_float_of_string = function () { throw "caml_float_of_string"; }
+var caml_float_of_string = function (s) {
+  var f = parseFloat(s);
+  return isNaN(f) ? caml_failwith("float_of_string") : f;
+}
 
 var caml_format_int = function(f, a) {
   function parse_format(f) { return f; } // XXX see ints.c
