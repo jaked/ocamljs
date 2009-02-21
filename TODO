@@ -49,3 +49,5 @@ jscomp
 all
   docs, wiki
   build docs and examples to gcode site
+  IFDEF DEBUG console on all examples
+  check readmes and licenses
