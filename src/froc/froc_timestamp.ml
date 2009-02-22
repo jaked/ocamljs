@@ -31,6 +31,11 @@ let set_cleanup t cleanup =
   check t;
   t.cleanup <- cleanup
 
+let add_cleanup t cleanup' =
+  check t;
+  let cleanup = t.cleanup in
+  t.cleanup <- (fun () -> cleanup (); cleanup' ())
+
 let splice_out t1 t2 =
   check t1;
   check t2;

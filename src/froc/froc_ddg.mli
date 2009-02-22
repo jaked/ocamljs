@@ -1,3 +1,5 @@
+(** Dynamic dependency graph underlying [Froc] and [Froc_afp]. *)
+
 type 'a t
 
 val return : ?eq:('a -> 'a -> bool) -> 'a -> 'a t

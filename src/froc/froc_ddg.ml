@@ -50,7 +50,7 @@ type 'a t = {
   mutable deps : ('a result -> unit) Dlist.t;
 }
 
-type edge = {
+type reader = {
   read : unit -> unit;
   start : TS.t;
   finish : TS.t;
@@ -58,13 +58,13 @@ type edge = {
 
 (*
 module PQ = Pqueue.Make(struct
-  type t = edge
+  type t = reader
   let compare t1 t2 = TS.compare t1.start t2.start
 end)
 *)
 
 module PQ : sig
-  type elt = edge
+  type elt = reader
   type t
   val empty : t
   val is_empty : t -> bool
@@ -73,7 +73,7 @@ module PQ : sig
   val remove_min : t -> t
 end =
 struct
-  type elt = edge
+  type elt = reader
   type t = elt Dlist.t
   let empty = Dlist.empty ()
   let is_empty t = t.Dlist.prev == t && t.Dlist.next == t
@@ -157,15 +157,15 @@ let read t =
 let add_dep ts t dep =
   let dl = Dlist.add_after t.deps dep in
   let cancel () = Dlist.remove dl in
-  TS.set_cleanup ts cancel
+  TS.add_cleanup ts cancel
 
 let enqueue e _ = pq := PQ.add e !pq
 
-let add_edge t read =
+let add_reader t read =
   let start = tick () in
   read ();
-  let e = { read = read; start = start; finish = tick () } in
-  add_dep start t (enqueue e)
+  let r = { read = read; start = start; finish = tick () } in
+  add_dep start t (enqueue r)
 
 let notify t f =
   add_dep (tick ()) t f
@@ -182,7 +182,7 @@ let never _ _ = false
 
 let bind_gen assign ?eq f t =
   let res = make ?eq () in
-  add_edge t (fun () ->
+  add_reader t (fun () ->
     match t.state with
       | Fail e -> write_exn res e
       | Value v -> try assign res (f v) with e -> write_exn res e);
@@ -196,7 +196,7 @@ let blift t ?eq f = lift ?eq f t
 let try_bind_gen assign f ?eq succ err =
   let t = try f () with e -> fail e in
   let res = make ?eq () in
-  add_edge t (fun () ->
+  add_reader t (fun () ->
     try assign res (match t.state with Value v -> succ v | Fail e -> err e)
     with e -> write_exn res e);
   res
@@ -207,7 +207,7 @@ let try_bind_lift f ?eq succ err = try_bind_gen write f ?eq succ err
 let catch_gen assign f ?eq err =
   let t = try f () with e -> fail e in
   let res = make ?eq () in
-  add_edge t (fun () ->
+  add_reader t (fun () ->
     match t.state with
       | Value v -> write_result res t.state
       | Fail e -> try assign res (err e) with e -> write_exn res e);
@@ -221,14 +221,14 @@ let propagate () =
     if not (PQ.is_empty !pq)
     then
       begin
-        let e = PQ.find_min !pq in
+        let r = PQ.find_min !pq in
         pq := PQ.remove_min !pq;
-        if not (TS.is_spliced_out e.start)
+        if not (TS.is_spliced_out r.start)
         then
           begin
-            TS.splice_out e.start e.finish;
-            now := e.start;
-            e.read ();
+            TS.splice_out r.start r.finish;
+            now := r.start;
+            r.read ();
           end;
         prop ()
       end in
@@ -249,9 +249,9 @@ let bind2_gen assign ?eq f t1 t2 =
           with e -> write_exn res e in
   let start = tick () in
   read ();
-  let e = { read = read; start = start; finish = tick () } in
-  add_dep start t1 (enqueue e);
-  add_dep start t2 (enqueue e);
+  let r = { read = read; start = start; finish = tick () } in
+  add_dep start t1 (enqueue r);
+  add_dep start t2 (enqueue r);
   res
 
 let bind2 t1 t2 f = bind2_gen connect ~eq:never f t1 t2
@@ -270,10 +270,10 @@ let bind3_gen assign ?eq f t1 t2 t3 =
           with e -> write_exn res e in
   let start = tick () in
   read ();
-  let e = { read = read; start = start; finish = tick () } in
-  add_dep start t1 (enqueue e);
-  add_dep start t2 (enqueue e);
-  add_dep start t3 (enqueue e);
+  let r = { read = read; start = start; finish = tick () } in
+  add_dep start t1 (enqueue r);
+  add_dep start t2 (enqueue r);
+  add_dep start t3 (enqueue r);
   res
 
 let bind3 t1 t2 t3 f = bind3_gen connect ~eq:never f t1 t2 t3
@@ -293,11 +293,11 @@ let bind4_gen assign ?eq f t1 t2 t3 t4 =
           with e -> write_exn res e in
   let start = tick () in
   read ();
-  let e = { read = read; start = start; finish = tick () } in
-  add_dep start t1 (enqueue e);
-  add_dep start t2 (enqueue e);
-  add_dep start t3 (enqueue e);
-  add_dep start t4 (enqueue e);
+  let r = { read = read; start = start; finish = tick () } in
+  add_dep start t1 (enqueue r);
+  add_dep start t2 (enqueue r);
+  add_dep start t3 (enqueue r);
+  add_dep start t4 (enqueue r);
   res
 
 let bind4 t1 t2 t3 t4 f = bind4_gen connect ~eq:never f t1 t2 t3 t4
@@ -318,12 +318,12 @@ let bind5_gen assign ?eq f t1 t2 t3 t4 t5 =
           with e -> write_exn res e in
   let start = tick () in
   read ();
-  let e = { read = read; start = start; finish = tick () } in
-  add_dep start t1 (enqueue e);
-  add_dep start t2 (enqueue e);
-  add_dep start t3 (enqueue e);
-  add_dep start t4 (enqueue e);
-  add_dep start t5 (enqueue e);
+  let r = { read = read; start = start; finish = tick () } in
+  add_dep start t1 (enqueue r);
+  add_dep start t2 (enqueue r);
+  add_dep start t3 (enqueue r);
+  add_dep start t4 (enqueue r);
+  add_dep start t5 (enqueue r);
   res
 
 let bind5 t1 t2 t3 t4 t5 f = bind5_gen connect ~eq:never f t1 t2 t3 t4 t5
@@ -345,13 +345,13 @@ let bind6_gen assign ?eq f t1 t2 t3 t4 t5 t6 =
           with e -> write_exn res e in
   let start = tick () in
   read ();
-  let e = { read = read; start = start; finish = tick () } in
-  add_dep start t1 (enqueue e);
-  add_dep start t2 (enqueue e);
-  add_dep start t3 (enqueue e);
-  add_dep start t4 (enqueue e);
-  add_dep start t5 (enqueue e);
-  add_dep start t6 (enqueue e);
+  let r = { read = read; start = start; finish = tick () } in
+  add_dep start t1 (enqueue r);
+  add_dep start t2 (enqueue r);
+  add_dep start t3 (enqueue r);
+  add_dep start t4 (enqueue r);
+  add_dep start t5 (enqueue r);
+  add_dep start t6 (enqueue r);
   res
 
 let bind6 t1 t2 t3 t4 t5 t6 f = bind6_gen connect ~eq:never f t1 t2 t3 t4 t5 t6
@@ -374,14 +374,14 @@ let bind7_gen assign ?eq f t1 t2 t3 t4 t5 t6 t7 =
           with e -> write_exn res e in
   let start = tick () in
   read ();
-  let e = { read = read; start = start; finish = tick () } in
-  add_dep start t1 (enqueue e);
-  add_dep start t2 (enqueue e);
-  add_dep start t3 (enqueue e);
-  add_dep start t4 (enqueue e);
-  add_dep start t5 (enqueue e);
-  add_dep start t6 (enqueue e);
-  add_dep start t7 (enqueue e);
+  let r = { read = read; start = start; finish = tick () } in
+  add_dep start t1 (enqueue r);
+  add_dep start t2 (enqueue r);
+  add_dep start t3 (enqueue r);
+  add_dep start t4 (enqueue r);
+  add_dep start t5 (enqueue r);
+  add_dep start t6 (enqueue r);
+  add_dep start t7 (enqueue r);
   res
 
 let bind7 t1 t2 t3 t4 t5 t6 t7 f = bind7_gen connect ~eq:never f t1 t2 t3 t4 t5 t6 t7
@@ -400,8 +400,8 @@ let bindN_gen assign ?eq f ts =
     with e -> write_exn res e in
   let start = tick () in
   read ();
-  let e = { read = read; start = start; finish = tick () } in
-  List.iter (fun t -> add_dep start t (enqueue e)) ts;
+  let r = { read = read; start = start; finish = tick () } in
+  List.iter (fun t -> add_dep start t (enqueue r)) ts;
   res
 
 let bindN ts f = bindN_gen connect ~eq:never f ts
