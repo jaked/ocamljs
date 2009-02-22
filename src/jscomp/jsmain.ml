@@ -43,11 +43,12 @@ let process_file ppf name =
     if !make_package then objfiles := (opref ^ ".cmi") :: !objfiles
   end
   else if Filename.check_suffix name ".cmjs"
-       || Filename.check_suffix name ".cmjsa"
-       || Filename.check_suffix name ".js" then
+       || Filename.check_suffix name ".cmjsa" then
     objfiles := name :: !objfiles
   else if Filename.check_suffix name ".cmi" && !make_package then
     objfiles := name :: !objfiles
+  else if Filename.check_suffix name ".js" then
+    ccobjs := name :: !ccobjs
   else
     raise(Arg.Bad("don't know what to do with " ^ name))
 

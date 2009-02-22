@@ -38,6 +38,19 @@ type link_action =
   | Link_js of string
       (* Name of .js file *)
 
+(* Add extra JS files form a library descriptor *)
+(* Ignore them if -noautolink or -use-runtime or -use-prim was given *)
+
+let lib_ccobjs = ref []
+
+let add_ccobjs l =
+  if not !Clflags.no_auto_link
+      && String.length !Clflags.use_runtime = 0
+      && String.length !Clflags.use_prims = 0
+  then begin
+    lib_ccobjs := l.lib_ccobjs @ !lib_ccobjs
+  end
+
 (* First pass: determine which units are needed *)
 
 module IdentSet =
@@ -96,6 +109,7 @@ let scan_file obj_name tolink =
       seek_in ic pos_toc;
       let toc = (input_value ic : library) in
       close_in ic;
+      add_ccobjs toc;
       let required =
         List.fold_right
           (fun compunit reqd ->
@@ -328,8 +342,18 @@ let link_patch tolink exec_name =
 let link objfiles output_name =
   let objfiles =
     if !Clflags.nopervasives || !patch then objfiles
-    else ["support.js"; "primitives.js"; "stdlib.cmjsa" ] @ objfiles @ ["std_exit.cmjs"] in
+    else "stdlib.cmjsa" :: (objfiles @ ["std_exit.cmjs"]) in
   let tolink = List.fold_right scan_file objfiles [] in
+  Clflags.ccobjs := !Clflags.ccobjs @ !lib_ccobjs; (* put user's libs last *)
+  let jslink =
+    List.map
+      (fun obj_name ->
+        let file_name =
+          try find_in_path !load_path obj_name
+          with Not_found -> raise(Error(File_not_found obj_name)) in
+        Link_js file_name)
+      !Clflags.ccobjs in
+  let tolink = jslink @ tolink in
   if !patch
   then link_patch tolink output_name
   else link_js_exec tolink output_name

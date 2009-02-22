@@ -10,12 +10,9 @@ doc:
 	ocamlbuild doc.docdir/index.html
 
 install:
-	cp support.js $(LIBDIR)
-	cp primitives.js $(LIBDIR)
 	ocamlfind install ocamljs META _build/*.cmi _build/*.cmjs
 
 uninstall:
-	rm -f $(LIBDIR)/*.js
 	ocamlfind remove ocamljs
 
 clean:

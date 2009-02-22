@@ -1,2 +1,4 @@
 <random.ml> : syntax_camlp4o,pkg_jslib.inline,pkg_ocamljs
 <buffer.ml> : syntax_camlp4o,pkg_jslib.inline,pkg_ocamljs
+
+<stdlib.cmjsa> : support_js,primitives_js

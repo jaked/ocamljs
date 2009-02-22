@@ -35,6 +35,15 @@ let copy_compunit ic oc compunit =
     copy_file_chunk ic oc compunit.cu_debugsize
   end
 
+(* Add extra JS files from a library descriptor *)
+
+let lib_ccobjs = ref []
+
+let add_ccobjs l =
+  if not !Clflags.no_auto_link then begin
+    lib_ccobjs := !lib_ccobjs @ l.lib_ccobjs
+  end
+
 let copy_object_file oc name =
   let file_name =
     try
@@ -59,6 +68,7 @@ let copy_object_file oc name =
       seek_in ic toc_pos;
       let toc = (input_value ic : library) in
       List.iter (Jslink.check_consistency file_name) toc.lib_units;
+      add_ccobjs toc;
       List.iter (copy_compunit ic oc) toc.lib_units;
       close_in ic;
       toc.lib_units
@@ -78,7 +88,7 @@ let create_archive file_list lib_name =
     let toc =
       { lib_units = units;
         lib_custom = false;
-        lib_ccobjs = [];
+        lib_ccobjs = !Clflags.ccobjs @ !lib_ccobjs;
         lib_ccopts = [];
         lib_dllibs = [] } in
     let pos_toc = pos_out outchan in
