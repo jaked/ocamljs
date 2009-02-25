@@ -195,11 +195,9 @@ dispatch begin function
          flag ["ocaml"; "doc";      "syntax_"^syntax] & S[A"-syntax"; A syntax];
        end (find_syntaxes ());
 
-       flag ["ocaml"; "js"; "link"; "library"; "support_js"]
-         (S[A"-cclib"; A"support.js"]);
-
-       flag ["ocaml"; "js"; "link"; "library"; "primitives_js"]
-         (S[A"-cclib"; A"primitives.js"]);
+       flag ["ocaml"; "js"; "link"; "library"; "support_js"] & S[A"-cclib"; A"support.js"];
+       flag ["ocaml"; "js"; "link"; "library"; "primitives_js"] & S[A"-cclib"; A"primitives.js"];
+       flag ["ocaml"; "js"; "link"; "library"; "gears_init_js"] & S[A"-cclib"; A"gears_init.js"];
 
   | _ -> ()
 end

@@ -16,7 +16,7 @@ doc:
 	ocamlbuild doc.docdir/index.html
 
 install:
-	ocamlfind install gears META $(BFILES)
+	ocamlfind install gears META $(BFILES) gears_init.js
 
 uninstall:
 	ocamlfind remove gears

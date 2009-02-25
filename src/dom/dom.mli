@@ -365,6 +365,7 @@ object
   method _get_location : location
 
   method alert : string -> unit
+  method confirm : string -> bool
 
   method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> interval_id
   method clearInterval : interval_id -> unit
@@ -410,6 +411,8 @@ end
 class type form =
 object
   inherit element
+
+  method _get_elements : #element array
 
   method _set_onsubmit : (unit -> bool) Ocamljs.jsfun -> unit
 end

@@ -7,6 +7,8 @@ object
   method _get_hasPermission : bool
 end
 
+let factory = (Ocamljs.var "google.gears.factory" : factory)
+
 class type blob =
 object
   method _get_length : int
@@ -30,7 +32,7 @@ object
   method _get_rowsAffected : int
   method open__ : string -> unit
   method execute : string -> resultSet
-  method execute_bind_ : string -> 'a array -> resultSet
+  method execute_bind_ : 'a. string -> 'a array -> resultSet
   method close : unit
   method remove : unit
 end
@@ -237,6 +239,6 @@ object
   method _get_onerror : (< _get_message : string; _get_lineNumber : int > -> bool) Ocamljs.jsfun
   method createWorker : string -> worker_id
   method createWorkerFromUrl : string -> worker_id
-  method sendMessage : 'a -> worker_id -> unit
+  method sendMessage : 'a. 'a -> worker_id -> unit
   method allowCrossOrigin : unit
 end
