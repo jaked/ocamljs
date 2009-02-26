@@ -15,6 +15,7 @@ jslib
   fill in more of parser
   bug with locations
   check pattern quotations
+  redo pretty-printing
   examples
 
 javascript

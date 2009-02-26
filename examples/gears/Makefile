@@ -1,4 +1,4 @@
-DIRS=database file_system
+DIRS=database file_system geolocation
 
 all:
 	for dir in $(DIRS); do \

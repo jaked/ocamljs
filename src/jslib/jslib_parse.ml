@@ -184,7 +184,7 @@ expression: [
   | "true" -> Jbool (_loc, true)
   | "false" -> Jbool (_loc, false)
   | "["; es = comma_expr; "]" -> Jarray (_loc, es)
-  | "{"; kvs = LIST0 [ k = expression; ":"; v = expression -> (k, v) ] SEP ","; "}" -> Jobject (_loc, kvs)
+  | "{"; kvs = LIST0 [ k = expression; ":"; v = expression LEVEL "AssignmentExpression" -> (k, v) ] SEP ","; "}" -> Jobject (_loc, kvs)
   | "("; e = expression; ")" -> e
   ]
 ];
