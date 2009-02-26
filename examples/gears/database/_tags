@@ -1,2 +1,3 @@
-<database.ml> : pkg_ocamljs,pkg_javascript,pkg_dom,pkg_gears,syntax_camlp4o,pkg_jslib.inline,dtypes
+<sample.ml> : pkg_ocamljs,pkg_dom,syntax_camlp4o,pkg_jslib.inline
+<database.ml> : pkg_ocamljs,pkg_javascript,pkg_dom,pkg_gears,syntax_camlp4o,pkg_jslib.inline
 <database.js> : pkg_ocamljs,pkg_javascript,pkg_dom,pkg_gears

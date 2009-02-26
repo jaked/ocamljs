@@ -1,5 +1,5 @@
 all: myocamlbuild.ml sample.ml sample.css
-	ocamlbuild database.js
+	ocamlbuild file_system.js
 
 clean:
 	ocamlbuild -clean
