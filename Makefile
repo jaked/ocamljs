@@ -42,5 +42,5 @@ examples:
 .PHONY: test examples doc
 
 gcode:
-	rsync -a --delete --delete-excluded --exclude '.svn/' doc/ ../doc/
-	rsync -a --delete --delete-excluded --exclude '.svn/' --include '*/' --include '*.html' --include '*.js' --include '*.css' --exclude '*' examples/ ../examples/
+	rsync -a --delete --exclude '.svn/' doc/ ../doc/
+	rsync -a --delete --exclude '.svn/' --include '*/' --include '*.html' --include '*.js' --include '*.css' --exclude '*' examples/ ../examples/
