@@ -41,5 +41,6 @@ examples:
 
 .PHONY: test examples doc
 
-wiki: doc
-	find . -name '*.odoc' | awk '{print "-load"; print $$1}' | xargs ocamldoc -g gcode_wiki.cmo -sort -d ../wiki
+gcode:
+	rsync -a --delete --delete-excluded --exclude '.svn/' doc/ ../doc/
+	rsync -a --delete --delete-excluded --exclude '.svn/' --include '*/' --include '*.html' --include '*.js' --include '*.css' --exclude '*' examples/ ../examples/

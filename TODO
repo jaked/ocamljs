@@ -39,8 +39,6 @@ jscomp
   check float format (e.g. float_of_string) JS vs. OCaml
   make Pervasives.^ do native string concat
 
-  check .js linking with libraries
-
   can we do better interoperating with exceptions? would be nice to be
   able to declare, catch, and match exceptions from JS libs.
 
