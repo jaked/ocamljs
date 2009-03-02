@@ -309,7 +309,8 @@ let rec comp_expr tail expr =
     | (Llet _ | Lletrec _) -> exp_of_stmts (comp_letrecs_st tail expr kreturn)
 
     | (Lswitch _ | Lprim (Praise, _) | Lstaticcatch _ | Lstaticraise _ |
-       Ltrywith _ | Lfor _ | Lwhile _) ->
+          Ltrywith _ | Lfor _ | Lwhile _ |
+            Lprim (Pccall { prim_name = "$inline_stmt" }, _))->
 	exp_of_stmts (comp_expr_st tail expr kreturn)
 
     | Lvar i -> << $id:jsident_of_ident i$ >>
@@ -496,6 +497,8 @@ and comp_expr_st tail expr k =
 
     | Lprim (Pignore, [e]) ->
         comp_expr_st tail (Lsequence (e, Lconst (Const_pointer 0))) k
+
+    | Lprim (Pccall { prim_name = "$inline_stmt" }, [e]) -> [ inline_stmt e ]
 
     | Lstaticcatch (e1, (lab, args), e2) ->
         (* The raised flag indicates whether e1 exits normally or via
