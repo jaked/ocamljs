@@ -30,7 +30,7 @@ class type database =
 object
   method _get_lastInsertRowId : int
   method _get_rowsAffected : int
-  method open__ : string -> unit
+  method open_ : string -> unit
   method execute : string -> resultSet
   method execute_bind_ : 'a. string -> 'a array -> resultSet
   method close : unit
@@ -127,7 +127,7 @@ end
 
 class type httpRequest =
 object
-  method open__ : string -> string -> unit
+  method open_ : string -> string -> unit
   method setRequestHeader : string -> string -> unit
   method send : unit
   method send_string_ : string -> unit

@@ -88,7 +88,7 @@ external new_RegExp_attributes : string -> string -> regexp = "$new" "RegExp"
 
 class type js_string =
 object
-  method match__ : regexp -> string array
+  method match_ : regexp -> string array
   method split : string -> string array
   method indexOf : string -> int
   method replace : regexp -> string -> string
@@ -100,7 +100,7 @@ module Js_string =
 struct
   external fromCharCode : int -> string = "@String.fromCharCode"
 
-  external match__ : string -> regexp -> string array = ".match"
+  external match_ : string -> regexp -> string array = ".match"
   external split : string -> string -> string array = ".split"
   external indexOf : string -> string -> int = ".indexOf"
   external replace : string -> regexp -> string -> string = ".replace"

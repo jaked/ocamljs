@@ -722,7 +722,7 @@ object
   method abort : unit
   method getAllResponseHeaders : string
   method getResponseHeader : string -> string
-  method open__ : string -> string -> bool -> unit
+  method open_ : string -> string -> bool -> unit
   method send : string -> unit
   method setRequestHeader : string -> string -> unit
 end

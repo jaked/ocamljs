@@ -35,7 +35,7 @@ let init () =
         if Ocamljs.is_null !db (* can this happen w/o raising exception? *)
         then false
         else begin
-          !db#open__ "database-demo";
+          !db#open_ "database-demo";
           ignore (!db#execute "create table if not exists Demo (Phrase varchar(255), Timestamp int)");
           displayRecentPhrases ();
           true
