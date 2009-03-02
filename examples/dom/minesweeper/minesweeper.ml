@@ -166,16 +166,14 @@ let create_demin nb_c nb_r nb_m =
 
 type mode = Normal | Flag
 
-let append n1 n2 = ignore (n1#appendChild (n2 :> Dom.node))
-
 let init_table d div =
   let dd = Dom.document in
   let board_div = dd#getElementById div in
   let mode = ref Normal in
   let buf = dd#createDocumentFragment in
-  append buf (dd#createTextNode "Mode : ");
+  ignore (buf#appendChild (dd#createTextNode "Mode : "));
   let img = (dd#createElement "img" : Dom.image) in
-  append buf img;
+  ignore (buf#appendChild img);
   img#_set_src "sprites/bomb.png";
   img#_set_onclick
     (Ocamljs.jsfun (fun _ ->
@@ -183,7 +181,7 @@ let init_table d div =
         | Normal -> mode := Flag ; img#_set_src "sprites/flag.png"
         | Flag -> mode := Normal ; img#_set_src "sprites/bomb.png");
       false));
-  append buf (dd#createElement "br");
+  ignore (buf#appendChild (dd#createElement "br"));
   for y = 0 to d.cf.nbrows - 1 do
     let imgs = ref [] in
     for x = 0 to d.cf.nbcols - 1 do
@@ -206,13 +204,13 @@ let init_table d div =
                 d.bd.(x).(y).flag <- not d.bd.(x).(y).flag ;
                 draw_cell img d.bd.(x).(y));
           false));
-      append buf img;
+      ignore (buf#appendChild img);
     done ;
-    append buf (dd#createElement "br");
+    ignore (buf#appendChild (dd#createElement "br"));
     d.dom.(y) <- Array.of_list (List.rev !imgs)
   done ;
   board_div#_get_style#_set_lineHeight "0";
-  append board_div buf
+  ignore (board_div#appendChild buf)
 
 let run div nbc nbr nbm =
   let div, nbc, nbr, nbm =

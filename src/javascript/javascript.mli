@@ -18,6 +18,11 @@
  * MA 02111-1307, USA
  *)
 
+(** Javascript standard library binding *)
+(**
+   [Javascript] is a partial binding of the Javascript standard library.
+*)
+
 external encodeURIComponent : string -> string = "@encodeURIComponent"
 external decodeURIComponent : string -> string = "@decodeURIComponent"
 external dump : string -> unit = "@dump"
@@ -95,6 +100,11 @@ external js_string_of_string : string -> js_string = "%identity"
 module Js_string :
 sig
   external fromCharCode : int -> string = "@String.fromCharCode"
+
+  external match__ : string -> regexp -> string array = ".match"
+  external split : string -> string -> string array = ".split"
+  external indexOf : string -> string -> int = ".indexOf"
+  external replace : string -> regexp -> string -> string = ".replace"
 end
 
 module Math :

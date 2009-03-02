@@ -1,11 +1,9 @@
 froc-dom
-  finish orbit-mouse example
   fill out Froc_dom_anim
   other examples? something with box2d-js would be cool
 
 gears
-  finish
-  examples
+  more examples
 
 dom
   fill in more of API
@@ -32,10 +30,8 @@ jscomp
   cleaner heap rep (arrays, tag in last elem)
 
   object system
-  some way to implement js objects with properties
 
   more stdlib work--other things to implement natively?
-  clean up printf
   check float format (e.g. float_of_string) JS vs. OCaml
   make Pervasives.^ do native string concat
 
@@ -47,6 +43,6 @@ jscomp
 
 all
   docs, wiki
-  build docs and examples to gcode site
+  links to source in example index page
   IFDEF DEBUG console on all examples
   check readmes and licenses

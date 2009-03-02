@@ -3,10 +3,21 @@ type timeout_id
 
 class type node =
 object
-  method appendChild : node -> node
-  method removeChild : node -> node
-  method replaceChild : node -> node -> node
-  method _get_parentNode : node
+  method _get_childNodes : < .. > array
+  method _get_parentNode : < .. >
+  method _get_firstChild : < .. >
+  method _get_lastChild : < .. >
+  method _get_nextSibling : < .. >
+  method _get_previousSibling : < .. >
+  method _get_nodeName : string
+  method _get_nodeType : int
+  method _get_nodeValue : string
+  method _set_nodeValue : string -> unit
+    
+  method appendChild : < .. > -> < .. >
+  method insertBefore : < .. > -> < .. > -> < .. >
+  method removeChild : < .. > -> < .. >
+  method replaceChild : < .. > -> < .. > -> < .. >
 end
 
 class type documentFragment =
@@ -18,21 +29,13 @@ class type abstractView =
 object
 end
 
-class type eventTarget =
-object
-  method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
-  method addEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
-  method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
-  method removeEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
-end
-
-and event =
+class type event =
 object
   method _get_bubbles : bool
   method _get_cancelable : bool
-  method _get_currentTarget : eventTarget
+  method _get_currentTarget : < .. >
   method _get_eventPhase : int
-  method _get_target : eventTarget
+  method _get_target : < .. >
   method _get_timeStamp : float
   method _get_type : string
   method initEvent : string -> bool -> bool -> unit
@@ -40,7 +43,7 @@ object
   method stopPropagation : unit
 end
 
-and uIEvent =
+class type uIEvent =
 object
   inherit event
 
@@ -49,7 +52,21 @@ object
   method initUIEvent : string -> bool -> bool -> abstractView -> int -> unit
 end
 
-and mouseEvent =
+class type keyEvent =
+object
+  inherit event
+
+  method _get_outputString : string
+  method _get_keyVal : int
+  method _get_virtKeyVal : int
+  method _get_inputGenerated : bool
+  method _get_numPad : bool
+  method checkModifier : int -> bool
+  method initKeyEvent : string -> bool -> bool -> abstractView -> int -> string -> int -> int -> bool -> bool -> unit
+  method initModifier : int -> bool -> unit
+end
+
+class type mouseEvent =
 object
   inherit uIEvent
 
@@ -59,11 +76,11 @@ object
   method _get_clientY : int
   method _get_ctrlKey : bool
   method _get_metaKey : bool
-  method _get_relatedTarget : eventTarget
+  method _get_relatedTarget : < .. >
   method _get_screenX : int
   method _get_screenY : int
   method _get_shiftKey : bool
-  method initMouseEvent : string -> bool -> bool -> abstractView -> int -> int -> int -> int -> int -> bool -> bool -> bool -> bool -> int -> eventTarget -> unit
+  method initMouseEvent : string -> bool -> bool -> abstractView -> int -> int -> int -> int -> int -> bool -> bool -> bool -> bool -> int -> < .. > -> unit
 end
 
 class type style =
@@ -260,28 +277,62 @@ end
 class type element =
 object
   inherit node
-  inherit eventTarget
 
-  method getAttribute : string -> string
-  method setAttribute : string -> string -> unit
-
-  method _get_style : style
-
+  method _get_accessKey : string
+  method _set_accessKey : string -> unit
   method _get_className : string
   method _set_className : string -> unit
-
-  method _get_offsetWidth : int
-
+  method _get_disabled : bool
+  method _set_disabled : bool -> unit
+  method _get_id : string
+  method _set_id : string -> unit
   method _get_innerHTML : string
   method _set_innerHTML : string -> unit
+  method _get_offsetWidth : int
+  method _get_offsetHeight : int
+  method _get_offsetLeft : int
+  method _get_offsetTop : int
+  method _get_scrollWidth : int
+  method _get_scrollHeight : int
+  method _get_scrollLeft : int
+  method _get_scrollTop : int
+  method _get_style : style
+  method _get_tabIndex : int
+  method _set_tabIndex : int -> unit
+  method _get_tagName : string
+
+  method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
+  method addEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
+  method blur : unit
+  method click : unit
+  method dispatchEvent : #event -> unit
+  method focus : unit
+  method getAttribute : string -> string
+  method removeAttribute : string -> unit
+  method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
+  method removeEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
+  method setAttribute : string -> string -> unit
+
+  method _set_onblur : (event -> bool) Ocamljs.jsfun -> unit
+  method _set_onclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_oncontextmenu : (mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_ondblclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onfocus : (event -> bool) Ocamljs.jsfun -> unit
+  method _set_onkeydown : (keyEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onkeypress : (keyEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onkeyup : (keyEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onmousedown : (mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onmousemove : (mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onmouseout : (mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onmouseover : (mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onmouseup : (mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method _set_onresize : (event -> bool) Ocamljs.jsfun -> unit
 end
 
 class type anchor =
 object
   inherit element
 
-  method _get_accessKey : string
-  method _set_accessKey : string -> unit
   method _get_charset : string
   method _set_charset : string -> unit
   method _get_coords : string
@@ -312,17 +363,10 @@ object
   method _set_search : string -> unit
   method _get_shape : string
   method _set_shape : string -> unit
-  method _get_tabIndex : int
-  method _set_tabIndex : int -> unit
   method _get_target : string
   method _set_target : string -> unit
   method _get_type : string
   method _set_type : string -> unit
-
-  method blur : unit
-  method focus : unit
-
-  method _set_onclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
 end
 
 class type characterData =
@@ -422,19 +466,11 @@ object
   inherit element
 
   method _get_form : form
-  method _get_accessKey : string
-  method _set_accessKey : string -> unit
-  method _get_disabled : bool
-  method _set_disabled : bool -> unit
   method _get_name : string
   method _set_name : string -> unit
-  method _get_tabIndex : int
-  method _set_tabIndex : int -> unit
   method _get_type : string
   method _get_value : string
   method _set_value : string -> unit
-
-  method _set_onclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
 end
 
 class type input =
@@ -448,16 +484,12 @@ object
   method _get_form : form
   method _get_accept : string
   method _set_accept : string -> unit
-  method _get_accessKey : string
-  method _set_accessKey : string -> unit
   method _get_align : string
   method _set_align : string -> unit
   method _get_alt : string
   method _set_alt : string -> unit
   method _get_checked : bool
   method _set_checked : bool -> unit
-  method _get_disabled : bool
-  method _set_disabled : bool -> unit
   method _get_maxLength : int
   method _set_maxLength : int -> unit
   method _get_name : string
@@ -468,20 +500,14 @@ object
   method _set_size : int -> unit
   method _get_src : string
   method _set_src : string -> unit
-  method _get_tabIndex : int
-  method _set_tabIndex : int -> unit
   method _get_type : string
   method _get_useMap : string
   method _set_useMap : string -> unit
   method _get_value : string
   method _set_value : string -> unit
 
-  method blur : unit
-  method focus : unit
   method select : unit
-  method click : unit
 
-  method _set_onclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
   method _set_onchange : (unit -> unit) Ocamljs.jsfun -> unit
 end
 
@@ -494,8 +520,6 @@ object
   method _set_defaultSelected : bool -> unit
   method _get_text : string
   method _get_index : int
-  method _get_disabled : bool
-  method _set_disabled : bool -> unit
   method _get_label : string
   method _set_label : string -> unit
   method _get_selected : bool
@@ -516,22 +540,16 @@ object
   method _get_length : int
   method _get_form : form
   method _get_options : option array
-  method _get_disabled : bool
-  method _set_disabled : bool -> unit
   method _get_multiple : bool
   method _set_multiple : bool -> unit
   method _get_name : string
   method _set_name : string -> unit
   method _get_size : int
   method _set_size : int -> unit
-  method _get_tabIndex : int
-  method _set_tabIndex : int -> unit
 
   method add : option -> option -> unit
   method add_ie_ : option -> int -> unit
   method remove : int -> unit
-  method blur : unit
-  method focus : unit
 end
 
 class type span =
@@ -545,8 +563,6 @@ object
 
   method _get_src : string
   method _set_src : string -> unit
-
-  method _set_onclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
 end
 
 class type canvas =

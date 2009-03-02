@@ -1,9 +1,7 @@
-let append n1 n2 = ignore (n1#appendChild (n2 :> Dom.node))
-
 let int_input name value =
   let d = Dom.document in
   let res = d#createDocumentFragment in
-  append res (d#createTextNode name);
+  ignore (res#appendChild (d#createTextNode name));
   let input = (d#createElement "input" : Dom.input) in
   input#setAttribute "type" "text";
   input#_set_value (string_of_int !value);
@@ -11,7 +9,7 @@ let int_input name value =
     (Ocamljs.jsfun (fun _ ->
       (value := try int_of_string input#_get_value with _ -> !value);
       input#_set_value (string_of_int !value)));
-  append res input;
+  ignore (res#appendChild input);
   res
 
 let button name callback =
@@ -21,7 +19,7 @@ let button name callback =
   input#setAttribute "type" "submit";
   input#_set_value name;
   input#_set_onclick (Ocamljs.jsfun callback);
-  append res input;
+  ignore (res#appendChild input);
   res
 
 let div id =
@@ -35,19 +33,23 @@ let onload _ =
   let d = Dom.document in
   let main = d#getElementById "main" in
   let nbr, nbc, nbm = ref 10, ref 12, ref 15 in
-  append main (int_input "Number of columns" nbr);
-  append main (d#createElement "br");
-  append main (int_input "Number of rows" nbc);
-  append main (d#createElement "br");
-  append main (int_input "Number of mines" nbm);
-  append main (d#createElement "br");
-  append main
-    (button "nouvelle partie"
-        (fun _ ->
-          let id = uid () in
-          append main (div id);
-          Minesweeper.run id (string_of_int !nbc) (string_of_int !nbr) (string_of_int !nbm);
-          false));
+  ignore (main#appendChild (int_input "Number of columns" nbr));
+  ignore (main#appendChild (d#createElement "br"));
+  ignore (main#appendChild (int_input "Number of rows" nbc));
+  ignore (main#appendChild (d#createElement "br"));
+  ignore (main#appendChild (int_input "Number of mines" nbm));
+  ignore (main#appendChild (d#createElement "br"));
+  ignore (main#appendChild
+             (button "nouvelle partie"
+                 (fun _ ->
+                   let id = uid () in
+                   ignore (main#appendChild (div id));
+                   Minesweeper.run
+                     id
+                     (string_of_int !nbc)
+                     (string_of_int !nbr)
+                     (string_of_int !nbm);
+                   false)));
 
 ;;
 
