@@ -25,7 +25,6 @@ jscomp
   allow trailing _ as well as __ in methods
 
   camlp4-generate inlining code
-  stmt inlining
 
   cleaner heap rep (arrays, tag in last elem)
 
@@ -46,3 +45,4 @@ all
   links to source in example index page
   IFDEF DEBUG console on all examples
   check readmes and licenses
+  clean up compile warnings
