@@ -1,11 +1,14 @@
-include ../../ocaml/config/Makefile
+-include ../../Makefile.conf
 
 all: myocamlbuild.ml
+	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
+	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild ocamljs.cmjs
 	ocamlfind remove -destdir ../../stage ocamljs
 	ocamlfind install -destdir ../../stage ocamljs META _build/*.cmi _build/*.cmjs
 
 doc:
+	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild doc.docdir/index.html
 

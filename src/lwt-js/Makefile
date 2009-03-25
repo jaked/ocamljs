@@ -1,7 +1,12 @@
+-include ../../Makefile.conf
+
 all: myocamlbuild.ml
+	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
+	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild lwt-js.cmjsa
 
 doc:
+	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild doc.docdir/index.html
 

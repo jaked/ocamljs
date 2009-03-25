@@ -5,6 +5,7 @@ module Fd = Froc_dom
 module Fda = Froc_dom_anim
 
 IFDEF DEBUG
+THEN
 class type console =
 object
   method log : string -> unit
@@ -92,7 +93,8 @@ let onload () =
 
 F.init ();
 IFDEF DEBUG
+THEN
 F.set_debug (fun s -> console#log s);
 F.set_exn_handler (fun e -> console#log (Obj.magic e));
-ENDIF
+ENDIF;
 D.window#_set_onload (Ocamljs.jsfun onload)

@@ -106,7 +106,7 @@ let appendChild n nb =
 
 let replaceNode n nb =
   let n = (n :> Dom.node) in
-  let p = n#_get_parentNode in
+  let p = (n#_get_parentNode : Dom.node) in
   let old = ref n in
   let update r =
     let c = node_of_result r in

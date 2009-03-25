@@ -1,0 +1,248 @@
+#! /bin/sh
+
+# adapted from ocamlnet's configure
+
+#######################################################################
+# Helpers:
+
+# Split $PATH into words:
+oldifs="$IFS"
+IFS="   :"
+spacepath=`echo $PATH`
+IFS="$oldifs"
+
+
+in_path () {
+    # Does $1 exist in $PATH?
+    for d in $spacepath; do
+        if test -x "$d/$1"; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+
+get_path () {
+    for d in $spacepath; do
+        if test -x "$d/$1"; then
+            echo "$d/$1"
+            return
+        fi
+    done
+}
+
+#######################################################################
+# Defaults
+
+#--- Options ---
+# value 0: off
+# value 1: on
+# defaults:
+
+set_defaults () {
+    srcdir="/usr/local/src/ocaml-3.10.2"
+    bindir=`dirname $ocamlc`
+    libdir=`ocamlc -where`
+}
+
+ocamlc=`get_path ocamlc`
+set_defaults
+
+version="0.2"
+exec_suffix=""
+
+#######################################################################
+# Option parsing
+
+# Packages to include anyway:
+requires="ulex"
+
+check_library () {
+    # $1: the name of the library (findlib)
+	ocamlfind query "$1" >/dev/null 2>/dev/null
+	return
+	return 1   # not found
+}
+
+print_options () {
+	echo "    -srcdir $srcdir"
+	echo "    -bindir $bindir"
+	echo "    -libdir $libdir"
+}
+
+
+usage () {
+	set_defaults
+	cat <<_EOF_ >&2
+usage: ./configure [ options ]
+
+_EOF_
+	cat <<_EOF_ >&2
+-srcdir dir
+        OCaml source is in this directory (default /usr/local/src/ocaml-3.10.2)
+
+-bindir dir
+        Install binaries into this directory (default same as ocamlc)
+
+-libdir dir
+        Install libraries into this directory (default same as ocamlc -where)
+
+Defaults are:
+
+_EOF_
+	print_options >&2
+	exit 1
+}
+
+
+echo "Welcome to ocamljs version $version" >&2
+
+while [ "$#" -gt 0 ]; do
+	case "$1" in
+                -srcdir)
+                        srcdir="$2"
+                        shift
+                        shift
+                        ;;
+                -bindir)
+                        bindir="$2"
+                        shift
+                        shift
+                        ;;
+                -libdir)
+                        libdir="$2"
+                        shift
+                        shift
+                        ;;
+		-version)
+			echo "$version"
+			exit 0
+			;;
+		*)
+			usage
+	esac
+done
+
+# Sanity checks
+
+case "$bindir" in
+  /*) ;;
+  "") ;;
+   *) echo "The -bindir directory must be absolute." 1>&2; exit 2;;
+esac
+case "$libdir" in
+  /*) ;;
+  "") ;;
+   *) echo "The -libdir directory must be absolute." 1>&2; exit 2;;
+esac
+
+######################################################################
+# Check OCaml source and version
+
+printf "%s" "Checking for OCaml source... "
+if [ -f $srcdir/VERSION ]; then
+    echo "found"
+    src_version=`head -1 $srcdir/VERSION`
+else
+    echo "not found"
+    echo "You need to set -srcdir to an OCaml source tree."
+    echo "Download OCaml from http://caml.inria.fr/download.en.html"
+    exit 1
+fi
+
+printf "%s" "Checking OCaml version... "
+ocamlc_version=`ocamlc -version`
+if [ "$src_version" = "3.10.2" -a "$src_version" = "$ocamlc_version" ]; then
+    echo "ok, $src_version"
+elif [ "$src_version" != "$ocamlc_version" ]; then
+    echo "source version $src_version != installed version $ocamlc_version"
+    echo "You need OCaml source that's the same version as your installed OCaml."
+    echo "Download OCaml from http://caml.inria.fr/download.en.html"
+    exit 1
+else
+    echo "unsupported version $src_version"
+    echo "Sorry, ocamljs needs OCaml version 3.10.2."
+    echo "Download OCaml from http://caml.inria.fr/download.en.html"
+    exit 1
+fi
+
+######################################################################
+# Check ocamlfind
+
+printf "%s" "Checking for findlib... "
+if check_library stdlib; then
+    echo "found"
+else
+    echo "not found"
+    echo "Make sure that ocamlfind is in your PATH, or download findlib"
+    echo "from www.ocaml-programming.de"
+    exit 1
+fi
+
+######################################################################
+# Check that ulex is available:
+
+printf "%s" "Checking for ulex... "
+if check_library ulex; then
+    echo "found"
+else
+    echo "not found"
+    echo "Sorry, installation is not possible without ulex."
+    echo "Get ulex from:"
+    echo "http://www.cduce.org/download.html#side"
+    exit 1
+fi
+
+######################################################################
+# Summary
+
+echo
+echo "Effective options:"
+print_options
+echo
+
+pkglist="jslib jscomp ocamljs stdlib javascript mozilla dom lwt-js froc froc-dom gears"
+
+######################################################################
+# Configure OCaml
+
+printf "%s" "Configuring OCaml... "
+ln -sf $srcdir ocaml
+(cd ocaml; make clean; ./configure -bindir $bindir -libdir $libdir)  >/dev/null 2>&1
+echo "done"
+
+######################################################################
+# Write Makefile.conf
+
+echo "Writing Makefile.conf"
+cat <<_EOF_ >Makefile.conf
+# Makefike.conf written by configure
+# The ocamljs version
+VERSION = $version
+
+# The packages to build in the right order:
+PKGLIST = $pkglist
+
+# Required packages (findlib):
+REQUIRES = $requires
+
+# Where binaries are installed:
+BINDIR = $bindir
+
+# Where libraries are installed:
+LIBDIR = $libdir
+
+_EOF_
+
+######################################################################
+# Finish
+
+echo
+echo "Please check Makefile.conf."
+echo
+echo "You can now compile ocamljs by invoking"
+echo "   make all"
+echo "Finally, a"
+echo "   make install"
+echo "will install the package(s)."

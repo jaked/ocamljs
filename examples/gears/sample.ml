@@ -1,6 +1,7 @@
 open Ocamljs.Inline
 
 IFDEF DEBUG
+THEN
 class type console =
 object
   method log : string -> unit

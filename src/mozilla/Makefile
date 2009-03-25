@@ -1,8 +1,12 @@
+-include ../../Makefile.conf
+
 all: myocamlbuild.ml
+	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild mozilla.cmjs
 
 doc:
+	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild doc.docdir/index.html
 

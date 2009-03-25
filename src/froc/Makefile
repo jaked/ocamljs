@@ -1,3 +1,5 @@
+-include ../../Makefile.conf
+
 FILES=\
 froc.cma froc.cmxa froc.a froc.cmjsa \
 froc.mli froc.cmi \
@@ -7,13 +9,14 @@ froc_ddg.mli froc_ddg.cmi \
 BFILES=$(addprefix _build/,$(FILES))
 
 all: myocamlbuild.ml
-	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
+	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild froc.cma froc.cmxa froc.cmjsa
 	ocamlfind remove -destdir ../../stage froc
 	ocamlfind install -destdir ../../stage froc META $(BFILES)
 
 doc:
+	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild doc.docdir/index.html
 

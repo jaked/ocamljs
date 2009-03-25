@@ -1,4 +1,4 @@
-include ../../ocaml/config/Makefile
+-include ../../Makefile.conf
 
 all: myocamlbuild.ml ocaml prereqs ocamljs # ocamljs.opt
 
