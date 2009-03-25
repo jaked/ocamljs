@@ -9,6 +9,9 @@ dom
   fill in more of API
   more examples
 
+lwt-js
+  examples
+
 jslib
   fill in more of parser
   bug with locations
@@ -21,8 +24,6 @@ javascript
 
 jscomp
   cleanup
-
-  allow trailing _ as well as __ in methods
 
   camlp4-generate inlining code
 

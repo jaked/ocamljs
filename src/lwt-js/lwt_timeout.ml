@@ -84,7 +84,7 @@ let set_exn_handler f = handle_exn := f
 
 let rec loop () =
   stopped := false;
-  Lwt.bind (Lwt_unix.sleep 1.) (fun () ->
+  Lwt.bind (Lwt_dom.sleep 1.) (fun () ->
   let s = !buckets.(!curr) in
   while not (lst_is_empty s) do
     let x = lst_peek s in

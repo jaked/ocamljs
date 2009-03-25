@@ -1,6 +1,6 @@
 include ocaml/config/Makefile
 
-PKGLIST=jslib jscomp ocamljs stdlib javascript mozilla lwt-js dom froc froc-dom gears
+PKGLIST=jslib jscomp ocamljs stdlib javascript mozilla dom lwt-js froc froc-dom gears
 
 all:
 	for pkg in $(PKGLIST); do \
