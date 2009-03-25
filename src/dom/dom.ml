@@ -13,7 +13,7 @@ object
   method _get_nodeType : int
   method _get_nodeValue : string
   method _set_nodeValue : string -> unit
-    
+
   method appendChild : < .. > -> < .. >
   method insertBefore : < .. > -> < .. > -> < .. >
   method removeChild : < .. > -> < .. >
@@ -308,6 +308,7 @@ object
   method dispatchEvent : #event -> unit
   method focus : unit
   method getAttribute : string -> string
+  method getElementsByTagName : string -> 'a
   method removeAttribute : string -> unit
   method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
   method removeEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
