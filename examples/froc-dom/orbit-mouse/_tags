@@ -1,2 +1,2 @@
-<orbit.ml> : pkg_froc-dom,pkg_javascript
+<orbit.ml> : pkg_froc-dom,pkg_javascript,syntax_camlp4o,pkg_camlp4.macro
 <orbit.js> : pkg_froc-dom,pkg_javascript

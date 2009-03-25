@@ -1,10 +1,12 @@
 open Ocamljs.Inline
 
+IFDEF DEBUG
 class type console =
 object
   method log : string -> unit
 end
 let console = (Ocamljs.var "console" : console)
+ENDIF
 
 (* stuff from sample.js *)
 
