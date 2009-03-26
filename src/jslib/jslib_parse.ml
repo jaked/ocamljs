@@ -49,6 +49,7 @@ a_NUM: [[
   `ANTIQUOT (""|"int"|"`int" as n, s) -> mk_anti n s
 | `ANTIQUOT (""|"flo"|"`flo" as n, s) -> mk_anti n s
 | s = INT -> s
+| s = FLOAT -> s
 ]];
 
 comma_expr: [[
@@ -175,7 +176,7 @@ expression: [
   ]
 | "PrimaryExpression" NONA [
     `ANTIQUOT ("exp"|""|"anti" as n, s) -> Jexp_Ant (_loc, mk_anti ~c:"exp" n s)
-  | i = a_NUM -> Jnum (_loc, i) (* XXX lex floats *)
+  | i = a_NUM -> Jnum (_loc, i)
   | s = a_STRING -> Jstring (_loc, s, false)
   | s = STRING2 -> Jstring (_loc, s, true)
   | v = a_IDENT -> Jvar (_loc, v)

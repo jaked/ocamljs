@@ -15,6 +15,9 @@
 module Make_options (F :
     sig
       val _a : unit -> unit
+IFNDEF OCAML_3_10_2 THEN
+      val _annot : unit -> unit
+ENDIF
       val _c : unit -> unit
       val _cclib : string -> unit
       val _ccopt : string -> unit
@@ -22,7 +25,9 @@ module Make_options (F :
       val _custom : unit -> unit
       val _dllib : string -> unit
       val _dllpath : string -> unit
+IFDEF OCAML_3_10_2 THEN
       val _dtypes : unit -> unit
+ENDIF
       val _g : unit -> unit
       val _i : unit -> unit
       val _I : string -> unit

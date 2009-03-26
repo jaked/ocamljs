@@ -79,6 +79,9 @@ let transl_store_label_init glob size f arg =
 let wrapping = ref false
 let top_env = ref Env.empty
 let classes = ref []
+IFNDEF OCAML_3_10_2 THEN
+let method_ids = ref IdentSet.empty
+ENDIF
 
 let oo_add_class id =
   classes := id :: !classes;
@@ -94,6 +97,9 @@ let oo_wrap env req f x =
     cache_required := req;
     top_env := env;
     classes := [];
+IFNDEF OCAML_3_10_2 THEN
+    method_ids := IdentSet.empty;
+ENDIF;
     let lambda = f x in
     let lambda =
       List.fold_left

@@ -8,6 +8,7 @@ type token =
     | KEYWORD of string
     | IDENT of string
     | INT of string
+    | FLOAT of string
     | STRING1 of string
     | STRING2 of string
     | ANTIQUOT of string * string
@@ -26,6 +27,7 @@ module Token = struct
       | KEYWORD s    -> sf "KEYWORD %S" s
       | IDENT s      -> sf "IDENT %S" s
       | INT s        -> sf "INT %s" s
+      | FLOAT s      -> sf "FLOAT %s" s
       | STRING1 s    -> sf "STRING \"%s\"" s
       | STRING2 s    -> sf "STRING \"%s\"" s
       | ANTIQUOT (n, s) -> sf "ANTIQUOT %s: %S" n s
@@ -40,7 +42,7 @@ module Token = struct
 
   let extract_string =
     function
-      | KEYWORD s | IDENT s | INT s | STRING1 s | STRING2 s -> s
+      | KEYWORD s | IDENT s | INT s | FLOAT s | STRING1 s | STRING2 s -> s
       | tok ->
           invalid_arg ("Cannot extract a string from this token: "^
                           to_string tok)
@@ -197,6 +199,9 @@ let rec token c = lexer
   | blank+ -> token c c.lexbuf
 
   | qname -> IDENT (L.utf8_lexeme c.lexbuf)
+
+  | '-'? ['0'-'9']+ '.' ['0'-'9']* ->
+      (FLOAT (L.utf8_lexeme c.lexbuf))
 
   | '-'? ['0'-'9']+ ->
       (INT (L.utf8_lexeme c.lexbuf))

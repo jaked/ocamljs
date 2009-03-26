@@ -81,6 +81,9 @@ module Options = Jsmain_args.Make_options (struct
   let set r () = r := true
   let unset r () = r := false
   let _a = set make_archive
+IFNDEF OCAML_3_10_2 THEN
+  let _annot = set annotations
+ENDIF
   let _c = set compile_only
   let _cclib s = ccobjs := Misc.rev_split_words s @ !ccobjs
   let _ccopt s = ccopts := s :: !ccopts
@@ -88,7 +91,9 @@ module Options = Jsmain_args.Make_options (struct
   let _custom = set custom_runtime
   let _dllib s = dllibs := Misc.rev_split_words s @ !dllibs
   let _dllpath s = dllpaths := !dllpaths @ [s]
+IFDEF OCAML_3_10_2 THEN
   let _dtypes = set save_types
+ENDIF
   let _g = set debug
   let _i () = print_types := true; compile_only := true
   let _I s = include_dirs := s :: !include_dirs

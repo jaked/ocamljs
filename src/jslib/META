@@ -1,7 +1,7 @@
 name = "jslib"
 version = "0.1"
 description = "Javascript parsing, prettyprinting, tools"
-requires = "camlp4.lib,ulex"
+requires = "dynlink,camlp4.lib,ulex"
 archive(byte) = "jslib.cma"
 archive(native) = "jslib.cmxa"
 

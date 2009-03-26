@@ -1,5 +1,9 @@
 -include ../../Makefile.conf
 
+ifeq ($(OCAML_3_10_2),1)
+OCAMLBUILD_FLAGS=-tag OCAML_3_10_2
+endif
+
 all: myocamlbuild.ml ocaml prereqs ocamljs # ocamljs.opt
 
 doc:
@@ -11,13 +15,13 @@ prereqs:
 ocamljs:
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
 	OCAMLPATH=`pwd`/../../stage \
-	ocamlbuild jsmain.byte
+	ocamlbuild $(OCAMLBUILD_FLAGS) jsmain.byte
 
 # not sure how to get this to link
 ocamljs.opt:
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
 	OCAMLPATH=`pwd`/../jslib/_build \
-	ocamlbuild jsmain.native
+	ocamlbuild $(OCAMLBUILD_FLAGS) jsmain.native
 
 install:
 	cp _build/jsmain.byte $(BINDIR)/ocamljs

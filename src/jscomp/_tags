@@ -1,3 +1,4 @@
+<jsmain.ml> or <jsmain_args.ml*> or <jserrors.ml> or <emitjs.ml> or <jsgen.ml> or <translobj.ml*> : syntax_camlp4o,pkg_camlp4.macro
 <emitjs.mli>: pkg_jslib
 <emitjs.ml>: pkg_jslib
 <jsgen.mli>: pkg_jslib

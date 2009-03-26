@@ -6,6 +6,7 @@ type token =
   | KEYWORD of string
   | IDENT of string
   | INT of string
+  | FLOAT of string
   | STRING1 of string
   | STRING2 of string
   | ANTIQUOT of string * string

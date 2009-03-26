@@ -15,6 +15,9 @@
 module Make_options (F :
    sig
      val _a : unit -> unit
+IFNDEF OCAML_3_10_2 THEN
+     val _annot : unit -> unit
+ENDIF
      val _c : unit -> unit
      val _cclib : string -> unit
      val _ccopt : string -> unit
@@ -22,7 +25,9 @@ module Make_options (F :
      val _custom : unit -> unit
      val _dllib : string -> unit
      val _dllpath : string -> unit
+IFDEF OCAML_3_10_2 THEN
      val _dtypes : unit -> unit
+ENDIF
      val _g : unit -> unit
      val _i : unit -> unit
      val _I : string -> unit
@@ -63,8 +68,13 @@ module Make_options (F :
      val anonymous : string -> unit
    end) =
 struct
-  let list = [
+  let list = List.filter (fun (x,_,_) -> x <> "BOGUS") [
     "-a", Arg.Unit F._a, " Build a library";
+IFNDEF OCAML_3_10_2 THEN
+    "-annot", Arg.Unit F._annot, " Save information in <filename>.annot";
+ELSE
+    "BOGUS", Arg.Unit ignore, "";
+ENDIF;
     "-c", Arg.Unit F._c, " Compile only (do not link)";
     "-cclib", Arg.String F._cclib, "<opt>  Pass option <opt> to the C linker";
     "-ccopt", Arg.String F._ccopt,
@@ -76,7 +86,11 @@ struct
            "<lib>  Use the dynamically-loaded library <lib>";
     "-dllpath", Arg.String F._dllpath,
            "<dir>  Add <dir> to the run-time search path for shared libraries";
+IFDEF OCAML_3_10_2 THEN
     "-dtypes", Arg.Unit F._dtypes, " Save type information in <filename>.annot";
+ELSE
+    "BOGUS", Arg.Unit ignore, "";
+ENDIF;
      "-for-pack", Arg.String (fun s -> ()),
            "<ident>  Ignored (for compatibility with ocamlopt)";
     "-g", Arg.Unit F._g, " Save debugging information";
