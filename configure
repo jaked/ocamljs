@@ -237,7 +237,7 @@ BINDIR = $bindir
 # Where libraries are installed:
 LIBDIR = $libdir
 
-OCAML_3_11_0 = $ocaml_3_11_0
+OCAML_3_10_2 = $ocaml_3_10_2
 _EOF_
 
 ######################################################################
