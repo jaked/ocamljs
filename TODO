@@ -43,7 +43,4 @@ jscomp
 
 all
   docs, wiki
-  links to source in example index page
-  IFDEF DEBUG console on all examples
   check readmes and licenses
-  clean up compile warnings

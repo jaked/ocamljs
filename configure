@@ -41,7 +41,7 @@ get_path () {
 # defaults:
 
 set_defaults () {
-    srcdir="/usr/local/src/ocaml-3.10.2"
+    srcdir="/usr/local/src/ocaml-3.11.0"
     bindir=`dirname $ocamlc`
     libdir=`ocamlc -where`
 }

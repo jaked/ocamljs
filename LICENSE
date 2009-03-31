@@ -1,13 +1,13 @@
 In the following, "the Library" refers to all files marked "Copyright
-(C) 2007 Skydeck, Inc" in the following directories and their
+(C) 2007-9 Skydeck, Inc" in the following directories and their
 sub-directories:
 
-  src/libs
+  src/ (excluding src/jscomp)
 
-and "the Compiler" refers to all files marked "Copyright (C) 2007
+and "the Compiler" refers to all files marked "Copyright (C) 2007-9
 Skydeck, Inc" in the following directories and their sub-directories:
 
-  src/ocamljs
+  src/jscomp
 
 The Compiler is distributed under the terms of the Q Public License
 version 1.0 with a change to choice of law (included below).

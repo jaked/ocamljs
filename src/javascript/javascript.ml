@@ -1,6 +1,6 @@
 (*
  * This file is part of ocamljs, OCaml to Javascript compiler
- * Copyright (C) 2007 Skydeck, Inc
+ * Copyright (C) 2007-9 Skydeck, Inc
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

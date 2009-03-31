@@ -41,4 +41,4 @@ examples:
 
 gcode:
 	rsync -a --delete --exclude '.svn/' doc/ ../doc/
-	rsync -a --delete --exclude '.svn/' --include '*/' --include '*.html' --include '*.js' --include '*.css' --include '*.png' --exclude '*' examples/ ../examples/
+	rsync -a --delete --exclude '.svn/' --include '*/' --include '*.html' --include '*.ml' --include '*.js' --include '*.css' --include '*.png' --exclude '*' examples/ ../examples/
