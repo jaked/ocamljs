@@ -202,7 +202,7 @@ echo "Effective options:"
 print_options
 echo
 
-pkglist="jslib jscomp ocamljs stdlib javascript mozilla dom lwt-js froc froc-dom gears"
+pkglist="jslib jscomp ocamljs stdlib javascript mozilla dom lwt-js gears"
 
 ######################################################################
 # Configure OCaml
@@ -221,7 +221,7 @@ fi
 
 echo "Writing Makefile.conf"
 cat <<_EOF_ >Makefile.conf
-# Makefike.conf written by configure
+# Makefile.conf written by configure
 # The ocamljs version
 VERSION = $version
 

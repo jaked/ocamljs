@@ -29,7 +29,11 @@ clean:
 	done
 	make -C test clean
 	make -C examples clean
+	rm -rf doc/*
 	rm -rf stage/*
+
+distclean: clean
+	rm -rf Makefile.conf
 
 test:
 	make -C test

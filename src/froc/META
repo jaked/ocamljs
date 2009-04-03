@@ -1,6 +1,0 @@
-name="Froc"
-version="0.1"
-description="Functional reactive programming in the style of FrTime"
-archive(js) = "froc.cmjsa"
-archive(byte) = "froc.cma"
-archive(native) = "froc.cmxa"
