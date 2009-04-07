@@ -24,8 +24,8 @@ ocamljs.opt:
 	ocamlbuild $(OCAMLBUILD_FLAGS) jsmain.native
 
 install:
-	cp _build/jsmain.byte $(BINDIR)/ocamljs
-#	cp _build/jsmain.native $(BINDIR)/ocamljs.opt
+	install _build/jsmain.byte $(BINDIR)/ocamljs
+#	install _build/jsmain.native $(BINDIR)/ocamljs.opt
 
 uninstall:
 	rm -f $(BINDIR)/ocamljs

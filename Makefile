@@ -15,7 +15,7 @@ install:
 	for pkg in $(PKGLIST); do \
 		$(MAKE) -C src/$$pkg install || exit; \
 	done
-	cp bin/ocamlfindjs $(BINDIR)
+	install bin/ocamlfindjs $(BINDIR)
 
 uninstall:
 	for pkg in $(PKGLIST); do \
