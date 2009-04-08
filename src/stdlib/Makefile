@@ -1,9 +1,22 @@
 -include ../../Makefile.conf
 
-all: myocamlbuild.ml ocaml stdlib.mllib
+MLI=random.mli buffer.mli printf.mli camlinternalMod.mli
+ML=buffer.ml printf.ml camlinternalMod.ml
+
+all: myocamlbuild.ml ocaml $(ML) $(MLI) stdlib.mllib
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild stdlib.cmjsa std_exit.cmjs
+
+%.ml : %.ml.patch
+	cp ocaml/stdlib/$@ .
+	patch -p0 < $<
+
+%.mli :
+	ln -s ocaml/stdlib/$@ .
+
+patches:
+	for ml in $(ML); do diff -Naur ocaml/stdlib/$$ml $$ml > $$ml.patch; done || exit 0
 
 doc:
 
@@ -31,7 +44,3 @@ ocaml:
 
 stdlib.mllib:
 	ln -s ocaml/stdlib/stdlib.mllib .
-	ln -s ocaml/stdlib/random.mli .
-	ln -s ocaml/stdlib/buffer.mli .
-	ln -s ocaml/stdlib/printf.mli .
-	ln -s ocaml/stdlib/camlinternalMod.mli .
