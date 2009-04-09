@@ -1,7 +1,7 @@
 -include ../../Makefile.conf
 
-MLI=random.mli buffer.mli printf.mli camlinternalMod.mli
-ML=buffer.ml printf.ml camlinternalMod.ml
+ML=random.ml buffer.ml printf.ml camlinternalMod.ml pervasives.ml
+MLI=$(addsuffix .mli,$(basename $(ML)))
 
 all: myocamlbuild.ml ocaml $(ML) $(MLI) stdlib.mllib
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
