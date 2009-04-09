@@ -1,6 +1,6 @@
 (*
  * This file is part of ocamljs, OCaml to Javascript compiler
- * Copyright (C) 2007 Skydeck, Inc
+ * Copyright (C) 2007-9 Skydeck, Inc
  * Original file (bytecomp/bytepackager.mli) in the Objective Caml source
  * distribution) is Copyright (C) INRIA.
  *
