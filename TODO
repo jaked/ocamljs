@@ -1,7 +1,3 @@
-froc-dom
-  fill out Froc_dom_anim
-  other examples? something with box2d-js would be cool
-
 gears
   more examples
 
@@ -33,7 +29,6 @@ jscomp
 
   more stdlib work--other things to implement natively?
   check float format (e.g. float_of_string) JS vs. OCaml
-  make Pervasives.^ do native string concat
 
   can we do better interoperating with exceptions? would be nice to be
   able to declare, catch, and match exceptions from JS libs.
@@ -43,4 +38,3 @@ jscomp
 
 all
   docs, wiki
-  check readmes and licenses
