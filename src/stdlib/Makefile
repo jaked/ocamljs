@@ -1,9 +1,9 @@
 -include ../../Makefile.conf
 
-ML=random.ml buffer.ml printf.ml camlinternalMod.ml pervasives.ml
+ML=buffer.ml printf.ml camlinternalMod.ml pervasives.ml
 MLI=$(addsuffix .mli,$(basename $(ML)))
 
-all: myocamlbuild.ml ocaml $(ML) $(MLI) stdlib.mllib
+all: myocamlbuild.ml ocaml $(ML) $(MLI) random.mli stdlib.mllib
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild stdlib.cmjsa std_exit.cmjs
@@ -34,7 +34,7 @@ clean:
 	ocamlbuild -clean
 	rm -f myocamlbuild.ml
 	rm -f ocaml
-	rm -f stdlib.mllib *.mli
+	rm -f stdlib.mllib $(ML) $(MLI) random.mli
 
 myocamlbuild.ml: ../../tools/myocamlbuild.ml myocamlbuild.mlp
 	cat ../../tools/myocamlbuild.ml myocamlbuild.mlp > myocamlbuild.ml
