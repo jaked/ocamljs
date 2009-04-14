@@ -10,8 +10,6 @@ all: myocamlbuild.ml
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild gears.cmjsa
-	ocamlfind remove -destdir ../../stage gears
-	ocamlfind install -destdir ../../stage gears META $(BFILES)
 
 doc:
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
