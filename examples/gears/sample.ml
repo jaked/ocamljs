@@ -1,14 +1,5 @@
 open Ocamljs.Inline
 
-IFDEF DEBUG
-THEN
-class type console =
-object
-  method log : string -> unit
-end
-let console = (Ocamljs.var "console" : console)
-ENDIF
-
 (* stuff from sample.js *)
 
 let isDefined type_ = type_ <> "undefined" && type_ <> "unknown"

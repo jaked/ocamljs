@@ -356,7 +356,7 @@ let rec comp_expr tail expr =
           if ml >= 2 && m.[ml - 1] = '_'
           then
             try String.sub m 0 (String.rindex_from m (ml - 2) '_')
-            with Not_found -> String.sub m 0 (ml - 2)
+            with Not_found -> String.sub m 0 (ml - 1)
           else m in
         begin
           match op, cargs with
