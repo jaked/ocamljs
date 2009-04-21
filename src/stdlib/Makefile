@@ -1,5 +1,9 @@
 -include ../../Makefile.conf
 
+ifeq ($(OCAML_3_10_2),1)
+VERSION=.3.10.2
+endif
+
 ML=buffer.ml printf.ml camlinternalMod.ml pervasives.ml
 MLI=$(addsuffix .mli,$(basename $(ML)))
 
@@ -7,6 +11,10 @@ all: myocamlbuild.ml ocaml $(ML) $(MLI) random.mli stdlib.mllib
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
 	OCAMLPATH=`pwd`/../../stage \
 	ocamlbuild stdlib.cmjsa std_exit.cmjs
+
+%.ml : %.ml$(VERSION).patch
+	cp ocaml/stdlib/$@ .
+	patch -p0 < $<
 
 %.ml : %.ml.patch
 	cp ocaml/stdlib/$@ .
