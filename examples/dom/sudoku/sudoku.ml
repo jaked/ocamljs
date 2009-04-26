@@ -57,10 +57,6 @@ let make_board () =
   (rows, table)
 
 let check_board rows _ =
-  let ok i j =
-    let cell = rows.(i).(j) in
-    cell#_get_style#_set_backgroundColor "#ffffff" in
-
   let error i j =
     let cell = rows.(i).(j) in
     cell#_get_style#_set_backgroundColor "#ff0000" in
@@ -91,11 +87,10 @@ let check_board rows _ =
       i * 3 + k mod 3, j * 3 + k / 3) in
     check_set set in
 
-  for i = 0 to 8 do
-    for j = 0 to 8 do
-      ok i j
-    done
-  done;
+  ArrayLabels.iter rows ~f:(fun row ->
+    ArrayLabels.iter row ~f:(fun cell ->
+      cell#_get_style#_set_backgroundColor "#ffffff"));
+
   for i = 0 to 8 do check_row i done;
   for j = 0 to 8 do check_column j done;
   for i = 0 to 2 do
