@@ -193,6 +193,9 @@ dispatch begin function
          flag ["ocaml"; "doc";      "syntax_"^syntax] & S[A"-syntax"; A syntax];
        end (find_syntaxes ());
 
+       flag ["ocaml"; "compile"; "DEBUG"] & S[A"-ppopt"; A"-DDEBUG"];
+       flag ["ocaml"; "ocamldep"; "DEBUG"] & S[A"-ppopt"; A"-DDEBUG"];
+
   | _ -> ()
 end
 
