@@ -583,32 +583,34 @@ and comp_letrecs_st tail expr k =
 and inline_exp = function
     (* XXX actually we never get these because of the _loc arg *)
   | Lconst (Const_block _) as cb -> inline_exp (makeblock_of_const cb)
-  | Lprim (Pmakeblock (tag, _), args) ->
-      begin
-        match tag, args with
-          | 0, [_] -> Jthis _loc
-          | 1, [_; v] -> Jvar (_loc, inline_string v)
-          | 2, [_; el] -> Jarray (_loc, inline_exp el)
-          | 3, [_; kvl] -> Jobject (_loc, inline_list (inline_pair inline_exp inline_exp) kvl)
-          | 4, [_; s; qq] -> Jstring (_loc, inline_string s, inline_bool qq)
-          | 5, [_; s] -> Jnum (_loc, inline_string s)
-          | 6, [_] -> Jnull _loc
-          | 7, [_; b] -> Jbool (_loc, inline_bool b)
-          | 8, [_; so; sl; stl] ->
-              Jfun (_loc,
-                   inline_option inline_string so,
-                   inline_list inline_string sl,
-                   inline_list inline_stmt stl)
-          | 9, [_; e; s] -> Jfieldref (_loc, inline_exp e, inline_string s)
-          | 10, [_; u; e] -> Junop (_loc, inline_unop u, inline_exp e)
-          | 11, [_; b; e1; e2] -> Jbinop (_loc, inline_binop b, inline_exp e1, inline_exp e2)
-          | 12, [_; i; t; e] -> Jite (_loc, inline_exp i, inline_exp t, inline_exp e)
-          | 13, [_; e; el] -> Jcall (_loc, inline_exp e, inline_exp el)
-          | 14, [_; e; elo] -> Jnew (_loc, inline_exp e, inline_option inline_exp elo)
-          | 15, [_] -> Jexp_nil _loc
-          | 16, [_; e1; e2] -> Jexp_cons (_loc, inline_exp e1, inline_exp e2)
-          | _ -> raise (Failure "bad inline exp")
-      end
+  | <:lam_exp< this >> -> <:exp< this >>
+  | <:lam_exp< $id:v$ >> -> <:exp< $id:inline_string v$ >>
+  | <:lam_exp< [ $el$ ] >> -> <:exp< [ $inline_exp el$ ] >>
+  | Lprim (Pmakeblock (3, _), [_; kvl]) -> Jobject (_loc, inline_list (inline_pair inline_exp inline_exp) kvl)
+(*
+  | <:lam_exp< $str:s$ >> -> <:exp< $str:s$ >>
+*) (* XXX bools don't work in lambda_meta_generator *)
+  | Lprim (Pmakeblock (4, _), [_; s; qq]) -> Jstring (_loc, inline_string s, inline_bool qq) (* XXX the quote flag is not accessible from quotation *)
+  | <:lam_exp< $flo:s$ >> -> <:exp< $flo:inline_string s$ >> (* XXX :num ? *)
+  | <:lam_exp< null >> -> <:exp< null >>
+(*
+  | <:lam_exp< true >> -> <:exp< true >> (* XXX :bool *)
+  | <:lam_exp< false >> -> <:exp< false >>
+*) (* XXX bools don't work in lambda_meta_generator *)
+  | Lprim (Pmakeblock (7, _), [_; b]) -> Jbool (_loc, inline_bool b)
+  | Lprim (Pmakeblock (8, _), [_; so; sl; stl]) ->
+      Jfun (_loc,
+           inline_option inline_string so,
+           inline_list inline_string sl,
+           inline_list inline_stmt stl)
+  | <:lam_exp< $e$.$s$ >> -> <:exp< $inline_exp e$.$inline_string s$ >>
+  | Lprim (Pmakeblock (10, _), [_; u; e]) -> Junop (_loc, inline_unop u, inline_exp e)
+  | Lprim (Pmakeblock (11, _), [_; b; e1; e2]) -> Jbinop (_loc, inline_binop b, inline_exp e1, inline_exp e2)
+  | <:lam_exp< $i$ ? $t$ : $e$ >> -> <:exp< $inline_exp i$ ? $inline_exp t$ : $inline_exp e$ >>
+  | <:lam_exp< $e$($el$) >> -> <:exp< $inline_exp e$($inline_exp el$) >>
+  | Lprim (Pmakeblock (14, _), [_; e; elo]) -> Jnew (_loc, inline_exp e, inline_option inline_exp elo)
+  | Lprim (Pmakeblock (15, _), [_]) -> Jexp_nil _loc
+  | Lprim (Pmakeblock (16, _), [_; e1; e2]) -> Jexp_cons (_loc, inline_exp e1, inline_exp e2)
   | Lprim (Pccall { prim_name = "$inline_antiexp" }, [e]) -> comp_expr false e
   | _ -> raise (Failure "bad inline exp")
 

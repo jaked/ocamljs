@@ -109,4 +109,75 @@ struct
     end
   end
 
+  module MakeLambda (MetaLoc : META_LOC) =
+  struct
+    open MetaLoc
+
+    module Expr =
+    struct
+      let meta_loc = meta_loc_expr
+
+      let meta_option mf_a _loc = function
+        | None -> <:expr< None >>
+        | Some a -> <:expr< Some $mf_a _loc a$ >>
+
+      include LambdaMetaGeneratorExpr(Jslib_ast)
+    end
+
+    module Patt =
+    struct
+      let meta_loc = meta_loc_patt
+
+      let meta_option mf_a _loc = function
+        | None -> <:patt< None >>
+        | Some a -> <:patt< Some $mf_a _loc a$ >>
+
+      include LambdaMetaGeneratorPatt(Jslib_ast)
+    end
+  end
+
+  module MakeAbstractLambda (MetaLoc : META_LOC) =
+  struct
+    open MetaLoc
+
+    module Expr =
+    struct
+      let meta_loc _loc _ =
+        (* XXX translate the argument location *)
+        <:expr<
+          Lambda.Lconst
+            (Lambda.Const_block (0, [
+              Lambda.Const_immstring "ghost-location";
+              Lambda.Const_block (0, [
+                Lambda.Const_base (Asttypes.Const_int 1);
+                Lambda.Const_base (Asttypes.Const_int 0);
+                Lambda.Const_base (Asttypes.Const_int 0);
+              ]);
+              Lambda.Const_block (0, [
+                Lambda.Const_base (Asttypes.Const_int 1);
+                Lambda.Const_base (Asttypes.Const_int 0);
+                Lambda.Const_base (Asttypes.Const_int 0);
+              ]);
+              Lambda.Const_pointer 1;
+            ]))
+        >>
+
+      let meta_option mf_a _loc = function
+        | <:expr< None >> -> <:expr< None >>
+        | <:expr< Some $a$ >> -> <:expr< Some $mf_a _loc a$ >>
+
+      include LambdaAbstractMetaGeneratorExpr(Jslib_ast)
+    end
+
+    module Patt =
+    struct
+      let meta_loc _loc _ = <:patt< _ >>
+
+      let meta_option mf_a _loc = function
+        | <:expr< None >> -> <:patt< None >>
+        | <:expr< Some $a$ >> -> <:patt< Some $mf_a _loc a$ >>
+
+      include LambdaAbstractMetaGeneratorPatt(Jslib_ast)
+    end
+  end
 end

@@ -18,3 +18,9 @@ package "inline" (
   requires(syntax,preprocessor) = "ulex"
   archive(syntax,preprocessor) = "ulexing.cma,jslib.cma,syntax_inline.cmo"
 )
+
+package "lambda" (
+  description = "Syntax extension: quotations to create lambda nodes"
+  requires(syntax,preprocessor) = "ulex"
+  archive(syntax,preprocessor) = "ulexing.cma,jslib.cma,syntax_lambda.cmo"
+)
