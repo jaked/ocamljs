@@ -163,7 +163,15 @@ let add_ocaml_quotation name entry mexpr mpatt =
   Q.add name Q.DynAst.str_item_tag expand_str_item
 ;;
 
+(*
+  these quotations match / produce the lambda term to which a
+  Jslib_ast value compiles. lam_{exp,...} take concrete syntax,
+  lam_{aexp,...} take abstract syntax. see jscomp/jsgen.ml for
+  examples.
+*)
 add_js_quotation "lam_exp" Jslib_parse.expression ME.meta_exp MP.meta_exp;
 add_js_quotation "lam_stmt" Jslib_parse.statement ME.meta_stmt MP.meta_stmt;
 add_ocaml_quotation "lam_aexp" Syntax.expr MAE.meta_exp MAP.meta_exp;
 add_ocaml_quotation "lam_astmt" Syntax.expr MAE.meta_stmt MAP.meta_stmt;
+add_ocaml_quotation "lam_unop" Syntax.expr MAE.meta_unop MAP.meta_unop;
+add_ocaml_quotation "lam_binop" Syntax.expr MAE.meta_binop MAP.meta_binop;

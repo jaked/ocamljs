@@ -211,7 +211,7 @@ let mk_meta m =
   end <:binding<>>
 
 let mk_abs_meta m =
-  let m_name_uid x = <:ident< $m.name$.$uid:x$ >> in
+  let m_name_uid x = <:ident< $uid:x$ >> in
   fold_type_decls m begin fun tyname tydcl binding_acc ->
     match tydcl with
     | Ast.TyDcl (_, _, tyvars, Ast.TySum (_, ty), _) ->
@@ -223,49 +223,45 @@ let mk_abs_meta m =
               <:patt< Ast.ExApp(_, $acc$, $id:x i$) >>
             end (pm_id m (pmeta_ident m m_name_cons)) in
           let e =
-(*
-            if cons = "BAnt" || cons = "OAnt" || cons = "LAnt" then
-              <:expr< $id:m.ant$ _loc x0 >>
-            else if is_antiquot_data_ctor cons then
-              expr_of_data_ctor_decl m.ant tyargs
-            else
-*)
-              let tag = <:expr< $m.int$ _loc $str:string_of_int tag$ >> in
-              let args =
-                fold_right_args tyargs begin fun ty i acc ->
-                  let rec fcall_of_ctyp ty =
-                    match ty with
-                      | <:ctyp< $id:id$ >> ->
-                          <:expr< $id:meta_ (string_of_ident id)$ >>
-                      | <:ctyp< ($t1$ * $t2$) >> ->
-                          <:expr< fun _loc -> function
-                            | Ast.ExTup (_, Ast.ExCom (_, x1, x2)) ->
-                                $m.tup$ _loc
-                                  ($m.com$ _loc
-                                      ($fcall_of_ctyp t1$ _loc x1)
-                                      ($fcall_of_ctyp t2$ _loc x2))
-                            | _ -> invalid_arg "tuple"
-                          >>
-                      | <:ctyp< $t2$ $t1$ >> ->
-                          <:expr< $fcall_of_ctyp t1$ $fcall_of_ctyp t2$ >>
-                      | <:ctyp< '$s$ >> -> <:expr< $lid:mf_ s$ >>
-                      | _ -> failure in
-                  m_app m
-                    (m_app m (m_uid m "::")
-                      <:expr< $fcall_of_ctyp ty$ _loc $id:x i$ >>)
-                    acc
-                end (m_uid m "[]") in
-              m_app m
-                (m_app m
-                    (m_id m (meta_ident m <:ident< Lambda.Lprim >>))
-                    (m_app m
-                        (m_app m
-                            (m_id m (meta_ident m <:ident< Lambda.Pmakeblock >>))
-                            tag)
-                        (m_id m (meta_ident m <:ident< Asttypes.Immutable >>))))
-                args
+            let tag = <:expr< $m.int$ _loc $str:string_of_int tag$ >> in
+            let args =
+              fold_right_args tyargs begin fun ty i acc ->
+                let rec fcall_of_ctyp ty =
+                  match ty with
+                    | <:ctyp< $id:id$ >> ->
+                        <:expr< $id:meta_ (string_of_ident id)$ >>
+                    | <:ctyp< ($t1$ * $t2$) >> ->
+                        <:expr< fun _loc -> function
+                          | Ast.ExTup (_, Ast.ExCom (_, x1, x2)) ->
+                              $m.tup$ _loc
+                                ($m.com$ _loc
+                                    ($fcall_of_ctyp t1$ _loc x1)
+                                    ($fcall_of_ctyp t2$ _loc x2))
+                          | _ -> invalid_arg "tuple"
+                        >>
+                    | <:ctyp< $t2$ $t1$ >> ->
+                        <:expr< $fcall_of_ctyp t1$ $fcall_of_ctyp t2$ >>
+                    | <:ctyp< '$s$ >> -> <:expr< $lid:mf_ s$ >>
+                    | _ -> failure in
+                m_app m
+                  (m_app m (m_uid m "::")
+                    <:expr< $fcall_of_ctyp ty$ _loc $id:x i$ >>)
+                  acc
+              end (m_uid m "[]") in
+            m_app m
+              (m_app m
+                  (m_id m (meta_ident m <:ident< Lambda.Lprim >>))
+                  (m_app m
+                      (m_app m
+                          (m_id m (meta_ident m <:ident< Lambda.Pmakeblock >>))
+                          tag)
+                      (m_id m (meta_ident m <:ident< Asttypes.Immutable >>))))
+              args
           in <:match_case< $p$ -> $e$ | $acc$ >>
-        end <:match_case<>> in
+        end <:match_case<
+                Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
+              | _ -> invalid_arg $`str:"meta_" ^ tyname$
+            >> in
         let funct =
           List.fold_right begin fun tyvar acc ->
             match tyvar with
@@ -321,15 +317,19 @@ let filter st =
         struct
           let meta_string _loc = function
             | Ast.ExStr (_loc, s) -> $m.str$ _loc s
+            | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_string"
           let meta_int _loc = function
             | Ast.ExInt (loc, s) -> $m.int$ _loc s
+            | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_int"
           let meta_float _loc = function
             | Ast.ExFlo (_loc, s) -> $m.flo$ _loc s
+            | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_float"
           let meta_char _loc = function
             | Ast.ExChr (_loc, s) -> $m.chr$ _loc s
+            | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_char"
 (*
           let meta_bool _loc b =
@@ -340,9 +340,13 @@ let filter st =
           let meta_bool _loc = function
             | <:expr< false >> -> $m_uid m "False"$
             | <:expr< true >> -> $m_uid m "True"$
+            | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
+            | _ -> invalid_arg "meta_bool"
           let rec meta_list mf_a _loc = function
             | <:expr< [] >> -> $m_uid m "[]"$
             | <:expr< $x$ :: $xs$ >> -> $m_app m (m_app m (m_uid m "::") <:expr< mf_a _loc x >>) <:expr< meta_list mf_a _loc xs >>$
+            | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
+            | _ -> invalid_arg "meta_list"
           let rec $bi$
         end >> in
      match super#module_expr me with

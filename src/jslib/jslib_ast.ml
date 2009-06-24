@@ -144,6 +144,7 @@ struct
     struct
       let meta_loc _loc _ =
         (* XXX translate the argument location *)
+        (* XXX or at least support ExAnt? *)
         <:expr<
           Lambda.Lconst
             (Lambda.Const_block (0, [
@@ -165,6 +166,8 @@ struct
       let meta_option mf_a _loc = function
         | <:expr< None >> -> <:expr< None >>
         | <:expr< Some $a$ >> -> <:expr< Some $mf_a _loc a$ >>
+        | Ast.ExAnt (_loc, s) -> Ast.ExAnt (_loc, s)
+        | _ -> invalid_arg "meta_option"
 
       include LambdaAbstractMetaGeneratorExpr(Jslib_ast)
     end
@@ -176,6 +179,8 @@ struct
       let meta_option mf_a _loc = function
         | <:expr< None >> -> <:patt< None >>
         | <:expr< Some $a$ >> -> <:patt< Some $mf_a _loc a$ >>
+        | Ast.ExAnt (_loc, s) -> Ast.PaAnt (_loc, s)
+        | _ -> invalid_arg "meta_option"
 
       include LambdaAbstractMetaGeneratorPatt(Jslib_ast)
     end

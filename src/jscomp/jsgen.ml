@@ -579,85 +579,75 @@ and comp_letrecs_st tail expr k =
       | e -> comp_expr_st tail e k in
    cl expr
 
-(* XXX annoying, would be nice to Camlp4-generate this *)
 and inline_exp = function
     (* XXX actually we never get these because of the _loc arg *)
   | Lconst (Const_block _) as cb -> inline_exp (makeblock_of_const cb)
   | <:lam_exp< this >> -> <:exp< this >>
   | <:lam_exp< $id:v$ >> -> <:exp< $id:inline_string v$ >>
   | <:lam_exp< [ $el$ ] >> -> <:exp< [ $inline_exp el$ ] >>
-  | Lprim (Pmakeblock (3, _), [_; kvl]) -> Jobject (_loc, inline_list (inline_pair inline_exp inline_exp) kvl)
+  | <:lam_aexp< Jobject (_loc, $kvl$) >> -> Jobject (_loc, inline_list (inline_pair inline_exp inline_exp) kvl)
 (*
   | <:lam_exp< $str:s$ >> -> <:exp< $str:s$ >>
-*) (* XXX bools don't work in lambda_meta_generator *)
-  | Lprim (Pmakeblock (4, _), [_; s; qq]) -> Jstring (_loc, inline_string s, inline_bool qq) (* XXX the quote flag is not accessible from quotation *)
+*) (* quote flag is not accessible *)
+  | <:lam_aexp< Jstring (_loc, $s$, $qq$) >> -> Jstring (_loc, inline_string s, inline_bool qq)
   | <:lam_exp< $flo:s$ >> -> <:exp< $flo:inline_string s$ >> (* XXX :num ? *)
   | <:lam_exp< null >> -> <:exp< null >>
-(*
-  | <:lam_exp< true >> -> <:exp< true >> (* XXX :bool *)
-  | <:lam_exp< false >> -> <:exp< false >>
-*) (* XXX bools don't work in lambda_meta_generator *)
-  | Lprim (Pmakeblock (7, _), [_; b]) -> Jbool (_loc, inline_bool b)
-  | Lprim (Pmakeblock (8, _), [_; so; sl; stl]) ->
+  | <:lam_aexp< Jbool (_loc, $b$) >> -> Jbool (_loc, inline_bool b) (* XXX :bool ? *)
+  | <:lam_aexp< Jfun (_loc, $so$, $sl$, $stl$) >> ->
       Jfun (_loc,
            inline_option inline_string so,
            inline_list inline_string sl,
            inline_list inline_stmt stl)
   | <:lam_exp< $e$.$s$ >> -> <:exp< $inline_exp e$.$inline_string s$ >>
-  | Lprim (Pmakeblock (10, _), [_; u; e]) -> Junop (_loc, inline_unop u, inline_exp e)
-  | Lprim (Pmakeblock (11, _), [_; b; e1; e2]) -> Jbinop (_loc, inline_binop b, inline_exp e1, inline_exp e2)
+  | <:lam_aexp< Junop (_loc, $u$, $e$) >> -> Junop (_loc, inline_unop u, inline_exp e)
+  | <:lam_aexp< Jbinop (_loc, $b$, $e1$, $e2$) >> -> Jbinop (_loc, inline_binop b, inline_exp e1, inline_exp e2)
   | <:lam_exp< $i$ ? $t$ : $e$ >> -> <:exp< $inline_exp i$ ? $inline_exp t$ : $inline_exp e$ >>
   | <:lam_exp< $e$($el$) >> -> <:exp< $inline_exp e$($inline_exp el$) >>
-  | Lprim (Pmakeblock (14, _), [_; e; elo]) -> Jnew (_loc, inline_exp e, inline_option inline_exp elo)
-  | Lprim (Pmakeblock (15, _), [_]) -> Jexp_nil _loc
-  | Lprim (Pmakeblock (16, _), [_; e1; e2]) -> Jexp_cons (_loc, inline_exp e1, inline_exp e2)
+  | <:lam_aexp< Jnew (_loc, $e$, $elo$) >> -> Jnew (_loc, inline_exp e, inline_option inline_exp elo)
+  | <:lam_aexp< Jexp_nil _loc >> -> Jexp_nil _loc
+  | <:lam_aexp< Jexp_cons (_loc, $e1$, $e2$) >> -> Jexp_cons (_loc, inline_exp e1, inline_exp e2)
   | Lprim (Pccall { prim_name = "$inline_antiexp" }, [e]) -> comp_expr false e
   | _ -> raise (Failure "bad inline exp")
 
 and inline_stmt = function
   | Lconst (Const_block _) as cb -> inline_stmt (makeblock_of_const cb)
-  | Lprim (Pmakeblock (tag, _), args) ->
-      begin
-        match tag, args with
-          | 0, [_] -> Jempty _loc
-          | 1, [_; seol] ->
-              Jvars (_loc, inline_list (inline_pair inline_string (inline_option inline_exp)) seol)
-          | 2, [_; s; sl; stl] ->
-              Jfuns (_loc, inline_string s, inline_list inline_string sl, inline_list inline_stmt stl)
-          | 3, [_; eo] -> Jreturn (_loc, inline_option inline_exp eo)
-          | 4, [_; so] -> Jcontinue (_loc, inline_option inline_string so)
-          | 5, [_; so] -> Jbreak (_loc, inline_option inline_string so)
-          | 6, [_; e; esll; slo] ->
-              Jswitch (_loc,
-                      inline_exp e,
-                      inline_list (inline_pair inline_exp (inline_list inline_stmt)) esll,
-                      inline_option (inline_list inline_stmt) slo)
-          | 7, [_; e; s; so] -> Jites (_loc, inline_exp e, inline_stmt s, inline_option inline_stmt so)
-          | 8, [_; e] -> Jthrow (_loc, inline_exp e)
-          | 9, [_; e] -> Jexps (_loc, inline_exp e)
-          | 10, [_; sl1; s; sl2] ->
-              Jtrycatch (_loc, inline_list inline_stmt sl1, inline_string s, inline_list inline_stmt sl2)
-          | 11, [_; sl1; sl2] ->
-              Jtryfinally (_loc, inline_list inline_stmt sl1, inline_list inline_stmt sl2)
-          | 12, [_; sl1; s; sl2; sl3] ->
-              Jtrycatchfinally (_loc,
-                               inline_list inline_stmt sl1,
-                               inline_string s,
-                               inline_list inline_stmt sl2,
-                               inline_list inline_stmt sl3)
-          | 13, [_; eo1; eo2; eo3; s] ->
-              Jfor (_loc,
-                   inline_option inline_exp eo1,
-                   inline_option inline_exp eo2,
-                   inline_option inline_exp eo3,
-                   inline_stmt s)
-          | 14, [_; s; e] -> Jdowhile (_loc, inline_stmt s, inline_exp e)
-          | 15, [_; e; s] -> Jwhile (_loc, inline_exp e, inline_stmt s)
-          | 16, [_; sl] -> Jblock (_loc, inline_list inline_stmt sl)
-          | 17, [_; e; s] -> Jwith (_loc, inline_exp e, inline_stmt s)
-          | 18, [_; s; st] -> Jlabel (_loc, inline_string s, inline_stmt st)
-          | _ -> raise (Failure "bad inline stmt")
-      end
+  | <:lam_astmt< Jempty _loc >> -> Jempty _loc
+  | <:lam_astmt< Jvars (_loc, $seol$) >> ->
+      Jvars (_loc, inline_list (inline_pair inline_string (inline_option inline_exp)) seol)
+  | <:lam_astmt< Jfuns (_loc, $s$, $sl$, $stl$) >> ->
+      Jfuns (_loc, inline_string s, inline_list inline_string sl, inline_list inline_stmt stl)
+  | <:lam_astmt< Jreturn (_loc, $eo$) >> -> Jreturn (_loc, inline_option inline_exp eo)
+  | <:lam_astmt< Jcontinue (_loc, $so$) >> -> Jcontinue (_loc, inline_option inline_string so)
+  | <:lam_astmt< Jbreak (_loc, $so$) >> -> Jbreak (_loc, inline_option inline_string so)
+  | <:lam_astmt< Jswitch (_loc, $e$, $esll$, $slo$) >> ->
+      Jswitch (_loc,
+              inline_exp e,
+              inline_list (inline_pair inline_exp (inline_list inline_stmt)) esll,
+              inline_option (inline_list inline_stmt) slo)
+  | <:lam_astmt< Jites (_loc, $e$, $s$, $so$) >> -> Jites (_loc, inline_exp e, inline_stmt s, inline_option inline_stmt so)
+  | <:lam_astmt< Jthrow (_loc, $e$) >> -> Jthrow (_loc, inline_exp e)
+  | <:lam_astmt< Jexps (_loc, $e$) >> -> Jexps (_loc, inline_exp e)
+  | <:lam_astmt< Jtrycatch (_loc, $sl1$, $s$, $sl2$) >> ->
+      Jtrycatch (_loc, inline_list inline_stmt sl1, inline_string s, inline_list inline_stmt sl2)
+  | <:lam_astmt< Jtryfinally (_loc, $sl1$, $sl2$) >> ->
+      Jtryfinally (_loc, inline_list inline_stmt sl1, inline_list inline_stmt sl2)
+  | <:lam_astmt< Jtrycatchfinally (_loc, $sl1$, $s$, $sl2$, $sl3$) >> ->
+      Jtrycatchfinally (_loc,
+                       inline_list inline_stmt sl1,
+                       inline_string s,
+                       inline_list inline_stmt sl2,
+                       inline_list inline_stmt sl3)
+  | <:lam_astmt< Jfor (_loc, $eo1$, $eo2$, $eo3$, $s$) >> ->
+      Jfor (_loc,
+           inline_option inline_exp eo1,
+           inline_option inline_exp eo2,
+           inline_option inline_exp eo3,
+           inline_stmt s)
+  | <:lam_astmt< Jdowhile (_loc, $s$, $e$) >> -> Jdowhile (_loc, inline_stmt s, inline_exp e)
+  | <:lam_astmt< Jwhile (_loc, $e$, $s$) >> -> Jwhile (_loc, inline_exp e, inline_stmt s)
+  | <:lam_astmt< Jblock (_loc, $sl$) >> -> Jblock (_loc, inline_list inline_stmt sl)
+  | <:lam_astmt< Jwith (_loc, $e$, $s$) >> -> Jwith (_loc, inline_exp e, inline_stmt s)
+  | <:lam_astmt< Jlabel (_loc, $s$, $st$) >> -> Jlabel (_loc, inline_string s, inline_stmt st)
 (*| Lprim (Pccall { prim_name = "$inline_antistmt" }, [s]) -> *)(* XXX *)
   | _ -> raise (Failure "bad inline stmt")
 
