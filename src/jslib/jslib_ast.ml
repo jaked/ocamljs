@@ -142,26 +142,27 @@ struct
 
     module Expr =
     struct
-      let meta_loc _loc _ =
-        (* XXX translate the argument location *)
-        (* XXX or at least support ExAnt? *)
-        <:expr<
-          Lambda.Lconst
-            (Lambda.Const_block (0, [
-              Lambda.Const_immstring "ghost-location";
-              Lambda.Const_block (0, [
-                Lambda.Const_base (Asttypes.Const_int 1);
-                Lambda.Const_base (Asttypes.Const_int 0);
-                Lambda.Const_base (Asttypes.Const_int 0);
-              ]);
-              Lambda.Const_block (0, [
-                Lambda.Const_base (Asttypes.Const_int 1);
-                Lambda.Const_base (Asttypes.Const_int 0);
-                Lambda.Const_base (Asttypes.Const_int 0);
-              ]);
-              Lambda.Const_pointer 1;
-            ]))
-        >>
+      let meta_loc _loc = function
+        | Ast.ExAnt (_loc, s) -> Ast.ExAnt (_loc, s)
+        | _ ->
+            (* XXX translate the argument location *)
+            <:expr<
+              Lambda.Lconst
+                (Lambda.Const_block (0, [
+                  Lambda.Const_immstring "ghost-location";
+                  Lambda.Const_block (0, [
+                    Lambda.Const_base (Asttypes.Const_int 1);
+                    Lambda.Const_base (Asttypes.Const_int 0);
+                    Lambda.Const_base (Asttypes.Const_int 0);
+                  ]);
+                  Lambda.Const_block (0, [
+                    Lambda.Const_base (Asttypes.Const_int 1);
+                    Lambda.Const_base (Asttypes.Const_int 0);
+                    Lambda.Const_base (Asttypes.Const_int 0);
+                  ]);
+                  Lambda.Const_pointer 1;
+                ]))
+            >>
 
       let meta_option mf_a _loc = function
         | <:expr< None >> -> <:expr< None >>
@@ -174,7 +175,11 @@ struct
 
     module Patt =
     struct
-      let meta_loc _loc _ = <:patt< _ >>
+      let meta_loc _loc = function
+        | Ast.ExAnt (_loc, s) -> Ast.PaAnt (_loc, s)
+        | _ ->
+            (* XXX translate the argument location? *)
+            <:patt< _ >>
 
       let meta_option mf_a _loc = function
         | <:expr< None >> -> <:patt< None >>

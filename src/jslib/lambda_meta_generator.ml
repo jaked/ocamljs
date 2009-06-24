@@ -166,36 +166,44 @@ let mk_meta m =
               expr_of_data_ctor_decl m.ant tyargs
             else
               let tag = <:expr< $m.int$ _loc $str:string_of_int tag$ >> in
-              let args =
-                fold_right_args tyargs begin fun ty i acc ->
-                  let rec fcall_of_ctyp ty =
-                    match ty with
-                      | <:ctyp< $id:id$ >> ->
-                          <:expr< $id:meta_ (string_of_ident id)$ >>
-                      | <:ctyp< ($t1$ * $t2$) >> ->
-                          <:expr< fun _loc (x1, x2) ->
-                            $m.tup$ _loc
-                              ($m.com$ _loc
-                                  ($fcall_of_ctyp t1$ _loc x1)
-                                  ($fcall_of_ctyp t2$ _loc x2)) >>
-                      | <:ctyp< $t2$ $t1$ >> ->
-                          <:expr< $fcall_of_ctyp t1$ $fcall_of_ctyp t2$ >>
-                      | <:ctyp< '$s$ >> -> <:expr< $lid:mf_ s$ >>
-                      | _ -> failure in
-                  m_app m
-                    (m_app m (m_uid m "::")
-                      <:expr< $fcall_of_ctyp ty$ _loc $id:x i$ >>)
-                    acc
-                end (m_uid m "[]") in
-              m_app m
+              if tyargs = []
+              then
                 (m_app m
-                    (m_id m (meta_ident m <:ident< Lambda.Lprim >>))
+                    (m_id m (meta_ident m <:ident< Lambda.Lconst >>))
                     (m_app m
-                        (m_app m
-                            (m_id m (meta_ident m <:ident< Lambda.Pmakeblock >>))
-                            tag)
-                        (m_id m (meta_ident m <:ident< Asttypes.Immutable >>))))
-                args
+                        (m_id m (meta_ident m <:ident< Lambda.Const_pointer >>))
+                        tag))
+              else
+                let args =
+                  fold_right_args tyargs begin fun ty i acc ->
+                    let rec fcall_of_ctyp ty =
+                      match ty with
+                        | <:ctyp< $id:id$ >> ->
+                            <:expr< $id:meta_ (string_of_ident id)$ >>
+                        | <:ctyp< ($t1$ * $t2$) >> ->
+                            <:expr< fun _loc (x1, x2) ->
+                              $m.tup$ _loc
+                                ($m.com$ _loc
+                                    ($fcall_of_ctyp t1$ _loc x1)
+                                    ($fcall_of_ctyp t2$ _loc x2)) >>
+                        | <:ctyp< $t2$ $t1$ >> ->
+                            <:expr< $fcall_of_ctyp t1$ $fcall_of_ctyp t2$ >>
+                        | <:ctyp< '$s$ >> -> <:expr< $lid:mf_ s$ >>
+                        | _ -> failure in
+                    m_app m
+                      (m_app m (m_uid m "::")
+                        <:expr< $fcall_of_ctyp ty$ _loc $id:x i$ >>)
+                      acc
+                  end (m_uid m "[]") in
+                m_app m
+                  (m_app m
+                      (m_id m (meta_ident m <:ident< Lambda.Lprim >>))
+                      (m_app m
+                          (m_app m
+                              (m_id m (meta_ident m <:ident< Lambda.Pmakeblock >>))
+                              tag)
+                          (m_id m (meta_ident m <:ident< Asttypes.Immutable >>))))
+                  args
           in <:match_case< $p$ -> $e$ | $acc$ >>
         end <:match_case<>> in
         let funct =
@@ -224,39 +232,47 @@ let mk_abs_meta m =
             end (pm_id m (pmeta_ident m m_name_cons)) in
           let e =
             let tag = <:expr< $m.int$ _loc $str:string_of_int tag$ >> in
-            let args =
-              fold_right_args tyargs begin fun ty i acc ->
-                let rec fcall_of_ctyp ty =
-                  match ty with
-                    | <:ctyp< $id:id$ >> ->
-                        <:expr< $id:meta_ (string_of_ident id)$ >>
-                    | <:ctyp< ($t1$ * $t2$) >> ->
-                        <:expr< fun _loc -> function
-                          | Ast.ExTup (_, Ast.ExCom (_, x1, x2)) ->
-                              $m.tup$ _loc
-                                ($m.com$ _loc
-                                    ($fcall_of_ctyp t1$ _loc x1)
-                                    ($fcall_of_ctyp t2$ _loc x2))
-                          | _ -> invalid_arg "tuple"
-                        >>
-                    | <:ctyp< $t2$ $t1$ >> ->
-                        <:expr< $fcall_of_ctyp t1$ $fcall_of_ctyp t2$ >>
-                    | <:ctyp< '$s$ >> -> <:expr< $lid:mf_ s$ >>
-                    | _ -> failure in
-                m_app m
-                  (m_app m (m_uid m "::")
-                    <:expr< $fcall_of_ctyp ty$ _loc $id:x i$ >>)
-                  acc
-              end (m_uid m "[]") in
-            m_app m
+            if tyargs = []
+            then
               (m_app m
-                  (m_id m (meta_ident m <:ident< Lambda.Lprim >>))
+                  (m_id m (meta_ident m <:ident< Lambda.Lconst >>))
                   (m_app m
-                      (m_app m
-                          (m_id m (meta_ident m <:ident< Lambda.Pmakeblock >>))
-                          tag)
-                      (m_id m (meta_ident m <:ident< Asttypes.Immutable >>))))
-              args
+                      (m_id m (meta_ident m <:ident< Lambda.Const_pointer >>))
+                      tag))
+            else
+              let args =
+                fold_right_args tyargs begin fun ty i acc ->
+                  let rec fcall_of_ctyp ty =
+                    match ty with
+                      | <:ctyp< $id:id$ >> ->
+                          <:expr< $id:meta_ (string_of_ident id)$ >>
+                      | <:ctyp< ($t1$ * $t2$) >> ->
+                          <:expr< fun _loc -> function
+                            | Ast.ExTup (_, Ast.ExCom (_, x1, x2)) ->
+                                $m.tup$ _loc
+                                  ($m.com$ _loc
+                                      ($fcall_of_ctyp t1$ _loc x1)
+                                      ($fcall_of_ctyp t2$ _loc x2))
+                            | _ -> invalid_arg "tuple"
+                          >>
+                      | <:ctyp< $t2$ $t1$ >> ->
+                          <:expr< $fcall_of_ctyp t1$ $fcall_of_ctyp t2$ >>
+                      | <:ctyp< '$s$ >> -> <:expr< $lid:mf_ s$ >>
+                      | _ -> failure in
+                  m_app m
+                    (m_app m (m_uid m "::")
+                      <:expr< $fcall_of_ctyp ty$ _loc $id:x i$ >>)
+                    acc
+                end (m_uid m "[]") in
+              m_app m
+                (m_app m
+                    (m_id m (meta_ident m <:ident< Lambda.Lprim >>))
+                    (m_app m
+                        (m_app m
+                            (m_id m (meta_ident m <:ident< Lambda.Pmakeblock >>))
+                            tag)
+                        (m_id m (meta_ident m <:ident< Asttypes.Immutable >>))))
+                args
           in <:match_case< $p$ -> $e$ | $acc$ >>
         end <:match_case<
                 Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)

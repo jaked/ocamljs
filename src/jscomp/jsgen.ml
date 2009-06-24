@@ -60,12 +60,12 @@ let jsident_of_ident id =
   for i = 0 to String.length s - 1 do
     match s.[i] with
       | ('A' .. 'Z'|'a' .. 'z'|'0' .. '9'|'_'|'$') as c ->
-	  Buffer.add_char b c
+          Buffer.add_char b c
       | ('/'|'!'|'#') -> (* XXX safe? *)
-	  Buffer.add_char b '$'
+          Buffer.add_char b '$'
       | c ->
-	  Buffer.add_char b '$';
-	  Buffer.add_string b (Printf.sprintf "%02X" (int_of_char c))
+          Buffer.add_char b '$';
+          Buffer.add_string b (Printf.sprintf "%02X" (int_of_char c))
   done;
   Buffer.contents b
 
@@ -75,43 +75,41 @@ let raise_arg lab i = "$r" ^ string_of_int lab ^ "_" ^ string_of_int i
 
 let _loc = Camlp4.PreCast.Loc.ghost
 
-let jnum_of_int i = Jslib_ast.Jnum (_loc, string_of_int i) (* XXX <:exp $`int:i$ >> *)
-
 let makeblock tag ces =
   match tag with
     | 0 -> let id = "$" in << $id:id$($list:ces$) >>
     | (1|2|3|4|5|6|7|8|9) -> let id = "$" ^ string_of_int tag in << $id:id$($list:ces$) >>
-    | _ -> let id = "$N" in << $id:id$($exp:jnum_of_int tag$, [$list:ces$]) >>
+    | _ -> let id = "$N" in << $id:id$($`int:tag$, [$list:ces$]) >>
 
-let exp_of_stmts ss = << $Jslib_ast.Jfun (_loc, None, [], ss)$ () >>
+let exp_of_stmts ss = << $Jfun (_loc, None, [], ss)$ () >>
 
 let comp_const c =
   match c with
-    | Const_int i -> jnum_of_int i
-    | Const_char c -> jnum_of_int (Char.code c)
-    | Const_string s -> Jslib_ast.Jstring (_loc, s, false)
-    | Const_float s -> Jslib_ast.Jnum (_loc, s) (* XXX different float syntax *)
-    | Const_int32 i32 -> Jslib_ast.Jnum (_loc, Int32.to_string i32)
-    | Const_int64 i64 -> Jslib_ast.Jstring (_loc, Int64.to_string i64, false)
-    | Const_nativeint ni -> Jslib_ast.Jnum (_loc, Nativeint.to_string ni)
+    | Const_int i -> << $`int:i$ >>
+    | Const_char c -> << $`int:Char.code c$ >>
+    | Const_string s -> Jstring (_loc, s, false)
+    | Const_float s -> Jnum (_loc, s) (* XXX different float syntax *)
+    | Const_int32 i32 -> Jnum (_loc, Int32.to_string i32)
+    | Const_int64 i64 -> Jstring (_loc, Int64.to_string i64, false)
+    | Const_nativeint ni -> Jnum (_loc, Nativeint.to_string ni)
 
 let rec comp_sconst c =
   match c with
     | Const_base c -> comp_const c
-    | Const_pointer i -> jnum_of_int i
+    | Const_pointer i -> << $`int:i$ >>
     | Const_block (tag, cs) ->
-	makeblock tag (List.map comp_sconst cs)
+        makeblock tag (List.map comp_sconst cs)
     | Const_float_array ss ->
-	makeblock 0 (List.map (fun s -> Jslib_ast.Jnum (_loc, s)) ss) (* XXX different float syntax *)
-    | Const_immstring s -> Jslib_ast.Jstring (_loc, s, false) (* XXX when does this happen? *)
+        makeblock 0 (List.map (fun s -> Jnum (_loc, s)) ss) (* XXX different float syntax *)
+    | Const_immstring s -> Jstring (_loc, s, false) (* XXX when does this happen? *)
 
 let kreturn e = <:stmt< return $e$; >>
 
 let keffect = function
     (* anything that is already a value can have no effect *)
     (* mostly this arises with the compilation of () as Jnum 0 *)
-  | (Jslib_ast.Jnum _ | Jslib_ast.Jvar _) -> Jslib_ast.Jempty _loc
-  | e -> Jslib_ast.Jexps (_loc, e)
+  | (Jnum _ | Jvar _) -> Jempty _loc
+  | e -> Jexps (_loc, e)
 
 let comp_ccall c es =
   match c, es with
@@ -147,32 +145,32 @@ let comp_ccall c es =
     | "$assign", [e1; e2] -> << $e1$ = $e2$ >>
     | "$call", e::es -> << $e$($list:es$) >>
     | "$false", _ -> << false >>
-    | "$fieldref", [e; Jslib_ast.Jstring (_loc, id, _)] -> << $e$.$id$ >>
-    | "$function", [Jslib_ast.Jcall (_loc, Jslib_ast.Jvar _, (Jslib_ast.Jfun _ as f))] -> f
+    | "$fieldref", [e; Jstring (_loc, id, _)] -> << $e$.$id$ >>
+    | "$function", [Jcall (_loc, Jvar _, (Jfun _ as f))] -> f
     | "$hashref", [e1; e2] -> << $e1$[$e2$] >>
-    | "$new", (Jslib_ast.Jstring (_, id, _))::es -> << new $id:id$($list:es$) >>
+    | "$new", (Jstring (_, id, _))::es -> << new $id:id$($list:es$) >>
     | "$null", _ -> << null >>
     | "$this", _ -> << this >>
     | "$throw", [e] -> exp_of_stmts [ <:stmt< throw $e$; >> ]
     | "$true", _ -> << true >>
 
-    | "$var", [Jslib_ast.Jstring (_loc, id, _)] -> << $id:id$ >>
+    | "$var", [Jstring (_loc, id, _)] -> << $id:id$ >>
 
     | "$obj", [e] ->
-	let rec o e l =
-	  match e with
-	    | Jslib_ast.Jcall (_, Jslib_ast.Jvar _, Jslib_ast.Jexp_cons (_, Jslib_ast.Jcall (_, Jslib_ast.Jvar _, Jslib_ast.Jexp_cons (_, (Jslib_ast.Jstring _ as k), v)), e)) -> o e ((k, v)::l)
-	    | Jslib_ast.Jnum _ -> List.rev l
-	    | _ -> raise (Unimplemented "bad $obj") in
-	Jslib_ast.Jobject (_loc, o e [])
+        let rec o e l =
+          match e with
+            | Jcall (_, Jvar _, Jexp_cons (_, Jcall (_, Jvar _, Jexp_cons (_, (Jstring _ as k), v)), e)) -> o e ((k, v)::l)
+            | Jnum _ -> List.rev l
+            | _ -> raise (Unimplemented "bad $obj") in
+        Jobject (_loc, o e [])
 
     | _ ->
-	match c.[0], es with
-	  | '#', e::es -> let met = String.sub c 1 (String.length c - 1) in << $e$.$met$($list:es$) >>
-	  | '.', [e] -> let fld = String.sub c 1 (String.length c - 1) in << $e$.$fld$ >>
-	  | '=', [e1; e2] -> let fld = String.sub c 1 (String.length c - 1) in << $e1$.$fld$ = $e2$ >>
-	  | '@', _ -> let id = String.sub c 1 (String.length c - 1) in << $id:id$($list:es$) >>
-	  | _ -> enter_c_prim c; << $id:c$($list:es$) >>
+        match c.[0], es with
+          | '#', e::es -> let met = String.sub c 1 (String.length c - 1) in << $e$.$met$($list:es$) >>
+          | '.', [e] -> let fld = String.sub c 1 (String.length c - 1) in << $e$.$fld$ >>
+          | '=', [e1; e2] -> let fld = String.sub c 1 (String.length c - 1) in << $e1$.$fld$ = $e2$ >>
+          | '@', _ -> let id = String.sub c 1 (String.length c - 1) in << $id:id$($list:es$) >>
+          | _ -> enter_c_prim c; << $id:c$($list:es$) >>
 
 let comp_comparison c e1 e2 =
   match c with
@@ -188,8 +186,8 @@ let comp_prim p es =
     | Pgetglobal i, [] -> enter_getglobal i; << $id:jsident_of_ident i$ >>
     | Pmakeblock (tag, _), _ -> makeblock tag es
 
-    | (Pfield i | Pfloatfield i), [e] -> << $e$[$jnum_of_int i$] >>
-    | (Psetfield (i, _) | Psetfloatfield i), [e1; e2] -> << $e1$[$jnum_of_int i$] = $e2$ >>
+    | (Pfield i | Pfloatfield i), [e] -> << $e$[$`int:i$] >>
+    | (Psetfield (i, _) | Psetfloatfield i), [e1; e2] -> << $e1$[$`int:i$] = $e2$ >>
     | Pccall { prim_name = "$new"; prim_native_name = "" }, es -> comp_ccall "$new" es
     | Pccall { prim_name = "$new"; prim_native_name = id }, es -> << new $id:id$($list:es$) >>
     | Pccall { prim_name = n }, es -> comp_ccall n es
@@ -206,15 +204,15 @@ let comp_prim p es =
     | Pdivfloat, [e1; e2] -> << $e1$ / $e2$ >>
     | (Pdivint | Pdivbint _), [e1; e2] ->
         (* XXX << ($e1$ / $e2$) < < 0 >> *)
-        Jslib_ast.Jbinop(_loc,
-                        Jslib_ast.Jlsr,
+        Jbinop(_loc,
+                        Jlsr,
                         << $e1$ / $e2$ >>,
                         << 0 >>)
     | (Pmodint | Pmodbint _), [e1; e2] -> << $e1$ % $e2$ >>
 
-    | (Plslint | Plslbint _), [e1; e2] -> Jslib_ast.Jbinop(_loc, Jslib_ast.Jlsl, e1, e2)
-    | (Plsrint | Plsrbint _), [e1; e2] -> Jslib_ast.Jbinop(_loc, Jslib_ast.Jlsr, e1, e2)
-    | (Pasrint | Pasrbint _), [e1; e2] -> Jslib_ast.Jbinop(_loc, Jslib_ast.Jasr, e1, e2)
+    | (Plslint | Plslbint _), [e1; e2] -> Jbinop(_loc, Jlsl, e1, e2)
+    | (Plsrint | Plsrbint _), [e1; e2] -> Jbinop(_loc, Jlsr, e1, e2)
+    | (Pasrint | Pasrbint _), [e1; e2] -> Jbinop(_loc, Jasr, e1, e2)
 
     | (Pandint | Pandbint _), [e1; e2] -> << $e1$ & $e2$ >>
     | (Porint | Porbint _), [e1; e2] -> << $e1$ | $e2$ >>
@@ -224,11 +222,11 @@ let comp_prim p es =
     | Psequand, [e1; e2] -> << $e1$ && $e2$ >>
     | Psequor, [e1; e2] -> << $e1$ || $e2$ >> (* XXX rhs is possibly a tail call *)
 
-    | Poffsetint n, [e] -> << $jnum_of_int n$ + $e$ >>
+    | Poffsetint n, [e] -> << $`int:n$ + $e$ >>
 
     | Poffsetref 1, [e] -> << $e$[0]++ >>
     | Poffsetref -1, [e] -> << $e$[0]-- >>
-    | Poffsetref n, [e] -> << $e$[0] = $jnum_of_int n$ + $e$[0] >> (* XXX bind e to var? *)
+    | Poffsetref n, [e] -> << $e$[0] = $`int:n$ + $e$[0] >> (* XXX bind e to var? *)
 
     | Pstringlength, [e] -> << $e$.length >>
     | Parraylength _, [e] -> << $e$.length >>
@@ -249,7 +247,7 @@ let comp_prim p es =
 
     | (Pidentity | Pignore | Pfloatofint | Pintoffloat |
        Pintofbint _ | Pbintofint _ | Pcvtbint _), [e] ->
-	e
+        e
 
     | Pduprecord _, [e] -> << caml_obj_dup($exp:e$) >>
 
@@ -267,9 +265,9 @@ let drop s n =
 
 let maybe_block ss =
   match ss with
-    | [] -> Jslib_ast.Jempty _loc
+    | [] -> Jempty _loc
     | [s] -> s
-    | _ -> Jslib_ast.Jblock (_loc, ss)
+    | _ -> Jblock (_loc, ss)
 
 let inline_string = function
   | Lconst (Const_base (Const_string s)) -> s
@@ -282,7 +280,7 @@ let inline_bool = function
 
 let makeblock_of_const = function
   | Lconst (Const_block (tag, cs)) ->
-      Lprim (Pmakeblock (tag, Asttypes.Mutable), List.map (fun c -> Lconst c) cs)
+      Lprim (Pmakeblock (tag, Asttypes.Immutable), List.map (fun c -> Lconst c) cs)
   | _ -> assert false
 
 let rec inline_option inline = function
@@ -311,16 +309,16 @@ let rec comp_expr tail expr =
     | (Lswitch _ | Lprim (Praise, _) | Lstaticcatch _ | Lstaticraise _ |
           Ltrywith _ | Lfor _ | Lwhile _ |
             Lprim (Pccall { prim_name = "$inline_stmt" }, _))->
-	exp_of_stmts (comp_expr_st tail expr kreturn)
+        exp_of_stmts (comp_expr_st tail expr kreturn)
 
     | Lvar i -> << $id:jsident_of_ident i$ >>
 
     | Lfunction (_, args, e) ->
-        let e = Jslib_ast.Jfun (_loc, None, List.map jsident_of_ident args, comp_expr_st true e kreturn) in
-	<< _f($exp:e$) >>
+        let e = Jfun (_loc, None, List.map jsident_of_ident args, comp_expr_st true e kreturn) in
+        << _f($exp:e$) >>
 
     | IFDEF OCAML_3_10_2 THEN Lapply(e, es) ELSE Lapply(e, es, _) ENDIF ->
-	let app = if tail then "__" else "_" in
+        let app = if tail then "__" else "_" in
         let ce = comp_expr false e in
         let ces = List.map (comp_expr false) es in
         << $id:app$($exp:ce$, [$list:ces$]) >>
@@ -342,7 +340,7 @@ let rec comp_expr tail expr =
     | Lprim (p, args) -> comp_prim p (List.map (comp_expr false) args)
 
     | Lsend (_, Lconst(Const_immstring m), o, args) ->
-	let app = if tail then "__m" else "_m" in
+        let app = if tail then "__m" else "_m" in
         let co = comp_expr false o in
         let cargs = List.map (comp_expr false) args in
         let op, m = match m with
@@ -365,7 +363,7 @@ let rec comp_expr tail expr =
             | `Call, es ->
                 begin
                   match co with
-                    | Jslib_ast.Jvar _ -> << $id:app$($exp:co$.$m$, $co$, [$list:es$]) >>
+                    | Jvar _ -> << $id:app$($exp:co$.$m$, $co$, [$list:es$]) >>
                     | _ ->
                         let i = jsident_of_ident (Ident.create "v") in
                         (* here we bind i to avoid multiply evaluating co *)
@@ -389,111 +387,111 @@ and comp_expr_st tail expr k =
     | (Llet _ | Lletrec _) -> comp_letrecs_st tail expr k
 
     | Lfor (i, e1, e2, d, e3) ->
-	let i = jsident_of_ident i in
-	let jv = << $id:i$ >> in
-	let ce1 = comp_expr false e1
-	and ce2 = comp_expr false e2
-	and ce3 = comp_expr_st false e3 keffect in
-	let (te, ie) = 
-	  match d with
-	    | Upto -> << $jv$ <= $ce2$ >>, << $jv$++ >>
-	    | Downto -> << $jv$ >= $ce2$ >>, << $jv$-- >> in
-	[ <:stmt< var $id:i$; >>;
+        let i = jsident_of_ident i in
+        let jv = << $id:i$ >> in
+        let ce1 = comp_expr false e1
+        and ce2 = comp_expr false e2
+        and ce3 = comp_expr_st false e3 keffect in
+        let (te, ie) =
+          match d with
+            | Upto -> << $jv$ <= $ce2$ >>, << $jv$++ >>
+            | Downto -> << $jv$ >= $ce2$ >>, << $jv$-- >> in
+        [ <:stmt< var $id:i$; >>;
           (* wrap loop body in a function / call so closures over loop var work *)
-          Jslib_ast.Jfor (_loc,
-                         Some << $id:i$ = $ce1$ >>,
-                         Some te,
-                         Some ie,
-                         Jslib_ast.Jblock(_loc,
-                                         [ Jslib_ast.Jexps (_loc,
-                                                           Jslib_ast.Jcall(_loc,
-                                                                          Jslib_ast.Jfun(_loc, None, [i], ce3),
-                                                                          jv)) ] )) ]
+          Jfor (_loc,
+               Some << $id:i$ = $ce1$ >>,
+               Some te,
+               Some ie,
+               Jblock(_loc,
+                     [ Jexps (_loc,
+                             Jcall(_loc,
+                                  Jfun(_loc, None, [i], ce3),
+                                  jv)) ] )) ]
 
     | Lwhile (e1, e2) ->
-	[ Jslib_ast.Jwhile (_loc, comp_expr false e1, maybe_block (comp_expr_st false e2 keffect)) ]
+        [ Jwhile (_loc, comp_expr false e1, maybe_block (comp_expr_st false e2 keffect)) ]
 
     (*
       special case some constructs that arise from the compilation of pattern matching,
       to avoid deep nesting in generated Javascript
     *)
     | Lifthenelse (i, t, (Lstaticraise _ as e)) ->
-        (Jslib_ast.Jites (_loc,
-                         << !$comp_expr false i$ >>,
-                         maybe_block (comp_expr_st tail e k),
-                         None)) :: (comp_expr_st tail t k)
+        (Jites (_loc,
+               << !$comp_expr false i$ >>,
+               maybe_block (comp_expr_st tail e k),
+               None)) :: (comp_expr_st tail t k)
     | Lifthenelse (i, (Lstaticraise _ as t), e) ->
-	(Jslib_ast.Jites (_loc,
-                         comp_expr false i,
-                         maybe_block (comp_expr_st tail t k),
-                         None)) :: (comp_expr_st tail e k)
+        (Jites (_loc,
+               comp_expr false i,
+               maybe_block (comp_expr_st tail t k),
+               None)) :: (comp_expr_st tail e k)
 
     | Lifthenelse (i, (Lifthenelse _ as t), e) when k == kreturn ->
-        (Jslib_ast.Jites (_loc,
-                         << !$comp_expr false i$ >>,
-                         maybe_block (comp_expr_st tail e k),
-                         None)) :: (comp_expr_st tail t k)
+        (Jites (_loc,
+               << !$comp_expr false i$ >>,
+               maybe_block (comp_expr_st tail e k),
+               None)) :: (comp_expr_st tail t k)
 
     | Lifthenelse (i, t, e) when k == kreturn ->
-        (Jslib_ast.Jites (_loc,
-                         comp_expr false i,
-                         maybe_block (comp_expr_st tail t k),
-                         None)) :: (comp_expr_st tail e k)
+        (Jites (_loc,
+               comp_expr false i,
+               maybe_block (comp_expr_st tail t k),
+               None)) :: (comp_expr_st tail e k)
 
     | Lifthenelse (i, t, e) ->
-	[ Jslib_ast.Jites (_loc,
-                          comp_expr false i,
-                          maybe_block (comp_expr_st tail t k),
-                          Some (maybe_block (comp_expr_st tail e k))) ]
+        [ Jites (_loc,
+                comp_expr false i,
+                maybe_block (comp_expr_st tail t k),
+                Some (maybe_block (comp_expr_st tail e k))) ]
 
     | Lswitch (se,
-	       { sw_numconsts = nc; sw_consts = cs;
-		 sw_numblocks = nb; sw_blocks = bs;
-		 sw_failaction = fe }) ->
-	(* we don't want to evaluate the scrutinee more than once: if
-	   it is already a var leave it alone, otherwise bind a var *)
-	let (k2, cse) =
-	  match se with
-	    | Lvar i -> ((fun x -> x), << $id:jsident_of_ident i$ >>)
-	    | _ ->
-		let i = jsident_of_ident (Ident.create "s") in
-		let cse = comp_expr false se in
-		((fun x -> Jslib_ast.Jvars (_loc, [ i, Some cse ]) :: x), << $id:i$ >>) in
-	let cc (i, e) =
+               { sw_numconsts = nc; sw_consts = cs;
+                 sw_numblocks = nb; sw_blocks = bs;
+                 sw_failaction = fe }) ->
+        (* we don't want to evaluate the scrutinee more than once: if
+           it is already a var leave it alone, otherwise bind a var *)
+        let (k2, cse) =
+          match se with
+            | Lvar i -> ((fun x -> x), << $id:jsident_of_ident i$ >>)
+            | _ ->
+                let i = jsident_of_ident (Ident.create "s") in
+                let cse = comp_expr false se in
+                ((fun x -> Jvars (_loc, [ i, Some cse ]) :: x), << $id:i$ >>) in
+        let cc (i, e) =
           (* true if the sequence returns or throws; otherwise we need a break *)
           let rec exits stmts =
             match stmts with
-              | Jslib_ast.Jempty _ -> false
-              | Jslib_ast.Jblock (_, ss) -> exits (List.nth ss (List.length ss - 1))
-              | Jslib_ast.Jbreak (_, Some _) -> true
-              | Jslib_ast.Jreturn _ -> true
-              | Jslib_ast.Jthrow _ -> true
-              | Jslib_ast.Jites (_, _, t, Some e) -> exits t && exits e
+              | Jempty _ -> false
+              | Jblock (_, ss) -> exits (List.nth ss (List.length ss - 1))
+              | Jbreak (_, Some _) -> true
+              | Jreturn _ -> true
+              | Jthrow _ -> true
+              | Jites (_, _, t, Some e) -> exits t && exits e
               | _ -> false in
-          let i = jnum_of_int i in
+          let i = << $`int:i$ >> in
           let stmts = comp_expr_st tail e k in
           let stmts =
             if exits (maybe_block stmts)
             then stmts
             else stmts @ [ <:stmt< break; >> ] in
         (i, stmts) in
-	let fss = match fe with None -> Some [k << null >> ] | Some e -> Some (comp_expr_st tail e k) in
-	let cswitch = Jslib_ast.Jswitch (_loc, cse, List.map cc cs, fss) in
-	let bswitch = Jslib_ast.Jswitch (_loc, (let id = "$t" in << $id:id$($exp:cse$) >>), List.map cc bs, fss) in
-	let stmt =
-	  if nc = 0 && nb = 0 then Jslib_ast.Jempty _loc (* shouldn't happen *)
-	  else if nc = 0 then bswitch
-	  else if nb = 0 then cswitch
-	  else Jslib_ast.Jites (_loc,
-                               << typeof $cse$ == 'number' >>,
-                               cswitch,
-                               Some bswitch) in
-	k2 [ stmt ]
+        let fss = match fe with None -> Some [k << null >> ] | Some e -> Some (comp_expr_st tail e k) in
+        let cswitch = Jswitch (_loc, cse, List.map cc cs, fss) in
+        let bswitch = Jswitch (_loc, (let id = "$t" in << $id:id$($exp:cse$) >>), List.map cc bs, fss) in
+        let stmt =
+          if nc = 0 && nb = 0 then Jempty _loc (* shouldn't happen *)
+          else if nc = 0 then bswitch
+          else if nb = 0 then cswitch
+          else Jites (_loc,
+                     << typeof $cse$ == 'number' >>,
+                     cswitch,
+                     Some bswitch) in
+        k2 [ stmt ]
 
     | Lsequence (e1, e2) ->
         comp_expr_st false e1 keffect @ comp_expr_st tail e2 k
 
-    | Lprim (Praise, [e]) -> [ Jslib_ast.Jthrow (_loc, comp_expr false e) ]
+    | Lprim (Praise, [e]) -> [ Jthrow (_loc, comp_expr false e) ]
 
     | Lprim (Pignore, [e]) ->
         comp_expr_st tail (Lsequence (e, Lconst (Const_pointer 0))) k
@@ -515,19 +513,19 @@ and comp_expr_st tail expr k =
            alpha-renaming them to raise_args. *)
         let rec with_raise_arg i l =
           if i <= 0 then l
-          else with_raise_arg (i-1) (Jslib_ast.Jvars(_loc, [ raise_arg lab (i-1), Some << null >> ])::l) in
+          else with_raise_arg (i-1) (Jvars(_loc, [ raise_arg lab (i-1), Some << null >> ])::l) in
         let _, dest_raise_args =
           List.fold_left
             (fun (i,l) v ->
-              i+1, Jslib_ast.Jvars (_loc, [ jsident_of_ident v, Some << $id:raise_arg lab i$ >> ]) :: l)
+              i+1, Jvars (_loc, [ jsident_of_ident v, Some << $id:raise_arg lab i$ >> ]) :: l)
             (0,[]) args in
         with_raise_arg (List.length args)
-          [ Jslib_ast.Jvars (_loc, [ raised, Some (Jslib_ast.Jbool (_loc, false)) ]);
-            Jslib_ast.Jlabel (_loc, label_raise lab, maybe_block (comp_expr_st tail e1 k));
-            Jslib_ast.Jites (_loc,
-                            << $id:raised$ >>,
-	                    maybe_block (List.rev_append dest_raise_args (comp_expr_st tail e2 k)),
-                            None) ]
+          [ Jvars (_loc, [ raised, Some (Jbool (_loc, false)) ]);
+            Jlabel (_loc, label_raise lab, maybe_block (comp_expr_st tail e1 k));
+            Jites (_loc,
+                  << $id:raised$ >>,
+                  maybe_block (List.rev_append dest_raise_args (comp_expr_st tail e2 k)),
+                  None) ]
 
     | Lstaticraise (lab, args) ->
         let _, cons_raise_args =
@@ -540,10 +538,10 @@ and comp_expr_st tail expr k =
             <:stmt< break $label_raise lab$; >> ]
 
     | Ltrywith (e1, i, e2) ->
-	[ Jslib_ast.Jtrycatch (_loc,
-                              comp_expr_st false e1 k,
-                              jsident_of_ident i,
-                              comp_expr_st tail e2 k) ]
+        [ Jtrycatch (_loc,
+                    comp_expr_st false e1 k,
+                    jsident_of_ident i,
+                    comp_expr_st tail e2 k) ]
 
     | _ -> [ k (comp_expr tail expr) ]
 
@@ -560,7 +558,7 @@ and backpatch bs =
           else bps
       | Lprim (Pmakeblock _, args) ->
           List.fold_right2
-            (fun i e bps -> bp << $path$[$jnum_of_int i$] >> e bps)
+            (fun i e bps -> bp << $path$[$`int:i$] >> e bps)
             (range 0 (List.length args))
             args
             bps
@@ -574,8 +572,8 @@ and comp_letrecs_st tail expr k =
     match expr with
       | Llet (_, i, e1, e2) -> <:stmt< var $id:jsident_of_ident i$ = $comp_expr false e1$; >> :: cl e2
       | Lletrec (bs, e) ->
-	  let cb (id, e) = <:stmt< var $id:jsident_of_ident id$ = $comp_expr false e$; >> in
-	  List.map cb bs @ backpatch bs @ cl e
+          let cb (id, e) = <:stmt< var $id:jsident_of_ident id$ = $comp_expr false e$; >> in
+          List.map cb bs @ backpatch bs @ cl e
       | e -> comp_expr_st tail e k in
    cl expr
 
@@ -585,92 +583,123 @@ and inline_exp = function
   | <:lam_exp< this >> -> <:exp< this >>
   | <:lam_exp< $id:v$ >> -> <:exp< $id:inline_string v$ >>
   | <:lam_exp< [ $el$ ] >> -> <:exp< [ $inline_exp el$ ] >>
-  | <:lam_aexp< Jobject (_loc, $kvl$) >> -> Jobject (_loc, inline_list (inline_pair inline_exp inline_exp) kvl)
+  | <:lam_aexp< Jobject ($_$, $kvl$) >> -> Jobject (_loc, inline_list (inline_pair inline_exp inline_exp) kvl)
 (*
   | <:lam_exp< $str:s$ >> -> <:exp< $str:s$ >>
 *) (* quote flag is not accessible *)
-  | <:lam_aexp< Jstring (_loc, $s$, $qq$) >> -> Jstring (_loc, inline_string s, inline_bool qq)
+  | <:lam_aexp< Jstring ($_$, $s$, $qq$) >> -> Jstring (_loc, inline_string s, inline_bool qq)
   | <:lam_exp< $flo:s$ >> -> <:exp< $flo:inline_string s$ >> (* XXX :num ? *)
   | <:lam_exp< null >> -> <:exp< null >>
-  | <:lam_aexp< Jbool (_loc, $b$) >> -> Jbool (_loc, inline_bool b) (* XXX :bool ? *)
-  | <:lam_aexp< Jfun (_loc, $so$, $sl$, $stl$) >> ->
+  | <:lam_aexp< Jbool ($_$, $b$) >> -> Jbool (_loc, inline_bool b) (* XXX :bool ? *)
+  | <:lam_aexp< Jfun ($_$, $so$, $sl$, $stl$) >> ->
       Jfun (_loc,
            inline_option inline_string so,
            inline_list inline_string sl,
            inline_list inline_stmt stl)
   | <:lam_exp< $e$.$s$ >> -> <:exp< $inline_exp e$.$inline_string s$ >>
-  | <:lam_aexp< Junop (_loc, $u$, $e$) >> -> Junop (_loc, inline_unop u, inline_exp e)
-  | <:lam_aexp< Jbinop (_loc, $b$, $e1$, $e2$) >> -> Jbinop (_loc, inline_binop b, inline_exp e1, inline_exp e2)
+  | <:lam_aexp< Junop ($_$, $u$, $e$) >> -> Junop (_loc, inline_unop u, inline_exp e)
+  | <:lam_aexp< Jbinop ($_$, $b$, $e1$, $e2$) >> -> Jbinop (_loc, inline_binop b, inline_exp e1, inline_exp e2)
   | <:lam_exp< $i$ ? $t$ : $e$ >> -> <:exp< $inline_exp i$ ? $inline_exp t$ : $inline_exp e$ >>
   | <:lam_exp< $e$($el$) >> -> <:exp< $inline_exp e$($inline_exp el$) >>
-  | <:lam_aexp< Jnew (_loc, $e$, $elo$) >> -> Jnew (_loc, inline_exp e, inline_option inline_exp elo)
-  | <:lam_aexp< Jexp_nil _loc >> -> Jexp_nil _loc
-  | <:lam_aexp< Jexp_cons (_loc, $e1$, $e2$) >> -> Jexp_cons (_loc, inline_exp e1, inline_exp e2)
+  | <:lam_aexp< Jnew ($_$, $e$, $elo$) >> -> Jnew (_loc, inline_exp e, inline_option inline_exp elo)
+  | <:lam_aexp< Jexp_nil $_$ >> -> Jexp_nil _loc
+  | <:lam_aexp< Jexp_cons ($_$, $e1$, $e2$) >> -> Jexp_cons (_loc, inline_exp e1, inline_exp e2)
   | Lprim (Pccall { prim_name = "$inline_antiexp" }, [e]) -> comp_expr false e
   | _ -> raise (Failure "bad inline exp")
 
 and inline_stmt = function
   | Lconst (Const_block _) as cb -> inline_stmt (makeblock_of_const cb)
-  | <:lam_astmt< Jempty _loc >> -> Jempty _loc
-  | <:lam_astmt< Jvars (_loc, $seol$) >> ->
+  | <:lam_astmt< Jempty $_$ >> -> Jempty _loc
+  | <:lam_astmt< Jvars ($_$, $seol$) >> ->
       Jvars (_loc, inline_list (inline_pair inline_string (inline_option inline_exp)) seol)
-  | <:lam_astmt< Jfuns (_loc, $s$, $sl$, $stl$) >> ->
+  | <:lam_astmt< Jfuns ($_$, $s$, $sl$, $stl$) >> ->
       Jfuns (_loc, inline_string s, inline_list inline_string sl, inline_list inline_stmt stl)
-  | <:lam_astmt< Jreturn (_loc, $eo$) >> -> Jreturn (_loc, inline_option inline_exp eo)
-  | <:lam_astmt< Jcontinue (_loc, $so$) >> -> Jcontinue (_loc, inline_option inline_string so)
-  | <:lam_astmt< Jbreak (_loc, $so$) >> -> Jbreak (_loc, inline_option inline_string so)
-  | <:lam_astmt< Jswitch (_loc, $e$, $esll$, $slo$) >> ->
+  | <:lam_astmt< Jreturn ($_$, $eo$) >> -> Jreturn (_loc, inline_option inline_exp eo)
+  | <:lam_astmt< Jcontinue ($_$, $so$) >> -> Jcontinue (_loc, inline_option inline_string so)
+  | <:lam_astmt< Jbreak ($_$, $so$) >> -> Jbreak (_loc, inline_option inline_string so)
+  | <:lam_astmt< Jswitch ($_$, $e$, $esll$, $slo$) >> ->
       Jswitch (_loc,
               inline_exp e,
               inline_list (inline_pair inline_exp (inline_list inline_stmt)) esll,
               inline_option (inline_list inline_stmt) slo)
-  | <:lam_astmt< Jites (_loc, $e$, $s$, $so$) >> -> Jites (_loc, inline_exp e, inline_stmt s, inline_option inline_stmt so)
-  | <:lam_astmt< Jthrow (_loc, $e$) >> -> Jthrow (_loc, inline_exp e)
-  | <:lam_astmt< Jexps (_loc, $e$) >> -> Jexps (_loc, inline_exp e)
-  | <:lam_astmt< Jtrycatch (_loc, $sl1$, $s$, $sl2$) >> ->
+  | <:lam_astmt< Jites ($_$, $e$, $s$, $so$) >> -> Jites (_loc, inline_exp e, inline_stmt s, inline_option inline_stmt so)
+  | <:lam_astmt< Jthrow ($_$, $e$) >> -> Jthrow (_loc, inline_exp e)
+  | <:lam_astmt< Jexps ($_$, $e$) >> -> Jexps (_loc, inline_exp e)
+  | <:lam_astmt< Jtrycatch ($_$, $sl1$, $s$, $sl2$) >> ->
       Jtrycatch (_loc, inline_list inline_stmt sl1, inline_string s, inline_list inline_stmt sl2)
-  | <:lam_astmt< Jtryfinally (_loc, $sl1$, $sl2$) >> ->
+  | <:lam_astmt< Jtryfinally ($_$, $sl1$, $sl2$) >> ->
       Jtryfinally (_loc, inline_list inline_stmt sl1, inline_list inline_stmt sl2)
-  | <:lam_astmt< Jtrycatchfinally (_loc, $sl1$, $s$, $sl2$, $sl3$) >> ->
+  | <:lam_astmt< Jtrycatchfinally ($_$, $sl1$, $s$, $sl2$, $sl3$) >> ->
       Jtrycatchfinally (_loc,
                        inline_list inline_stmt sl1,
                        inline_string s,
                        inline_list inline_stmt sl2,
                        inline_list inline_stmt sl3)
-  | <:lam_astmt< Jfor (_loc, $eo1$, $eo2$, $eo3$, $s$) >> ->
+  | <:lam_astmt< Jfor ($_$, $eo1$, $eo2$, $eo3$, $s$) >> ->
       Jfor (_loc,
            inline_option inline_exp eo1,
            inline_option inline_exp eo2,
            inline_option inline_exp eo3,
            inline_stmt s)
-  | <:lam_astmt< Jdowhile (_loc, $s$, $e$) >> -> Jdowhile (_loc, inline_stmt s, inline_exp e)
-  | <:lam_astmt< Jwhile (_loc, $e$, $s$) >> -> Jwhile (_loc, inline_exp e, inline_stmt s)
-  | <:lam_astmt< Jblock (_loc, $sl$) >> -> Jblock (_loc, inline_list inline_stmt sl)
-  | <:lam_astmt< Jwith (_loc, $e$, $s$) >> -> Jwith (_loc, inline_exp e, inline_stmt s)
-  | <:lam_astmt< Jlabel (_loc, $s$, $st$) >> -> Jlabel (_loc, inline_string s, inline_stmt st)
+  | <:lam_astmt< Jdowhile ($_$, $s$, $e$) >> -> Jdowhile (_loc, inline_stmt s, inline_exp e)
+  | <:lam_astmt< Jwhile ($_$, $e$, $s$) >> -> Jwhile (_loc, inline_exp e, inline_stmt s)
+  | <:lam_astmt< Jblock ($_$, $sl$) >> -> Jblock (_loc, inline_list inline_stmt sl)
+  | <:lam_astmt< Jwith ($_$, $e$, $s$) >> -> Jwith (_loc, inline_exp e, inline_stmt s)
+  | <:lam_astmt< Jlabel ($_$, $s$, $st$) >> -> Jlabel (_loc, inline_string s, inline_stmt st)
 (*| Lprim (Pccall { prim_name = "$inline_antistmt" }, [s]) -> *)(* XXX *)
   | _ -> raise (Failure "bad inline stmt")
 
 and inline_unop = function
-  | Lconst (Const_pointer tag) ->
-      let unops = [|
-        Jdelete; Jvoid; Jtypeof; Jadd2_pre; Jsub2_pre; Jadd_pre; Jsub_pre; Jtilde; Jnot; Jadd2_post; Jsub2_post
-      |] in
-      if tag < Array.length unops
-      then unops.(tag)
-      else raise (Failure "bad inline unop")
+  | <:lam_aunop< Jdelete >> -> Jdelete
+  | <:lam_aunop< Jvoid >> -> Jvoid
+  | <:lam_aunop< Jtypeof >> -> Jtypeof
+  | <:lam_aunop< Jadd2_pre >> -> Jadd2_pre
+  | <:lam_aunop< Jsub2_pre >> -> Jsub2_pre
+  | <:lam_aunop< Jadd_pre >> -> Jadd_pre
+  | <:lam_aunop< Jsub_pre >> -> Jsub_pre
+  | <:lam_aunop< Jtilde >> -> Jtilde
+  | <:lam_aunop< Jnot >> -> Jnot
+  | <:lam_aunop< Jadd2_post >> -> Jadd2_post
+  | <:lam_aunop< Jsub2_post >> -> Jsub2_post
   | _ -> raise (Failure "bad inline unop")
 
 and inline_binop = function
-  | Lconst (Const_pointer tag) ->
-      let binops = [|
-        Jhashref; Jmul; Jdiv; Jmod; Jadd; Jsub; Jlt; Jgt; Jleq; Jgeq; Jlsr; Jlsl; Jasr; Jeq; Jneq; Jinstanceof; Jseq;
-        Jsneq; Jland; Jlor; Jand; Jxor; Jor; Jcomma; Jassign; Jmul_assign; Jdiv_assign; Jmod_assign; Jadd_assign; Jsub_assign;
-        Jlsl_assign; Jlsr_assign; Jasr_assign; Jand_assign; Jxor_assign; Jor_assign
-      |] in
-      if tag < Array.length binops
-      then binops.(tag)
-      else raise (Failure "bad inline binop")
+  | <:lam_abinop< Jhashref >> -> Jhashref
+  | <:lam_abinop< Jmul >> -> Jmul
+  | <:lam_abinop< Jdiv >> -> Jdiv
+  | <:lam_abinop< Jmod >> -> Jmod
+  | <:lam_abinop< Jadd >> -> Jadd
+  | <:lam_abinop< Jsub >> -> Jsub
+  | <:lam_abinop< Jlt >> -> Jlt
+  | <:lam_abinop< Jgt >> -> Jgt
+  | <:lam_abinop< Jleq >> -> Jleq
+  | <:lam_abinop< Jgeq >> -> Jgeq
+  | <:lam_abinop< Jlsr >> -> Jlsr
+  | <:lam_abinop< Jlsl >> -> Jlsl
+  | <:lam_abinop< Jasr >> -> Jasr
+  | <:lam_abinop< Jeq >> -> Jeq
+  | <:lam_abinop< Jneq >> -> Jneq
+  | <:lam_abinop< Jinstanceof >> -> Jinstanceof
+  | <:lam_abinop< Jseq >> -> Jseq
+  | <:lam_abinop< Jsneq >> -> Jsneq
+  | <:lam_abinop< Jland >> -> Jland
+  | <:lam_abinop< Jlor >> -> Jlor
+  | <:lam_abinop< Jand >> -> Jand
+  | <:lam_abinop< Jxor >> -> Jxor
+  | <:lam_abinop< Jor >> -> Jor
+  | <:lam_abinop< Jcomma >> -> Jcomma
+  | <:lam_abinop< Jassign >> -> Jassign
+  | <:lam_abinop< Jmul_assign >> -> Jmul_assign
+  | <:lam_abinop< Jdiv_assign >> -> Jdiv_assign
+  | <:lam_abinop< Jmod_assign >> -> Jmod_assign
+  | <:lam_abinop< Jadd_assign >> -> Jadd_assign
+  | <:lam_abinop< Jsub_assign >> -> Jsub_assign
+  | <:lam_abinop< Jlsl_assign >> -> Jlsl_assign
+  | <:lam_abinop< Jlsr_assign >> -> Jlsr_assign
+  | <:lam_abinop< Jasr_assign >> -> Jasr_assign
+  | <:lam_abinop< Jand_assign >> -> Jand_assign
+  | <:lam_abinop< Jxor_assign >> -> Jxor_assign
+  | <:lam_abinop< Jor_assign >> -> Jor_assign
   | _ -> raise (Failure "bad inline binop")
 
 (**** Compilation of a lambda phrase ****)
@@ -679,8 +708,8 @@ let compile_implementation modulename expr =
   let ce =
     match expr with
       | Lprim (Psetglobal id, [e]) ->
-	  enter_setglobal id;
-	  <:stmt< var $id:jsident_of_ident id$ = $comp_expr false e$; >>
+          enter_setglobal id;
+          <:stmt< var $id:jsident_of_ident id$ = $comp_expr false e$; >>
       | _ -> unimplemented "compile_implementation" expr in
   let ret = (ce, !reloc_info) in
   reloc_info := [];

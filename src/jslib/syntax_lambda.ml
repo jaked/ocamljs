@@ -173,5 +173,5 @@ add_js_quotation "lam_exp" Jslib_parse.expression ME.meta_exp MP.meta_exp;
 add_js_quotation "lam_stmt" Jslib_parse.statement ME.meta_stmt MP.meta_stmt;
 add_ocaml_quotation "lam_aexp" Syntax.expr MAE.meta_exp MAP.meta_exp;
 add_ocaml_quotation "lam_astmt" Syntax.expr MAE.meta_stmt MAP.meta_stmt;
-add_ocaml_quotation "lam_unop" Syntax.expr MAE.meta_unop MAP.meta_unop;
-add_ocaml_quotation "lam_binop" Syntax.expr MAE.meta_binop MAP.meta_binop;
+add_ocaml_quotation "lam_aunop" Syntax.expr MAE.meta_unop MAP.meta_unop;
+add_ocaml_quotation "lam_abinop" Syntax.expr MAE.meta_binop MAP.meta_binop;
