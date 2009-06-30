@@ -153,14 +153,14 @@ struct
                   Lambda.Const_block (0, [
                     Lambda.Const_base (Asttypes.Const_int 1);
                     Lambda.Const_base (Asttypes.Const_int 0);
-                    Lambda.Const_base (Asttypes.Const_int 0);
+                    Lambda.Const_base (Asttypes.Const_int 0)
                   ]);
                   Lambda.Const_block (0, [
                     Lambda.Const_base (Asttypes.Const_int 1);
                     Lambda.Const_base (Asttypes.Const_int 0);
-                    Lambda.Const_base (Asttypes.Const_int 0);
+                    Lambda.Const_base (Asttypes.Const_int 0)
                   ]);
-                  Lambda.Const_pointer 1;
+                  Lambda.Const_pointer 1
                 ]))
             >>
 
