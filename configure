@@ -153,7 +153,7 @@ fi
 
 printf "%s" "Checking OCaml version... "
 ocamlc_version=`ocamlc -version`
-if [ \( "$src_version" = "3.10.2" -o "$src_version" = "3.11.0" \) -a "$src_version" = "$ocamlc_version" ]; then
+if [ \( "$src_version" = "3.10.2" -o "$src_version" = "3.11.0" -o "$src_version" = "3.11.1" \) -a "$src_version" = "$ocamlc_version" ]; then
     echo "ok, $src_version"
 elif [ "$src_version" != "$ocamlc_version" ]; then
     echo "source version $src_version != installed version $ocamlc_version"
@@ -162,7 +162,7 @@ elif [ "$src_version" != "$ocamlc_version" ]; then
     exit 1
 else
     echo "unsupported version $src_version"
-    echo "Sorry, ocamljs needs OCaml version 3.10.2 or 3.11.0."
+    echo "Sorry, ocamljs needs OCaml version 3.10.2, 3.11.0, or 3.11.1."
     echo "Download OCaml from http://caml.inria.fr/download.en.html"
     exit 1
 fi
