@@ -1,5 +1,5 @@
 name="jQuery"
 version="0.1"
 description="jQuery binding"
-requires = "ocamljs"
+requires = "ocamljs,dom"
 archive(js) = "jquery.cmjsa"
