@@ -107,7 +107,7 @@ let ids ppf is =
   List.iter
     (fun i ->
       if !com then fprintf ppf ",@ " else com := true;
-      fprintf ppf "@[%a@]" id i)
+      fprintf ppf "%a" id i)
     is
 
 let is_postop = function
@@ -247,25 +247,25 @@ let rec expp pr ppf e =
 and exp ppf = function
   | Jthis _  -> fprintf ppf "this"
   | Jvar (_, i) -> fprintf ppf "%s" i
-  | Jarray (_, es) -> fprintf ppf "@[[%a]@]" exps es
+  | Jarray (_, es) -> fprintf ppf "@[<hv>[@;<1 2>%a@ ]@]" aexps es
   | Jobject (_, kvs) ->
       let keyvals ppf kvs =
         let com = ref false in
         List.iter
           (fun (k, v) ->
-            if !com then fprintf ppf ",@ " else com := true;
-            fprintf ppf "@[%a: %a@]" (expp pAssignment) k (expp pAssignment) v)
+            if !com then fprintf ppf ",@;<1 2>" else com := true;
+            fprintf ppf "@[<hv 2>%a:@ %a@]" (expp pAssignment) k (expp pAssignment) v)
           kvs in
-      fprintf ppf "@[{%a}@]" keyvals kvs
+      fprintf ppf "@[<hv>{@;<1 2>%a@ }@]" keyvals kvs
   | Jstring (_, s, false) -> fprintf ppf "\"%s\"" (JSString.escaped s)
   | Jstring (_, s, true) -> fprintf ppf "\'%s\'" (JSString.escaped s)
   | Jnum (_, n) -> fprintf ppf "%s" n
   | Jnull _ -> fprintf ppf "null"
   | Jbool (_, b) -> fprintf ppf "%B" b
   | Jfun (_, io, is, ss) ->
-      fprintf ppf "@[<hv>function %a(@[%a@]) %a@]" (opt_nbsp id) io ids is block ss
+      fprintf ppf "@[<hv>function %a@[<hv 1>(%a)@]%a@]" (opt_nbsp id) io ids is block ss
 
-  | Jfieldref (_, e, i) -> fprintf ppf "@[%a.%s@]" (expp pMember) e i
+  | Jfieldref (_, e, i) -> fprintf ppf "@[<hv 2>%a.@,%s@]" (expp pMember) e i
 
   | Junop (_, op, e) ->
       if is_postop op
@@ -276,7 +276,7 @@ and exp ppf = function
       else
         begin
           match op with
-            | Jdelete | Jvoid | Jtypeof -> fprintf ppf "@[%s@;<1 2>%a@]" (unop_op op) (expp pUnary) e
+            | Jdelete | Jvoid | Jtypeof -> fprintf ppf "@[%s %a@]" (unop_op op) (expp pUnary) e
             | _ -> fprintf ppf "@[%s%a@]" (unop_op op) (expp pUnary) e
         end
 
@@ -287,19 +287,19 @@ and exp ppf = function
           | Jcomma -> fprintf ppf "@[%a, %a@]" (expp p) e1 (expp pAssignment) e2
           | _ ->
               let prec = binop_prec op in
-              fprintf ppf "@[%a %s@ %a@]" (expp prec) e1 (binop_op op) (expp (prec + 2)) e2
+              fprintf ppf "@[<hv 2>%a %s@ %a@]" (expp prec) e1 (binop_op op) (expp (prec + 2)) e2
       end
 
   | Jite (_, i, t, e) ->
-      fprintf ppf "@[%a ?@ %a :@ %a@]"
+      fprintf ppf "@[<hv 2>%a ?@ %a :@ %a@]"
         (expp pLogicalOR) i
         (expp pAssignment) t
         (expp pAssignment) e
 
-  | Jcall (_, e, es) -> fprintf ppf "@[%a(%a)@]" (expp pCall) e exps es
+  | Jcall (_, e, es) -> fprintf ppf "@[%a@[<hov 1>(%a)@]@]" (expp pCall) e exps es
 
   | Jnew (_, e, None) -> fprintf ppf "@[new %a@]" (expp pMember) e
-  | Jnew (_, e, Some es) -> fprintf ppf "@[new %a(%a)@]" (expp pMember) e exps es
+  | Jnew (_, e, Some es) -> fprintf ppf "@[new %a@[<hov 1>(%a)@]@]" (expp pMember) e exps es
   | Jexp_Ant (_, s) -> fprintf ppf "$%s$" s
 
   | Jexp_nil _ -> assert false
@@ -313,39 +313,55 @@ and exps ppf e =
         fprintf ppf ",@ ";
         exps ppf e2;
     | _ ->
-        fprintf ppf "@[<2>%a@]" (expp pAssignment) e
+        (expp pAssignment) ppf e
+
+and aexps ppf e =
+  match e with
+    | Jexp_nil _ -> ()
+    | Jexp_cons (_, e1, e2) ->
+        aexps ppf e1;
+        fprintf ppf ",@;<1 2>";
+        aexps ppf e2;
+    | _ ->
+        (expp pAssignment) ppf e
 
 and stmt ppf = function
   | Jempty _ -> fprintf ppf ";"
 
   | Jvars (_, vars) ->
-      let fvars ppf vars =
-        let comma = ref false in
-        List.iter
-          (fun (i, e) ->
-            if !comma then fprintf ppf ",@ " else comma := true;
-            match e with
-              | Some e -> fprintf ppf "%s =@;<1 2>%a" i (expp pAssignment) e
-              | None -> fprintf ppf "%s" i)
-          vars in
-      fprintf ppf "@[var %a;@]" fvars vars
+      begin
+        match vars with
+          | [ (i, None) ] -> fprintf ppf "@[<hv 2>var %s;@]" i
+          | [ (i, Some e) ] -> fprintf ppf "@[<hv 2>var %s =@ %a;@]" i (expp pAssignment) e
+          | _ ->
+              let fvars ppf vars =
+                let comma = ref false in
+                List.iter
+                  (fun (i, e) ->
+                    if !comma then fprintf ppf ",@ " else comma := true;
+                    match e with
+                      | Some e -> fprintf ppf "%s =@;<1 2>%a" i (expp pAssignment) e
+                      | None -> fprintf ppf "%s" i)
+                  vars in
+              fprintf ppf "@[<hv 2>var@ %a;@]" fvars vars
+      end
 
   | Jfuns (_, i, is, ss) ->
-      fprintf ppf "@[<hv>function %s (@[%a@]) %a@]" i ids is block ss
+      fprintf ppf "@[<hv>function %s @[<hv 1>(%a)@]%a@]" i ids is block ss
 
   | Jreturn (_, e) -> fprintf ppf "@[<h>return%a;@]" (opt_nbsp (expp p)) e
-  | Jcontinue (_, i) -> fprintf ppf "@[continue%a;@]" (opt_nbsp id) i
-  | Jbreak (_, i) -> fprintf ppf "@[break%a;@]" (opt_nbsp id) i
+  | Jcontinue (_, i) -> fprintf ppf "@[<h>continue%a;@]" (opt_nbsp id) i
+  | Jbreak (_, i) -> fprintf ppf "@[<h>break%a;@]" (opt_nbsp id) i
 
   | Jites (_, i, t, None) ->
       fprintf ppf
-        "@[<hv>if (%a)@ %a@]"
-        (expp p) i stmt t
+        "@[<hv>if (%a)%a@]"
+        (expp p) i maybe_block t
 
   | Jites (_, i, t, Some e) ->
       fprintf ppf
-        "@[<hv>if (%a)@ %a@ else %a@]"
-        (expp p) i stmt t stmt e
+        "@[<hv>if (%a)%a@ else%a@]"
+        (expp p) i maybe_block t maybe_block e
 
   | Jswitch (_, e, cs, fss) ->
       let cases ppf (cs, fss) =
@@ -353,14 +369,14 @@ and stmt ppf = function
         List.iter
           (fun (i, ss) ->
             if !spc then fprintf ppf "@ " else spc := true;
-            fprintf ppf "@[<hv>case %a:@;<1 2>@[%a@]@]"
-              (expp p) i stmts ss)
+            fprintf ppf "@[<hv>case %a:%a@]"
+              (expp p) i ind_stmts ss)
           cs;
         match fss with
           | None -> ()
           | Some fss ->
               if !spc then fprintf ppf "@ " else spc := true;
-              fprintf ppf "@[<hv>default:@;<1 2>@[%a@]@]" stmts fss in
+              fprintf ppf "@[<hv>default:%a@]" ind_stmts fss in
       fprintf ppf
         "@[<hv>switch (%a)@ {@ %a@ }@]"
         (expp p) e cases (cs, fss)
@@ -371,36 +387,41 @@ and stmt ppf = function
   | Jexps (_, e) -> fprintf ppf "@[%a;@]" (expp p) e
 
   | Jtrycatch (_, ss, ci, css) ->
-      fprintf ppf "@[<hv>try %a catch (%s) %a@]" block ss ci block css
+      fprintf ppf "@[<hv>try%a@ catch (%s)%a@]" block ss ci block css
   | Jtryfinally (_, ss, fss) ->
-      fprintf ppf "@[<hv>try %a finally %a@]" block ss block fss
+      fprintf ppf "@[<hv>try%a@ finally%a@]" block ss block fss
   | Jtrycatchfinally (_, ss, ci, css, fss) ->
-      fprintf ppf "@[<hv>try %a catch (%s) %a finally %a@]" block ss ci block css block fss
+      fprintf ppf "@[<hv>try%a@ catch (%s)%a finally%a@]" block ss ci block css block fss
 
   | Jfor (_, e1, e2, e3, s) ->
-      fprintf ppf "@[<hv>for (%a;@ %a;@ %a) %a@]" (opt (expp p)) e1 (opt (expp p)) e2 (opt (expp p)) e3 stmt s
+      fprintf ppf "@[<hv>for @[<hv 1>(%a;@ %a;@ %a)@]%a@]" (opt (expp p)) e1 (opt (expp p)) e2 (opt (expp p)) e3 maybe_block s
 
   | Jdowhile (_, s, e) ->
-      fprintf ppf "@[<hv>do@ %a@ while (%a);@]" stmt s (expp p) e
+      fprintf ppf "@[<hv>do%a@ while (%a);@]" maybe_block s (expp p) e
 
   | Jwhile (_, e, s) ->
-      fprintf ppf "@[<hv>while (%a)@ %a@]" (expp p) e stmt s
+      fprintf ppf "@[<hv>while (%a)%a@]" (expp p) e maybe_block s
 
-  | Jblock (_, ss) -> fprintf ppf "{@;<1 2>%a@ }" stmts ss
-  | Jwith (_, e, s) -> fprintf ppf "@[<hv>with (%a)@ %a@]" (expp p) e stmt s
-  | Jlabel (_, i, s) -> fprintf ppf "@[%s: %a@]" i stmt s
+  | Jblock (_, ss) -> fprintf ppf "@[<hv>{%a@ }@]" ind_stmts ss
+  | Jwith (_, e, s) -> fprintf ppf "@[<hv>with (%a)%a@]" (expp p) e maybe_block s
+  | Jlabel (_, i, s) -> fprintf ppf "@[<hv>%s:%a@]" i maybe_block s
   | Jstmt_Ant (_, s) -> fprintf ppf "$%s$" s
 
-and block ppf ss = fprintf ppf "{@;<1 2>%a@ }" stmts ss
+and block ppf ss = fprintf ppf " {%a@ }" ind_stmts ss
+
+and maybe_block ppf = function
+  | Jblock (_, ss) -> block ppf ss
+  | s -> fprintf ppf "@;<1 2>%a" stmt s
+
+and ind_stmts ppf ss =
+  List.iter (fun s -> fprintf ppf "@;<1 2>%a" stmt s) ss
 
 and stmts ppf ss =
-  let sl ppf ss =
-    let spc = ref false in
-    List.iter
-      (fun s ->
-        if !spc then fprintf ppf "@ " else spc := true;
-        stmt ppf s;)
-      ss in
-  fprintf ppf "@[<v>%a@]" sl ss
+  let spc = ref false in
+  List.iter
+    (fun s ->
+      if !spc then fprintf ppf "@ " else spc := true;
+      stmt ppf s)
+    ss
 
 let escaped = JSString.escaped
