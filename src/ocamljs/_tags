@@ -1,1 +1,1 @@
-<ocamljs.ml*> : syntax_camlp4o,pkg_camlp4.macro
+<ocamljs.ml*> : syntax_camlp4o,pkg_camlp4.macro,pkg_jslib.inline
