@@ -439,6 +439,9 @@ end
 
 val jQuery_util : jQuery_util
 
+(* Invoking Plugins *)
+val jQuery_plugin_static : string -> 'a
+
 (* Callbacks *)
 (* --------- *)
 

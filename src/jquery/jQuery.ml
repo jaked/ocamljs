@@ -443,6 +443,10 @@ end
 
 let jQuery_util = (Ocamljs.var "jQuery" : jQuery_util)
 
+(* Invoking Plugins *)
+let jQuery_plugin_static (name : string) =
+  Ocamljs.hashref jQuery_util name
+
 (* Callbacks *)
 (* --------- *)
 
