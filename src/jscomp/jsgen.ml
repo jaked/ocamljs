@@ -103,13 +103,13 @@ let rec comp_sconst c =
         makeblock 0 (List.map (fun s -> Jnum (_loc, s)) ss) (* XXX different float syntax *)
     | Const_immstring s -> Jstring (_loc, s, false) (* XXX when does this happen? *)
 
-let kreturn e = <:stmt< return $e$; >>
+let kreturn e = [ <:stmt< return $e$; >> ]
 
 let keffect = function
     (* anything that is already a value can have no effect *)
     (* mostly this arises with the compilation of () as Jnum 0 *)
-  | (Jnum _ | Jvar _) -> Jempty _loc
-  | e -> Jexps (_loc, e)
+  | (Jnum _ | Jvar _) -> []
+  | e -> [ Jexps (_loc, e) ]
 
 let comp_ccall c es =
   match c, es with
@@ -475,7 +475,7 @@ and comp_expr_st tail expr k =
             then stmts
             else stmts @ [ <:stmt< break; >> ] in
         (i, stmts) in
-        let fss = match fe with None -> Some [k << null >> ] | Some e -> Some (comp_expr_st tail e k) in
+        let fss = match fe with None -> Some (k << null >>) | Some e -> Some (comp_expr_st tail e k) in
         let cswitch = Jswitch (_loc, cse, List.map cc cs, fss) in
         let bswitch = Jswitch (_loc, (let id = "$t" in << $id:id$($exp:cse$) >>), List.map cc bs, fss) in
         let stmt =
@@ -543,7 +543,7 @@ and comp_expr_st tail expr k =
                     jsident_of_ident i,
                     comp_expr_st tail e2 k) ]
 
-    | _ -> [ k (comp_expr tail expr) ]
+    | _ -> k (comp_expr tail expr)
 
 and backpatch bs =
   let rec range from upto =
