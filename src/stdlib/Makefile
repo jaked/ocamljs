@@ -4,7 +4,7 @@ ifeq ($(OCAML_3_10_2),1)
 VERSION=.3.10.2
 endif
 
-ML=buffer.ml printf.ml camlinternalMod.ml pervasives.ml
+ML=buffer.ml printf.ml camlinternalMod.ml pervasives.ml camlinternalOO.ml
 MLI=$(addsuffix .mli,$(basename $(ML)))
 
 all: myocamlbuild.ml ocaml $(ML) $(MLI) random.mli stdlib.mllib

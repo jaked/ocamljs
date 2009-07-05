@@ -147,6 +147,11 @@ let comp_ccall c es =
     | "$false", _ -> << false >>
     | "$fieldref", [e; Jstring (_loc, id, _)] -> << $e$.$id$ >>
     | "$function", [Jcall (_loc, Jvar _, (Jfun _ as f))] -> f
+
+    (* removes initial dummy arg; see camlinternalOO.ml *)
+    | "$dummyargfun", [Jcall (_loc, Jvar (_loc2, v), (Jfun (_loc3, name, (_::args), stmts)))] ->
+        Jcall (_loc, Jvar (_loc2, v), (Jfun (_loc3, name, args, stmts)))
+
     | "$hashref", [e1; e2] -> << $e1$[$e2$] >>
     | "$new", (Jstring (_, id, _))::es -> << new $id:id$($list:es$) >>
     | "$null", _ -> << null >>
