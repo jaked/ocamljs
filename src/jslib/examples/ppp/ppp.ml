@@ -1,5 +1,6 @@
 (* parse and pretty print Javascript *)
 
+Format.set_margin 25;
 try
   let ss = Jslib_parse.parse_stdin () in
   Jslib_pp.stmts Format.std_formatter ss;

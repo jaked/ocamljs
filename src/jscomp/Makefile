@@ -4,7 +4,20 @@ ifeq ($(OCAML_3_10_2),1)
 OCAMLBUILD_FLAGS=-tag OCAML_3_10_2
 endif
 
-all: myocamlbuild.ml ocaml prereqs ocamljs # ocamljs.opt
+ML=translobj.ml translclass.ml
+MLI=$(addsuffix .mli,$(basename $(ML)))
+
+all: myocamlbuild.ml ocaml $(ML) $(MLI) prereqs ocamljs # ocamljs.opt
+
+%.ml : %.ml.patch
+	cp ocaml/bytecomp/$@ .
+	patch -p0 < $<
+
+%.mli :
+	ln -s ocaml/bytecomp/$@ .
+
+patches:
+	for ml in $(ML); do diff -Naur ocaml/bytecomp/$$ml $$ml > $$ml.patch; done || exit 0
 
 doc:
 
