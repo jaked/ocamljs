@@ -152,6 +152,13 @@ var caml_float_of_string = function (s) {
   var f = parseFloat(s);
   return isNaN(f) ? caml_failwith("float_of_string") : f;
 }
+var caml_classify_float = function (f) {
+  if (isNan(f)) return 4; // FP_nan
+  else if (!isFinite(f)) return 3; // FP_infinite
+  else if (f === 0) return 2; // FP_zero
+  // can't determine subnormal from js afaik
+  else return 0; // FP_normal
+}
 
 var caml_format_int = function(f, a) {
   function parse_format(f) { return f; } // XXX see ints.c
