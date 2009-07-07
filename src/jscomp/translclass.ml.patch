@@ -1,22 +1,22 @@
---- ocaml/bytecomp/translclass.ml	2009-07-07 14:40:55.000000000 -0700
-+++ translclass.ml	2009-07-07 14:32:18.000000000 -0700
-@@ -1,15 +1,3 @@
--(*
-- * This file is part of ocamljs, OCaml to Javascript compiler
-- * Copyright (C) 2007-9 Skydeck, Inc
-- *
-- * This program is free software released under the QPL.
-- * See LICENSE for more details.
-- *
-- * The Software is provided AS IS with NO WARRANTY OF ANY KIND,
-- * INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND 
-- * FITNESS FOR A PARTICULAR PURPOSE.
-- *)
--
+--- ocaml/bytecomp/translclass.ml	2009-07-07 14:51:56.000000000 -0700
++++ translclass.ml	2009-07-07 14:52:05.000000000 -0700
+@@ -1,3 +1,15 @@
++(*
++ * This file is part of ocamljs, OCaml to Javascript compiler
++ * Copyright (C) 2007-9 Skydeck, Inc
++ *
++ * This program is free software released under the QPL.
++ * See LICENSE for more details.
++ *
++ * The Software is provided AS IS with NO WARRANTY OF ANY KIND,
++ * INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND 
++ * FITNESS FOR A PARTICULAR PURPOSE.
++ *)
++
  (***********************************************************************)
  (*                                                                     *)
  (*                           Objective Caml                            *)
-@@ -46,6 +34,14 @@
+@@ -34,6 +46,14 @@
    |  _ ->
        Lfunction (Curried, params, body)
  
@@ -31,7 +31,7 @@
  let lapply func args =
    match func with
      Lapply(func', args') ->
-@@ -641,11 +637,23 @@
+@@ -629,11 +649,23 @@
            if not arr || !Clflags.debug then raise Not_found;
            builtin_meths [self] env env2 (lfunction args body')
          with Not_found ->

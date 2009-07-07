@@ -1,5 +1,5 @@
 --- ocaml/bytecomp/translobj.ml	2004-05-26 04:10:51.000000000 -0700
-+++ translobj.ml	2009-07-07 14:40:54.000000000 -0700
++++ translobj.ml	2009-07-07 14:42:29.000000000 -0700
 @@ -1,3 +1,15 @@
 +(*
 + * This file is part of ocamljs, OCaml to Javascript compiler
