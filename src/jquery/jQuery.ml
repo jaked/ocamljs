@@ -442,7 +442,7 @@ object
     'a array -> (int -> 'a -> bool) Ocamljs.jsfun -> bool -> 'a array
   method makeArray : 'a -> 'b array
   method map : 'a array -> ('a -> 'b) Ocamljs.jsfun -> 'b array
-  method map_i_ : 'a array -> ('a -> int -> 'b) Ocamljs.jsfun -> 'b array
+  method map_index_ : 'a array -> ('a -> int -> 'b) Ocamljs.jsfun -> 'b array
   method inArray : 'a -> 'a array -> int
   method merge : 'a array -> 'a array -> 'a array
   method unique : 'a array -> 'a array
