@@ -27,7 +27,7 @@ object
   (* ----------- *)
 
   (* jQuery Object Accessors *)
-  method each : (int -> 'a -> bool) Ocamljs.jsfun -> unit
+  method each : (int -> Dom.element -> bool) Ocamljs.jsfun -> unit
   method size : int
   method _get_length : int
   method _get_selector : string
