@@ -4,20 +4,28 @@ ifeq ($(OCAML_3_10_2),1)
 OCAMLBUILD_FLAGS=-tag OCAML_3_10_2
 endif
 
-ML=translobj.ml translclass.ml
+ML=translobj.ml translclass.ml typecore.ml
 MLI=$(addsuffix .mli,$(basename $(ML)))
 
 all: myocamlbuild.ml ocaml $(ML) $(MLI) prereqs ocamljs # ocamljs.opt
 
 %.ml : %.ml.patch
-	cp ocaml/bytecomp/$@ .
+	if [ -f ocaml/bytecomp/$@ ]; then cp ocaml/bytecomp/$@ .; \
+	elif [ -f ocaml/typing/$@ ]; then cp ocaml/typing/$@ .; \
+	fi
 	patch -p0 < $<
 
 %.mli :
-	ln -s ocaml/bytecomp/$@ .
+	if [ -f ocaml/bytecomp/$@ ]; then ln -s ocaml/bytecomp/$@ .; \
+	elif [ -f ocaml/typing/$@ ]; then ln -s ocaml/typing/$@ .; \
+	fi
 
 patches:
-	for ml in $(ML); do diff -Naur ocaml/bytecomp/$$ml $$ml > $$ml.patch; done || exit 0
+	for ml in $(ML); do \
+	  if [ -f ocaml/bytecomp/$$ml ]; then diff -Naur ocaml/bytecomp/$$ml $$ml > $$ml.patch; \
+	  elif [ -f ocaml/typing/$$ml ]; then diff -Naur ocaml/typing/$$ml $$ml > $$ml.patch; \
+	  fi; \
+	done || exit 0
 
 doc:
 

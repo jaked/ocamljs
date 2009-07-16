@@ -1,0 +1,20 @@
+--- ocaml/typing/typecore.ml	2009-07-16 12:08:47.000000000 -0700
++++ typecore.ml	2009-07-16 12:27:48.000000000 -0700
+@@ -1294,6 +1294,17 @@
+                                      exp_loc = obj.exp_loc;
+                                      exp_type = desc.val_type;
+                                      exp_env = env },
++                               Required;
++                               (*
++                                 the following is a goofy hack so we
++                                 can recognize applications that are
++                                 really method invocations in jsgen.ml
++                                 in order to pass this properly.
++                               *)
++                               Some {exp_desc = Texp_tuple [];
++                                     exp_loc = obj.exp_loc;
++                                     exp_type = desc.val_type;
++                                     exp_env = env },
+                                Required]),
+                    typ)
+               |  _ ->

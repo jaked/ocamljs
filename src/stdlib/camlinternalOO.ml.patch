@@ -1,5 +1,5 @@
 --- ocaml/stdlib/camlinternalOO.ml	2007-10-28 20:11:03.000000000 -0700
-+++ camlinternalOO.ml	2009-07-04 21:36:47.000000000 -0700
++++ camlinternalOO.ml	2009-07-16 11:04:01.000000000 -0700
 @@ -1,3 +1,25 @@
 +(*
 + * This file is part of ocamljs, OCaml to Javascript compiler
@@ -166,6 +166,15 @@
      set_id obj last_id;
      (Obj.obj obj)
    end
+@@ -371,7 +381,7 @@
+ let rec iter_f obj =
+   function
+     []   -> ()
+-  | f::l -> f obj; iter_f obj l
++  | f::l -> <:stmt< _m($f$, $obj$, []); >>; iter_f obj l
+ 
+ let run_initializers obj table =
+   let inits = table.initializers in
 @@ -440,60 +450,51 @@
  (**** builtin methods ****)
  
@@ -251,7 +260,7 @@
 -  in
 -  table.methods.(n) <- Obj.magic 0;
 -  n
-+    sendcache (sendself << this >> n) m)
++    send (sendself << this >> n) m)
  
  type impl =
      GetConst

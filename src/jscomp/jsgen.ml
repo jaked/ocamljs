@@ -323,10 +323,20 @@ let rec comp_expr tail expr =
         << _f($exp:e$) >>
 
     | IFDEF OCAML_3_10_2 THEN Lapply(e, es) ELSE Lapply(e, es, _) ENDIF ->
-        let app = if tail then "__" else "_" in
-        let ce = comp_expr false e in
-        let ces = List.map (comp_expr false) es in
-        << $id:app$($exp:ce$, [$list:ces$]) >>
+        begin
+          match es with
+              (* goofy hack from typecore.ml *)
+            | [this; Lconst(Const_block(0, []))] ->
+                let app = if tail then "__m" else "_m" in
+                let ce = comp_expr false e in
+                let cthis = comp_expr false this in
+                << $id:app$($exp:ce$, $cthis$, []) >>
+            | _ ->
+                let app = if tail then "__" else "_" in
+                let ce = comp_expr false e in
+                let ces = List.map (comp_expr false) es in
+                << $id:app$($exp:ce$, [$list:ces$]) >>
+        end
 
     | Lifthenelse (i, t, e) ->
         let ci = comp_expr false i in
@@ -344,7 +354,12 @@ let rec comp_expr tail expr =
 
     | Lprim (p, args) -> comp_prim p (List.map (comp_expr false) args)
 
-    | Lsend (_, Lconst(Const_immstring m), o, args) ->
+    | Lsend (Public, Lconst(Const_immstring m), o, args) ->
+        (*
+          XXX
+          an OCaml-defined object should not get the special method
+          name treatment. but we have no way to know at the call site.
+        *)
         let app = if tail then "__m" else "_m" in
         let co = comp_expr false o in
         let cargs = List.map (comp_expr false) args in
@@ -380,7 +395,33 @@ let rec comp_expr tail expr =
             | _ -> raise (Failure "bad method call")
         end
 
-    | Lsend _ -> << null >> (* XXX temporary *)
+    | Lsend (Public, m, o, args) ->
+        (*
+          I think this case (where we do not know the method name at
+          the call site) only comes up in the compilation of
+          camlinternalOO.ml, in the send_foo functions.
+        *)
+        let app = if tail then "__m" else "_m" in
+        let cm = comp_expr false m in
+        let co = comp_expr false o in
+        let cargs = List.map (comp_expr false) args in
+        begin
+          match co with
+            | Jvar _ -> << $id:app$($exp:co$[$cm$], $co$, [$list:cargs$]) >>
+            | _ ->
+                let i = jsident_of_ident (Ident.create "v") in
+                (* here we bind i to avoid multiply evaluating co *)
+                exp_of_stmts [
+                  <:stmt< var $id:i$ = $co$; >>;
+                  <:stmt< return $id:app$($id:i$[$cm$], $id:i$, [$list:cargs$]); >>
+                ]
+        end
+
+    | Lsend (Self, m, _, args) ->
+        let app = if tail then "__m" else "_m" in
+        let cm = comp_expr false m in
+        let cargs = List.map (comp_expr false) args in
+        << $id:app$(this._m[$cm$], this, [$list:cargs$]) >>
 
     | _ -> unimplemented "comp_expr" expr
 
