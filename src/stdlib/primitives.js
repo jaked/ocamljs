@@ -104,6 +104,13 @@ var compare_val = function (v1, v2, total) {
 	if (s1 > s2) return GREATER;
 	return EQUAL;
       }
+      if (v1._m != null && v2._m != null) { // i.e. an OCaml object XXX better test
+        var oid1 = v1[1];
+        var oid2 = v2[1];
+        if (oid1 < oid2) return LESS;
+        if (oid1 > oid2) return GREATER;
+        return EQUAL;
+      }
       return UNORDERED; // XXX
     default:
       return UNORDERED;
