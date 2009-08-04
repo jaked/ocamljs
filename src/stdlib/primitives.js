@@ -175,6 +175,60 @@ var caml_format_int = function(f, a) {
 
 var caml_greaterthan = function (v1, v2) { return compare_val(v1, v2, 0) > 0; }
 var caml_greaterequal = function (v1, v2) { return compare_val(v1, v2, 0) >= 0; }
+var caml_hash_univ_param = function (count, limit, obj) {
+  // globals
+  hash_univ_limit = limit;
+  hash_univ_count = count;
+  hash_accu = 0;
+
+  // XXX needs work
+  function hash_aux(obj) {
+    hash_univ_limit--;
+    if (hash_univ_count < 0 || hash_univ_limit < 0) return;
+
+    function combine(n) { hash_accu = hash_accu * 65599 + n; }
+    function combine_small(n) { hash_accu = hash_accu * 19 + n; }
+
+    switch (typeof obj) {
+    case "number":
+      // XXX for floats C impl examines bit rep
+      // XXX for constructors without data C impl uses combine_small
+      hash_univ_count--;
+      combine(obj);
+      break;
+    case "string":
+      hash_univ_count--;
+      for (var i = obj.length; i > 0; i--)
+        combine_small(obj.charCodeAt(i));
+      break;
+    case "boolean":
+      hash_univ_count--;
+      combine_small(obj ? 1 : 0);
+      break;
+    case "object":
+      if (obj instanceof oc$$ms)
+        hash_aux(obj.toString());
+      else if (obj instanceof Array) { // possibly a block
+        if (obj.t) {
+          hash_univ_count--;
+          combine_small(obj.t);
+          for (var i = obj.length; i > 0; i--)
+            hash_aux(obj[i]);
+        }
+      }
+      else if (obj._m != null) { // OCaml object, use oid
+        hash_univ_count--;
+        combine(obj[1]);
+      }
+      break;
+    default:
+      break;
+    }
+  }
+
+  hash_aux(obj);
+  return hash_accu & 0x3FFFFFFF;
+}
 var caml_input_value = function () { throw "caml_input_value"; }
 var caml_input_value_from_string = function () { throw "caml_input_value_from_string"; }
 var caml_install_signal_handler = function () { throw "caml_install_signal_handler"; }

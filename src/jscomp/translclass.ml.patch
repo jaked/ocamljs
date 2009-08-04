@@ -1,5 +1,5 @@
 --- ocaml/bytecomp/translclass.ml	2009-07-07 14:51:56.000000000 -0700
-+++ translclass.ml	2009-07-07 14:57:48.000000000 -0700
++++ translclass.ml	2009-08-04 10:22:00.000000000 -0700
 @@ -1,3 +1,15 @@
 +(*
 + * This file is part of ocamljs, OCaml to Javascript compiler
@@ -31,11 +31,15 @@
  let lfunction params body =
    if params = [] then body else
    match body with
-@@ -629,11 +649,23 @@
+@@ -629,11 +649,21 @@
            if not arr || !Clflags.debug then raise Not_found;
            builtin_meths [self] env env2 (lfunction args body')
          with Not_found ->
 -          [lfunction (self :: args)
+-             (if not (IdentSet.mem env (free_variables body')) then body' else
+-              Llet(Alias, env,
+-                   Lprim(Parrayrefu Paddrarray,
+-                         [Lvar self; Lvar env2]), body'))]
 +          let this =
 +            let desc = {
 +              Primitive.prim_name = "$this";
@@ -45,15 +49,12 @@
 +              prim_native_float = false;
 +            } in
 +            Lprim (Pccall desc, []) in
-+          let body' =
-+            let tbl = Ident.add self this Ident.empty in
-+            subst_lambda tbl body' in
 +          [lfunction' args
-              (if not (IdentSet.mem env (free_variables body')) then body' else
-               Llet(Alias, env,
-                    Lprim(Parrayrefu Paddrarray,
--                         [Lvar self; Lvar env2]), body'))]
-+                         [this; Lvar env2]), body'))]
++              (Llet(Strict, self, this,
++                    (if not (IdentSet.mem env (free_variables body')) then body' else
++                        Llet(Alias, env,
++                             Lprim(Parrayrefu Paddrarray,
++                                   [Lvar self; Lvar env2]), body'))))]
          end
        | _ -> assert false
    in

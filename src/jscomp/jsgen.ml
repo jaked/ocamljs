@@ -326,11 +326,11 @@ let rec comp_expr tail expr =
         begin
           match es with
               (* goofy hack from typecore.ml *)
-            | [this; Lconst(Const_block(0, []))] ->
+            | [o; Lconst(Const_block(0, []))] ->
                 let app = if tail then "__m" else "_m" in
                 let ce = comp_expr false e in
-                let cthis = comp_expr false this in
-                << $id:app$($exp:ce$, $cthis$, []) >>
+                let co = comp_expr false o in
+                << $id:app$($exp:ce$, $co$, []) >>
             | _ ->
                 let app = if tail then "__" else "_" in
                 let ce = comp_expr false e in
@@ -417,11 +417,12 @@ let rec comp_expr tail expr =
                 ]
         end
 
-    | Lsend (Self, m, _, args) ->
+    | Lsend (Self, m, o, args) ->
         let app = if tail then "__m" else "_m" in
         let cm = comp_expr false m in
+        let co = comp_expr false o in
         let cargs = List.map (comp_expr false) args in
-        << $id:app$(this._m[$cm$], this, [$list:cargs$]) >>
+        << $id:app$($co$._m[$cm$], $co$, [$list:cargs$]) >>
 
     | _ -> unimplemented "comp_expr" expr
 
