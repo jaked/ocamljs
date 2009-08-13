@@ -239,11 +239,11 @@ statement: [[
 | i = a_IDENT; ":"; s = statement -> Jlabel(_loc, i, s)
 | "throw"; e = expression; ";" -> Jthrow(_loc, e)
 | "try"; ss = block; "catch"; "("; ci = a_IDENT; ")"; css = block ->
-    Jtrycatch(_loc, ss, ci, css)
+    Jtrycatch(_loc, ss, Some (ci, css), [])
 | "try"; ss = block; "finally"; fss = block ->
-    Jtryfinally(_loc, ss, fss)
+    Jtrycatch(_loc, ss, None, fss)
 | "try"; ss = block; "catch"; "("; ci = a_IDENT; ")"; css = block; "finally"; fss = block ->
-    Jtrycatchfinally(_loc, ss, ci, css, fss)
+    Jtrycatch(_loc, ss, Some (ci, css), fss)
 ]];
 
 block: [[ "{"; ss = LIST0 statement; "}" -> ss ]];

@@ -100,9 +100,7 @@ and stmt =
     | Jites of     loc * exp * stmt * stmt option
     | Jthrow of    loc * exp
     | Jexps of     loc * exp
-    | Jtrycatch of loc * stmt list * string * stmt list
-    | Jtryfinally of loc * stmt list * stmt list
-    | Jtrycatchfinally of loc * stmt list * string * stmt list * stmt list
+    | Jtrycatch of loc * stmt list * (string * stmt list) option * stmt list
     | Jfor of      loc * exp option * exp option * exp option * stmt
     | Jdowhile of  loc * stmt * exp
     | Jwhile of    loc * exp * stmt

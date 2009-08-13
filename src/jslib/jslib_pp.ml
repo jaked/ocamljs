@@ -386,11 +386,11 @@ and stmt ppf = function
   | Jexps (_, (Jcall (_, Jfun _, _) as e)) -> fprintf ppf "@[(%a);@]" (expp p) e
   | Jexps (_, e) -> fprintf ppf "@[%a;@]" (expp p) e
 
-  | Jtrycatch (_, ss, ci, css) ->
+  | Jtrycatch (_, ss, Some (ci, css), []) ->
       fprintf ppf "@[<hv>try%a@ catch (%s)%a@]" block ss ci block css
-  | Jtryfinally (_, ss, fss) ->
+  | Jtrycatch (_, ss, None, fss) ->
       fprintf ppf "@[<hv>try%a@ finally%a@]" block ss block fss
-  | Jtrycatchfinally (_, ss, ci, css, fss) ->
+  | Jtrycatch (_, ss, Some (ci, css), fss) ->
       fprintf ppf "@[<hv>try%a@ catch (%s)%a finally%a@]" block ss ci block css block fss
 
   | Jfor (_, e1, e2, e3, s) ->

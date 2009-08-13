@@ -587,8 +587,8 @@ and comp_expr_st tail expr k =
     | Ltrywith (e1, i, e2) ->
         [ Jtrycatch (_loc,
                     comp_expr_st false e1 k,
-                    jsident_of_ident i,
-                    comp_expr_st tail e2 k) ]
+                    Some (jsident_of_ident i, comp_expr_st tail e2 k),
+                    []) ]
 
     | _ -> k (comp_expr tail expr)
 
@@ -672,16 +672,11 @@ and inline_stmt = function
   | <:lam_astmt< Jites ($_$, $e$, $s$, $so$) >> -> Jites (_loc, inline_exp e, inline_stmt s, inline_option inline_stmt so)
   | <:lam_astmt< Jthrow ($_$, $e$) >> -> Jthrow (_loc, inline_exp e)
   | <:lam_astmt< Jexps ($_$, $e$) >> -> Jexps (_loc, inline_exp e)
-  | <:lam_astmt< Jtrycatch ($_$, $sl1$, $s$, $sl2$) >> ->
-      Jtrycatch (_loc, inline_list inline_stmt sl1, inline_string s, inline_list inline_stmt sl2)
-  | <:lam_astmt< Jtryfinally ($_$, $sl1$, $sl2$) >> ->
-      Jtryfinally (_loc, inline_list inline_stmt sl1, inline_list inline_stmt sl2)
-  | <:lam_astmt< Jtrycatchfinally ($_$, $sl1$, $s$, $sl2$, $sl3$) >> ->
-      Jtrycatchfinally (_loc,
-                       inline_list inline_stmt sl1,
-                       inline_string s,
-                       inline_list inline_stmt sl2,
-                       inline_list inline_stmt sl3)
+  | <:lam_astmt< Jtrycatch ($_$, $sl1$, $sslpo$, $sl2$) >> ->
+      Jtrycatch (_loc,
+                inline_list inline_stmt sl1,
+                inline_option (inline_pair inline_string (inline_list inline_stmt)) sslpo,
+                inline_list inline_stmt sl2)
   | <:lam_astmt< Jfor ($_$, $eo1$, $eo2$, $eo3$, $s$) >> ->
       Jfor (_loc,
            inline_option inline_exp eo1,
