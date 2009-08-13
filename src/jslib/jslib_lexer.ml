@@ -207,8 +207,8 @@ let parse_char cx base i =
 
 
 let regexp ncname_char =
-  xml_letter | xml_digit | [ '-' '_' ] | xml_combining_char | xml_extender | "\\."
-let regexp ncname = ( xml_letter ncname_char* ) | ('_' ncname_char+)
+  xml_letter | xml_digit | [ '$' '_' ] | xml_combining_char | xml_extender | "\\."
+let regexp ncname = ( xml_letter ncname_char* ) | ('_' ncname_char+) | ('$' '$' ncname_char* )
 let regexp qname = (ncname ':')? ncname
 
 
@@ -218,7 +218,14 @@ let rec token c = lexer
   | newline -> next_line c; token c c.lexbuf
   | blank+ -> token c c.lexbuf
 
-  | qname -> IDENT (L.utf8_lexeme c.lexbuf)
+  | qname ->
+      let id = L.utf8_lexeme c.lexbuf in
+      let id =
+        let len = String.length id in
+        if len > 1 && id.[0] = '$' && id.[1] = '$'
+        then String.sub id 1 (len - 1)
+        else id in
+      IDENT (id)
 
   | '-'? ['0'-'9']+ '.' ['0'-'9']* ->
       (FLOAT (L.utf8_lexeme c.lexbuf))

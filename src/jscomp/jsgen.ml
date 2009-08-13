@@ -77,9 +77,9 @@ let _loc = Camlp4.PreCast.Loc.ghost
 
 let makeblock tag ces =
   match tag with
-    | 0 -> let id = "$" in << $id:id$($list:ces$) >>
+    | 0 -> << $$($list:ces$) >>
     | (1|2|3|4|5|6|7|8|9) -> let id = "$" ^ string_of_int tag in << $id:id$($list:ces$) >>
-    | _ -> let id = "$N" in << $id:id$($`int:tag$, [$list:ces$]) >>
+    | _ -> << $$N($`int:tag$, [$list:ces$]) >>
 
 let exp_of_stmts ss = << $Jfun (_loc, None, [], ss)$ () >>
 
@@ -114,14 +114,14 @@ let keffect = function
 let comp_ccall c es =
   match c, es with
     | ("caml_int32_format", _ | "caml_nativeint_format", _ | "caml_int64_format", _) -> << caml_format_int($list:es$) >>
-    | "caml_format_float", _ -> let id = "oc$$sprintf" in << $id:id$($list:es$) >>
-    | "caml_string_equal", _ -> let id = "oc$$seq" in << $id:id$($list:es$) >>
-    | "caml_string_notequal", _ -> let id = "oc$$sneq" in << $id:id$($list:es$) >>
-    | "caml_string_lessthan", _ -> let id = "oc$$slt" in << $id:id$($list:es$) >>
-    | "caml_string_greaterthan", _ -> let id = "oc$$sgt" in << $id:id$($list:es$) >>
-    | "caml_string_lessequal", _ -> let id = "oc$$slte" in << $id:id$($list:es$) >>
-    | "caml_string_greaterequal", _ -> let id = "oc$$sgte" in << $id:id$($list:es$) >>
-    | "caml_create_string", _ -> let id = "oc$$cms" in << $id:id$($list:es$) >>
+    | "caml_format_float", _ -> << oc$$sprintf($list:es$) >>
+    | "caml_string_equal", _ -> << oc$$seq($list:es$) >>
+    | "caml_string_notequal", _ -> << oc$$sneq($list:es$) >>
+    | "caml_string_lessthan", _ -> << oc$$slt($list:es$) >>
+    | "caml_string_greaterthan", _ -> << oc$$sgt($list:es$) >>
+    | "caml_string_lessequal", _ -> << oc$$slte($list:es$) >>
+    | "caml_string_greaterequal", _ -> << oc$$sgte($list:es$) >>
+    | "caml_create_string", _ -> << oc$$cms($list:es$) >>
 
     | "caml_power_float", _ -> << Math.pow($list:es$) >>
     | "caml_exp_float", _ -> << Math.exp($list:es$) >>
@@ -238,15 +238,15 @@ let comp_prim p es =
 
     | Pmakearray _, es -> makeblock 0 es
 
-    | Pstringrefu, _ -> let id = "oc$$srefu" in << $id:id$($list:es$) >>
-    | Pstringsetu, _ -> let id = "oc$$ssetu" in << $id:id$($list:es$) >>
-    | Pstringrefs, _ -> let id = "oc$$srefs" in << $id:id$($list:es$) >>
-    | Pstringsets, _ -> let id = "oc$$ssets" in << $id:id$($list:es$) >>
+    | Pstringrefu, _ -> << oc$$srefu($list:es$) >>
+    | Pstringsetu, _ -> << oc$$ssetu($list:es$) >>
+    | Pstringrefs, _ -> << oc$$srefs($list:es$) >>
+    | Pstringsets, _ -> << oc$$ssets($list:es$) >>
 
     | Parrayrefu _, [e1; e2] -> << $e1$[$e2$] >>
     | Parraysetu _, [e1; e2; e3] -> << $e1$[$e2$] = $e3$ >>
-    | Parrayrefs _, _ -> let id = "oc$$arefs" in << $id:id$($list:es$) >>
-    | Parraysets _, _ -> let id = "oc$$asets" in << $id:id$($list:es$) >>
+    | Parrayrefs _, _ -> << oc$$arefs($list:es$) >>
+    | Parraysets _, _ -> << oc$$asets($list:es$) >>
 
     | Pisint, [e] -> << typeof $e$ == 'number' >>
 
@@ -524,7 +524,7 @@ and comp_expr_st tail expr k =
         (i, stmts) in
         let fss = match fe with None -> Some (k << null >>) | Some e -> Some (comp_expr_st tail e k) in
         let cswitch = Jswitch (_loc, cse, List.map cc cs, fss) in
-        let bswitch = Jswitch (_loc, (let id = "$t" in << $id:id$($exp:cse$) >>), List.map cc bs, fss) in
+        let bswitch = Jswitch (_loc, << $$t($exp:cse$) >>, List.map cc bs, fss) in
         let stmt =
           if nc = 0 && nb = 0 then Jempty _loc (* shouldn't happen *)
           else if nc = 0 then bswitch
