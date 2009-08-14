@@ -102,5 +102,5 @@ let add_quotation name entry mexpr =
 ;;
 
 add_quotation "exp" Jslib_parse.expression ME.meta_exp;
-add_quotation "stmt" Jslib_parse.statement ME.meta_stmt;
+add_quotation "stmt" Jslib_parse.statementList ME.meta_stmt;
 Q.default := "exp";

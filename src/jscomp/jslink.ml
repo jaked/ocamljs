@@ -181,7 +181,7 @@ let link_compunit output_fun inchan file_name compunit =
   let buf = Buffer.create 1024 in
   let ppf = Format.formatter_of_buffer buf in
   Format.pp_set_margin ppf 132;
-  Jslib_pp.stmts ppf [ code_block ];
+  Jslib_pp.stmt ppf code_block;
   Format.fprintf ppf "\n";
   Format.pp_print_flush ppf ();
   output_fun (Buffer.contents buf);

@@ -239,6 +239,13 @@ let opt_nbsp f ppf x =
         fprintf ppf " ";
         f ppf x
 
+let rec stmt_iter f = function
+  | Jstmt_nil _ -> ()
+  | Jstmt_cons (_, s1, s2) ->
+      stmt_iter f s1;
+      stmt_iter f s2
+  | s -> f s
+
 let rec expp pr ppf e =
   if prec e < pr
   then fprintf ppf "(@[%a@])" exp e
@@ -326,8 +333,6 @@ and aexps ppf e =
         (expp pAssignment) ppf e
 
 and stmt ppf = function
-  | Jempty _ -> fprintf ppf ";"
-
   | Jvars (_, vars) ->
       begin
         match vars with
@@ -373,8 +378,8 @@ and stmt ppf = function
               (expp p) i ind_stmts ss)
           cs;
         match fss with
-          | None -> ()
-          | Some fss ->
+          | Jstmt_nil _ -> ()
+          | _ ->
               if !spc then fprintf ppf "@ " else spc := true;
               fprintf ppf "@[<hv>default:%a@]" ind_stmts fss in
       fprintf ppf
@@ -386,7 +391,7 @@ and stmt ppf = function
   | Jexps (_, (Jcall (_, Jfun _, _) as e)) -> fprintf ppf "@[(%a);@]" (expp p) e
   | Jexps (_, e) -> fprintf ppf "@[%a;@]" (expp p) e
 
-  | Jtrycatch (_, ss, Some (ci, css), []) ->
+  | Jtrycatch (_, ss, Some (ci, css), Jstmt_nil _) ->
       fprintf ppf "@[<hv>try%a@ catch (%s)%a@]" block ss ci block css
   | Jtrycatch (_, ss, None, fss) ->
       fprintf ppf "@[<hv>try%a@ finally%a@]" block ss block fss
@@ -407,18 +412,23 @@ and stmt ppf = function
   | Jlabel (_, i, s) -> fprintf ppf "@[<hv>%s:%a@]" i maybe_block s
   | Jstmt_Ant (_, s) -> fprintf ppf "$%s$" s
 
+  | (Jstmt_nil _ | Jstmt_cons _) as ss ->
+      stmts ppf ss
+
 and block ppf ss = fprintf ppf " {%a@ }" ind_stmts ss
 
 and maybe_block ppf = function
   | Jblock (_, ss) -> block ppf ss
+  | Jstmt_nil _ -> fprintf ppf ";"
+  | Jstmt_cons (_loc, _, _) as s -> block ppf (Jblock (_loc, s))
   | s -> fprintf ppf "@;<1 2>%a" stmt s
 
 and ind_stmts ppf ss =
-  List.iter (fun s -> fprintf ppf "@;<1 2>%a" stmt s) ss
+  stmt_iter (fun s -> fprintf ppf "@;<1 2>%a" stmt s) ss
 
 and stmts ppf ss =
   let spc = ref false in
-  List.iter
+  stmt_iter
     (fun s ->
       if !spc then fprintf ppf "@ " else spc := true;
       stmt ppf s)

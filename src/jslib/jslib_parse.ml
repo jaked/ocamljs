@@ -45,11 +45,18 @@ let comma_expr = Gram.Entry.mk "comma_expr"
 (* A.4 Statements *)
 let statement = Gram.Entry.mk "statement"
 let block = Gram.Entry.mk "block"
+let statementList = Gram.Entry.mk "statementList"
 let caseClause = Gram.Entry.mk "caseClause"
 
 (* A.5 Functions and Programs *)
 let program = Gram.Entry.mk "program"
 let sourceElement = Gram.Entry.mk "sourceElement"
+let sourceElements = Gram.Entry.mk "sourceElements"
+
+let maybe_stmt_cons _loc s1 s2 =
+  match s2 with
+    | Jstmt_nil _ -> s1
+    | _ -> Jstmt_cons (_loc, s1, s2)
 
 ;;
 
@@ -192,7 +199,7 @@ expression: [
   | "new"; e = expression LEVEL "MemberExpression"; args = OPT [ "("; args = comma_expr; ")" -> args ] -> Jnew (_loc, e, args)
   | "function"; i = OPT a_IDENT;
     "("; args = LIST0 a_IDENT SEP ","; ")";
-    "{"; ss = LIST0 sourceElement; "}" -> Jfun (_loc, i, args, ss)
+    "{"; ss = sourceElements; "}" -> Jfun (_loc, i, args, ss)
   ]
 | "PrimaryExpression" NONA [
     `ANTIQUOT ("exp"|""|"anti" as n, s) -> Jexp_Ant (_loc, mk_anti ~c:"exp" n s)
@@ -212,13 +219,14 @@ expression: [
 
 (* A.4 Statements *)
 statement: [[
-  ss = block -> Jblock (_loc, ss)
+  `ANTIQUOT ("stmt"|""|"anti" as n, s) -> Jstmt_Ant (_loc, mk_anti ~c:"stmt" n s)
+| ss = block -> Jblock (_loc, ss)
 | "var"; vars =
     LIST1 [ i = a_IDENT;
             e = OPT [ "="; e = expression LEVEL "AssignmentExpression" -> e ] -> (i, e) ]
       SEP ",";
   ";" -> Jvars (_loc, vars)
-| ";" -> Jempty (_loc)
+| ";" -> Jstmt_nil (_loc)
 | test_lookahead_not_brace_function; e = expression; ";" -> Jexps (_loc, e)
 | "if"; "("; e = expression; ")"; s1 = statement; "else"; s2 = statement -> Jites(_loc, e, s1, Some s2)
 | "if"; "("; e = expression; ")"; s1 = statement -> Jites(_loc, e, s1, None)
@@ -232,31 +240,45 @@ statement: [[
 | "with"; "("; e = expression; ")"; s = statement -> Jwith(_loc, e, s)
 | "switch"; "("; e = expression; ")"; "{";
     (cs, d) = [
-      cs = LIST0 caseClause -> (cs, None)
-    | cs1 = LIST0 caseClause; "default"; ":"; ss = LIST0 statement; cs2 = LIST0 caseClause -> (cs1 @ cs2, Some ss)
+      cs = LIST0 caseClause -> (cs, Jstmt_nil _loc)
+    | cs1 = LIST0 caseClause; "default"; ":"; ss = statementList; cs2 = LIST0 caseClause -> (cs1 @ cs2, ss)
     ];
     "}" -> Jswitch(_loc, e, cs, d)
 | i = a_IDENT; ":"; s = statement -> Jlabel(_loc, i, s)
 | "throw"; e = expression; ";" -> Jthrow(_loc, e)
 | "try"; ss = block; "catch"; "("; ci = a_IDENT; ")"; css = block ->
-    Jtrycatch(_loc, ss, Some (ci, css), [])
+    Jtrycatch(_loc, ss, Some (ci, css), Jstmt_nil _loc)
 | "try"; ss = block; "finally"; fss = block ->
     Jtrycatch(_loc, ss, None, fss)
 | "try"; ss = block; "catch"; "("; ci = a_IDENT; ")"; css = block; "finally"; fss = block ->
     Jtrycatch(_loc, ss, Some (ci, css), fss)
 ]];
 
-block: [[ "{"; ss = LIST0 statement; "}" -> ss ]];
-caseClause: [[ "case"; e = expression; ":"; ss = LIST0 statement -> (e, ss) ]];
+statementList: [[
+  `ANTIQUOT ("list" as n, s); s2 = SELF ->
+    maybe_stmt_cons _loc (Jstmt_Ant (_loc, mk_anti ~c:"stmt" n s)) s2
+| s1 = statement; s2 = SELF -> maybe_stmt_cons _loc s1 s2
+| -> Jstmt_nil _loc
+]];
+
+block: [[ "{"; ss = statementList; "}" -> ss ]];
+caseClause: [[ "case"; e = expression; ":"; ss = statementList -> (e, ss) ]];
 
 (* A.5 Functions and Programs *)
-program: [[ p = LIST0 sourceElement -> p ]];
+program: [[ p = sourceElements -> p ]];
 
 sourceElement: [[
   "function"; i = a_IDENT;
   "("; args = LIST0 a_IDENT SEP ","; ")";
-  "{"; ss = LIST0 sourceElement; "}" -> Jfuns(_loc, i, args, ss)
+  "{"; ss = sourceElements; "}" -> Jfuns(_loc, i, args, ss)
 | s = statement -> s
+]];
+
+sourceElements: [[
+  `ANTIQUOT ("list" as n, s); s2 = SELF ->
+    maybe_stmt_cons _loc (Jstmt_Ant (_loc, mk_anti ~c:"stmt" n s)) s2
+| s1 = sourceElement; s2 = SELF -> maybe_stmt_cons _loc s1 s2
+| -> Jstmt_nil _loc
 ]];
 
 END

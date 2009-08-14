@@ -25,6 +25,9 @@ INCLUDE "../jslib_ast.incl"
 val loc_of_exp : exp -> Camlp4.PreCast.Loc.t
 val exp_of_list : exp list -> exp
 val list_of_exp : exp -> exp list -> exp list
+val loc_of_stmt : stmt -> Camlp4.PreCast.Loc.t
+val stmt_of_list : stmt list -> stmt
+val list_of_stmt : stmt -> stmt list -> stmt list
 
 module Meta :
   sig

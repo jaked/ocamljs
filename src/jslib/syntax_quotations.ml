@@ -73,6 +73,7 @@ object
             | "`int" -> <:expr< string_of_int $e$ >>
             | "`flo" -> <:expr< string_of_float $e$ >>
             | "listexp" -> <:expr< Jslib_ast.exp_of_list $e$ >>
+            | "liststmt" -> <:expr< Jslib_ast.stmt_of_list $e$ >>
             (* | "`str" -> <:expr< Ast.safe_string_escaped $e$ >> *)
             | _ -> e )
       | e -> super#expr e
@@ -123,5 +124,5 @@ let add_quotation name entry mexpr mpatt =
 ;;
 
 add_quotation "exp" Jslib_parse.expression ME.meta_exp MP.meta_exp;
-add_quotation "stmt" Jslib_parse.statement ME.meta_stmt MP.meta_stmt;
+add_quotation "stmt" Jslib_parse.statementList ME.meta_stmt MP.meta_stmt;
 Q.default := "exp";

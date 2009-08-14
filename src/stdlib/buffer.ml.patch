@@ -110,7 +110,7 @@
 +
 +let clear b =
 +  b.length <- 0;
-+  <:stmt< $b.array$.length = 0; >>
++  <:stmt< $exp:b.array$.length = 0; >>
 +
 +let reset = clear
  
@@ -121,7 +121,7 @@
 -  b.position <- pos + 1
 +  b.string <- None;
 +  b.length <- b.length + 1;
-+  <:stmt< $b.array$.push(String.fromCharCode($c$)); >>
++  <:stmt< $exp:b.array$.push(String.fromCharCode($c$)); >>
  
  let add_substring b s offset len =
    if offset < 0 || len < 0 || offset > String.length s - len
@@ -132,7 +132,7 @@
 -  b.position <- new_position
 +  b.string <- None;
 +  b.length <- b.length + len;
-+  <:stmt< $b.array$.push($s$.substring($offset$, $offset$ + $len$)); >>
++  <:stmt< $exp:b.array$.push($s$.substring($offset$, $offset$ + $len$)); >>
  
  let add_string b s =
 -  let len = String.length s in
@@ -142,7 +142,7 @@
 -  b.position <- new_position
 +  b.string <- None;
 +  b.length <- b.length + String.length s;
-+  <:stmt< $b.array$.push($s$); >>
++  <:stmt< $exp:b.array$.push($s$); >>
  
  let add_buffer b bs =
 -  add_substring b bs.buffer 0 bs.position

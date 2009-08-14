@@ -170,7 +170,7 @@ let add_ocaml_quotation name entry mexpr mpatt =
   examples.
 *)
 add_js_quotation "lam_exp" Jslib_parse.expression ME.meta_exp MP.meta_exp;
-add_js_quotation "lam_stmt" Jslib_parse.statement ME.meta_stmt MP.meta_stmt;
+add_js_quotation "lam_stmt" Jslib_parse.statementList ME.meta_stmt MP.meta_stmt;
 add_ocaml_quotation "lam_aexp" Syntax.expr MAE.meta_exp MAP.meta_exp;
 add_ocaml_quotation "lam_astmt" Syntax.expr MAE.meta_stmt MAP.meta_stmt;
 add_ocaml_quotation "lam_aunop" Syntax.expr MAE.meta_unop MAP.meta_unop;

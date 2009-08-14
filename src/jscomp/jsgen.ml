@@ -83,6 +83,12 @@ let makeblock tag ces =
 
 let exp_of_stmts ss = << $Jfun (_loc, None, [], ss)$ () >>
 
+let rec stmt_rev_append l1 l2 =
+  match l1 with
+    | Jstmt_nil _ -> l2
+    | Jstmt_cons (_loc, a, l) -> stmt_rev_append l (Jstmt_cons (loc_of_stmt a, a, l2))
+    | s -> Jstmt_cons (loc_of_stmt s, s, l2)
+
 let comp_const c =
   match c with
     | Const_int i -> << $`int:i$ >>
@@ -103,13 +109,13 @@ let rec comp_sconst c =
         makeblock 0 (List.map (fun s -> Jnum (_loc, s)) ss) (* XXX different float syntax *)
     | Const_immstring s -> Jstring (_loc, s, false) (* XXX when does this happen? *)
 
-let kreturn e = [ <:stmt< return $e$; >> ]
+let kreturn e = <:stmt< return $e$; >>
 
 let keffect = function
     (* anything that is already a value can have no effect *)
     (* mostly this arises with the compilation of () as Jnum 0 *)
-  | (Jnum _ | Jvar _) -> []
-  | e -> [ Jexps (_loc, e) ]
+  | (Jnum _ | Jvar _) -> Jstmt_nil _loc
+  | e -> Jexps (_loc, e)
 
 let comp_ccall c es =
   match c, es with
@@ -156,7 +162,7 @@ let comp_ccall c es =
     | "$new", (Jstring (_, id, _))::es -> << new $id:id$($list:es$) >>
     | "$null", _ -> << null >>
     | "$this", _ -> << this >>
-    | "$throw", [e] -> exp_of_stmts [ <:stmt< throw $e$; >> ]
+    | "$throw", [e] -> exp_of_stmts <:stmt< throw $e$; >>
     | "$true", _ -> << true >>
 
     | "$var", [Jstring (_loc, id, _)] -> << $id:id$ >>
@@ -267,12 +273,6 @@ let drop s n =
   let sl = String.length s in
   if sl <= n then s
   else String.sub s n (sl - n)
-
-let maybe_block ss =
-  match ss with
-    | [] -> Jempty _loc
-    | [s] -> s
-    | _ -> Jblock (_loc, ss)
 
 let inline_string = function
   | Lconst (Const_base (Const_string s)) -> s
@@ -387,10 +387,10 @@ let rec comp_expr tail expr =
                     | _ ->
                         let i = jsident_of_ident (Ident.create "v") in
                         (* here we bind i to avoid multiply evaluating co *)
-                        exp_of_stmts [
-                          <:stmt< var $id:i$ = $co$; >>;
-                          <:stmt< return $id:app$($id:i$.$m$, $id:i$, [$list:es$]); >>
-                        ]
+                        exp_of_stmts <:stmt<
+                          var $id:i$ = $co$;
+                          return $id:app$($id:i$.$m$, $id:i$, [$list:es$]);
+                        >>
                 end
             | _ -> raise (Failure "bad method call")
         end
@@ -411,10 +411,10 @@ let rec comp_expr tail expr =
             | _ ->
                 let i = jsident_of_ident (Ident.create "v") in
                 (* here we bind i to avoid multiply evaluating co *)
-                exp_of_stmts [
-                  <:stmt< var $id:i$ = $co$; >>;
-                  <:stmt< return $id:app$($id:i$[$cm$], $id:i$, [$list:cargs$]); >>
-                ]
+                exp_of_stmts <:stmt<
+                  var $id:i$ = $co$;
+                  return $id:app$($id:i$[$cm$], $id:i$, [$list:cargs$]);
+                >>
         end
 
     | Lsend (Self, m, o, args) ->
@@ -443,53 +443,67 @@ and comp_expr_st tail expr k =
           match d with
             | Upto -> << $jv$ <= $ce2$ >>, << $jv$++ >>
             | Downto -> << $jv$ >= $ce2$ >>, << $jv$-- >> in
-        [ <:stmt< var $id:i$; >>;
-          (* wrap loop body in a function / call so closures over loop var work *)
-          Jfor (_loc,
-               Some << $id:i$ = $ce1$ >>,
-               Some te,
-               Some ie,
-               Jblock(_loc,
-                     [ Jexps (_loc,
+        <:stmt<
+          var $id:i$;
+          $ (* wrap loop body in a function / call so closures over loop var work *)
+            Jfor (_loc,
+                 Some << $id:i$ = $ce1$ >>,
+                 Some te,
+                 Some ie,
+                 Jblock(_loc,
+                       Jexps (_loc,
                              Jcall(_loc,
                                   Jfun(_loc, None, [i], ce3),
-                                  jv)) ] )) ]
+                                  jv))))
+          $ >>
 
     | Lwhile (e1, e2) ->
-        [ Jwhile (_loc, comp_expr false e1, maybe_block (comp_expr_st false e2 keffect)) ]
+        Jwhile (_loc, comp_expr false e1, comp_expr_st false e2 keffect)
 
     (*
       special case some constructs that arise from the compilation of pattern matching,
       to avoid deep nesting in generated Javascript
     *)
     | Lifthenelse (i, t, (Lstaticraise _ as e)) ->
-        (Jites (_loc,
+        <:stmt<
+          $Jites (_loc,
                << !$comp_expr false i$ >>,
-               maybe_block (comp_expr_st tail e k),
-               None)) :: (comp_expr_st tail t k)
+               (comp_expr_st tail e k),
+               None)$
+          $comp_expr_st tail t k$
+        >>
     | Lifthenelse (i, (Lstaticraise _ as t), e) ->
-        (Jites (_loc,
+        <:stmt<
+          $Jites (_loc,
                comp_expr false i,
-               maybe_block (comp_expr_st tail t k),
-               None)) :: (comp_expr_st tail e k)
+               (comp_expr_st tail t k),
+               None)$
+          $comp_expr_st tail e k$
+        >>
 
     | Lifthenelse (i, (Lifthenelse _ as t), e) when k == kreturn ->
-        (Jites (_loc,
+        <:stmt<
+          $Jites (_loc,
                << !$comp_expr false i$ >>,
-               maybe_block (comp_expr_st tail e k),
-               None)) :: (comp_expr_st tail t k)
+               (comp_expr_st tail e k),
+               None)$
+          $comp_expr_st tail t k$
+        >>
 
     | Lifthenelse (i, t, e) when k == kreturn ->
-        (Jites (_loc,
+        <:stmt<
+          $Jites (_loc,
                comp_expr false i,
-               maybe_block (comp_expr_st tail t k),
-               None)) :: (comp_expr_st tail e k)
+               (comp_expr_st tail t k),
+               None)$
+          $comp_expr_st tail e k$
+        >>
 
     | Lifthenelse (i, t, e) ->
-        [ Jites (_loc,
-                comp_expr false i,
-                maybe_block (comp_expr_st tail t k),
-                Some (maybe_block (comp_expr_st tail e k))) ]
+        Jites (_loc,
+              comp_expr false i,
+              (comp_expr_st tail t k),
+              Some (comp_expr_st tail e k))
 
     | Lswitch (se,
                { sw_numconsts = nc; sw_consts = cs;
@@ -503,47 +517,53 @@ and comp_expr_st tail expr k =
             | _ ->
                 let i = jsident_of_ident (Ident.create "s") in
                 let cse = comp_expr false se in
-                ((fun x -> Jvars (_loc, [ i, Some cse ]) :: x), << $id:i$ >>) in
+                ((fun x -> <:stmt< $Jvars (_loc, [ i, Some cse ])$ $x$ >>), << $id:i$ >>) in
         let cc (i, e) =
           (* true if the sequence returns or throws; otherwise we need a break *)
-          let rec exits stmts =
-            match stmts with
-              | Jempty _ -> false
-              | Jblock (_, ss) -> exits (List.nth ss (List.length ss - 1))
-              | Jbreak (_, Some _) -> true
-              | Jreturn _ -> true
-              | Jthrow _ -> true
-              | Jites (_, _, t, Some e) -> exits t && exits e
-              | _ -> false in
+          let rec exits = function
+            | Jblock (_, ss) -> exits ss
+            | Jbreak (_, Some _) -> true
+            | Jreturn _ -> true
+            | Jthrow _ -> true
+            | Jites (_, _, t, Some e) -> exits t && exits e
+            | Jstmt_cons _ as ss ->
+                let rec stmt_last = function
+                  | Jstmt_cons (_, _, s2) -> stmt_last s2
+                  | s -> s in
+                exits (stmt_last ss)
+            | _ -> false in
           let i = << $`int:i$ >> in
           let stmts = comp_expr_st tail e k in
           let stmts =
-            if exits (maybe_block stmts)
+            if exits stmts
             then stmts
-            else stmts @ [ <:stmt< break; >> ] in
+            else <:stmt< $stmts$ break; >> in
         (i, stmts) in
-        let fss = match fe with None -> Some (k << null >>) | Some e -> Some (comp_expr_st tail e k) in
+        let fss = match fe with None -> k << null >> | Some e -> comp_expr_st tail e k in
         let cswitch = Jswitch (_loc, cse, List.map cc cs, fss) in
         let bswitch = Jswitch (_loc, << $$t($exp:cse$) >>, List.map cc bs, fss) in
         let stmt =
-          if nc = 0 && nb = 0 then Jempty _loc (* shouldn't happen *)
+          if nc = 0 && nb = 0 then assert false
           else if nc = 0 then bswitch
           else if nb = 0 then cswitch
           else Jites (_loc,
                      << typeof $cse$ == 'number' >>,
                      cswitch,
                      Some bswitch) in
-        k2 [ stmt ]
+        k2 stmt
 
     | Lsequence (e1, e2) ->
-        comp_expr_st false e1 keffect @ comp_expr_st tail e2 k
+        <:stmt<
+          $comp_expr_st false e1 keffect$
+          $comp_expr_st tail e2 k$
+        >>
 
-    | Lprim (Praise, [e]) -> [ Jthrow (_loc, comp_expr false e) ]
+    | Lprim (Praise, [e]) -> Jthrow (_loc, comp_expr false e)
 
     | Lprim (Pignore, [e]) ->
         comp_expr_st tail (Lsequence (e, Lconst (Const_pointer 0))) k
 
-    | Lprim (Pccall { prim_name = "$inline_stmt" }, [e]) -> [ inline_stmt e ]
+    | Lprim (Pccall { prim_name = "$inline_stmt" }, [e]) -> inline_stmt e
 
     | Lstaticcatch (e1, (lab, args), e2) ->
         (* The raised flag indicates whether e1 exits normally or via
@@ -560,35 +580,39 @@ and comp_expr_st tail expr k =
            alpha-renaming them to raise_args. *)
         let rec with_raise_arg i l =
           if i <= 0 then l
-          else with_raise_arg (i-1) (Jvars(_loc, [ raise_arg lab (i-1), Some << null >> ])::l) in
+          else with_raise_arg (i-1) (<:stmt< $Jvars(_loc, [ raise_arg lab (i-1), Some << null >> ])$ $l$ >>) in
         let _, dest_raise_args =
           List.fold_left
             (fun (i,l) v ->
-              i+1, Jvars (_loc, [ jsident_of_ident v, Some << $id:raise_arg lab i$ >> ]) :: l)
-            (0,[]) args in
+              i+1, <:stmt< $Jvars (_loc, [ jsident_of_ident v, Some << $id:raise_arg lab i$ >> ])$ $l$ >>)
+            (0,<:stmt< >>) args in
         with_raise_arg (List.length args)
-          [ Jvars (_loc, [ raised, Some (Jbool (_loc, false)) ]);
-            Jlabel (_loc, label_raise lab, maybe_block (comp_expr_st tail e1 k));
-            Jites (_loc,
+          <:stmt<
+            $Jvars (_loc, [ raised, Some (Jbool (_loc, false)) ])$
+            $Jlabel (_loc, label_raise lab, comp_expr_st tail e1 k)$
+            $Jites (_loc,
                   << $id:raised$ >>,
-                  maybe_block (List.rev_append dest_raise_args (comp_expr_st tail e2 k)),
-                  None) ]
+                  (stmt_rev_append dest_raise_args (comp_expr_st tail e2 k)),
+                  None)$
+          >>
 
     | Lstaticraise (lab, args) ->
         let _, cons_raise_args =
           List.fold_left
             (fun (i,l) v ->
-              i+1, <:stmt< $id:raise_arg lab i$ = $comp_expr false v$; >> :: l)
-            (0, []) args in
-        List.rev_append cons_raise_args
-          [ <:stmt< $id:flag_raised lab$ = true; >>;
-            <:stmt< break $label_raise lab$; >> ]
+              i+1, <:stmt< $id:raise_arg lab i$ = $comp_expr false v$; $l$>>)
+            (0, <:stmt< >>) args in
+        stmt_rev_append cons_raise_args
+          <:stmt<
+            $id:flag_raised lab$ = true;
+            break $label_raise lab$;
+          >>
 
     | Ltrywith (e1, i, e2) ->
-        [ Jtrycatch (_loc,
-                    comp_expr_st false e1 k,
-                    Some (jsident_of_ident i, comp_expr_st tail e2 k),
-                    []) ]
+        Jtrycatch (_loc,
+                  comp_expr_st false e1 k,
+                  Some (jsident_of_ident i, comp_expr_st tail e2 k),
+                  <:stmt< >>)
 
     | _ -> k (comp_expr tail expr)
 
@@ -601,7 +625,7 @@ and backpatch bs =
     match e with
       | Lvar id ->
           if List.mem_assoc id bs
-          then <:stmt< $path$ = $id:jsident_of_ident id$; >>::bps
+          then <:stmt< $exp:path$ = $id:jsident_of_ident id$; $bps$ >>
           else bps
       | Lprim (Pmakeblock _, args) ->
           List.fold_right2
@@ -610,17 +634,25 @@ and backpatch bs =
             args
             bps
       | _ -> bps in
-  List.fold_right (fun (id, e) bps -> bp << $id:jsident_of_ident id$ >> e bps) bs []
+  List.fold_right (fun (id, e) bps -> bp << $id:jsident_of_ident id$ >> e bps) bs <:stmt< >>
 
 (* compile nested let/letrecs into a Js.stmt list *)
 (* k is called on the AST of exps in tail position *)
 and comp_letrecs_st tail expr k =
   let rec cl expr =
     match expr with
-      | Llet (_, i, e1, e2) -> <:stmt< var $id:jsident_of_ident i$ = $comp_expr false e1$; >> :: cl e2
+      | Llet (_, i, e1, e2) ->
+          <:stmt<
+            var $id:jsident_of_ident i$ = $comp_expr false e1$;
+            $cl e2$
+          >>
       | Lletrec (bs, e) ->
           let cb (id, e) = <:stmt< var $id:jsident_of_ident id$ = $comp_expr false e$; >> in
-          List.map cb bs @ backpatch bs @ cl e
+          <:stmt<
+            $list:List.map cb bs$
+            $backpatch bs$
+            $cl e$
+          >>
       | e -> comp_expr_st tail e k in
    cl expr
 
@@ -642,7 +674,7 @@ and inline_exp = function
       Jfun (_loc,
            inline_option inline_string so,
            inline_list inline_string sl,
-           inline_list inline_stmt stl)
+           inline_stmt stl)
   | <:lam_exp< $e$.$s$ >> -> <:exp< $inline_exp e$.$inline_string s$ >>
   | <:lam_aexp< Junop ($_$, $u$, $e$) >> -> Junop (_loc, inline_unop u, inline_exp e)
   | <:lam_aexp< Jbinop ($_$, $b$, $e1$, $e2$) >> -> Jbinop (_loc, inline_binop b, inline_exp e1, inline_exp e2)
@@ -656,27 +688,26 @@ and inline_exp = function
 
 and inline_stmt = function
   | Lconst (Const_block _) as cb -> inline_stmt (makeblock_of_const cb)
-  | <:lam_astmt< Jempty $_$ >> -> Jempty _loc
   | <:lam_astmt< Jvars ($_$, $seol$) >> ->
       Jvars (_loc, inline_list (inline_pair inline_string (inline_option inline_exp)) seol)
   | <:lam_astmt< Jfuns ($_$, $s$, $sl$, $stl$) >> ->
-      Jfuns (_loc, inline_string s, inline_list inline_string sl, inline_list inline_stmt stl)
+      Jfuns (_loc, inline_string s, inline_list inline_string sl, inline_stmt stl)
   | <:lam_astmt< Jreturn ($_$, $eo$) >> -> Jreturn (_loc, inline_option inline_exp eo)
   | <:lam_astmt< Jcontinue ($_$, $so$) >> -> Jcontinue (_loc, inline_option inline_string so)
   | <:lam_astmt< Jbreak ($_$, $so$) >> -> Jbreak (_loc, inline_option inline_string so)
   | <:lam_astmt< Jswitch ($_$, $e$, $esll$, $slo$) >> ->
       Jswitch (_loc,
               inline_exp e,
-              inline_list (inline_pair inline_exp (inline_list inline_stmt)) esll,
-              inline_option (inline_list inline_stmt) slo)
+              inline_list (inline_pair inline_exp inline_stmt) esll,
+              inline_stmt slo)
   | <:lam_astmt< Jites ($_$, $e$, $s$, $so$) >> -> Jites (_loc, inline_exp e, inline_stmt s, inline_option inline_stmt so)
   | <:lam_astmt< Jthrow ($_$, $e$) >> -> Jthrow (_loc, inline_exp e)
   | <:lam_astmt< Jexps ($_$, $e$) >> -> Jexps (_loc, inline_exp e)
   | <:lam_astmt< Jtrycatch ($_$, $sl1$, $sslpo$, $sl2$) >> ->
       Jtrycatch (_loc,
-                inline_list inline_stmt sl1,
-                inline_option (inline_pair inline_string (inline_list inline_stmt)) sslpo,
-                inline_list inline_stmt sl2)
+                inline_stmt sl1,
+                inline_option (inline_pair inline_string inline_stmt) sslpo,
+                inline_stmt sl2)
   | <:lam_astmt< Jfor ($_$, $eo1$, $eo2$, $eo3$, $s$) >> ->
       Jfor (_loc,
            inline_option inline_exp eo1,
@@ -685,9 +716,11 @@ and inline_stmt = function
            inline_stmt s)
   | <:lam_astmt< Jdowhile ($_$, $s$, $e$) >> -> Jdowhile (_loc, inline_stmt s, inline_exp e)
   | <:lam_astmt< Jwhile ($_$, $e$, $s$) >> -> Jwhile (_loc, inline_exp e, inline_stmt s)
-  | <:lam_astmt< Jblock ($_$, $sl$) >> -> Jblock (_loc, inline_list inline_stmt sl)
+  | <:lam_astmt< Jblock ($_$, $sl$) >> -> Jblock (_loc, inline_stmt sl)
   | <:lam_astmt< Jwith ($_$, $e$, $s$) >> -> Jwith (_loc, inline_exp e, inline_stmt s)
   | <:lam_astmt< Jlabel ($_$, $s$, $st$) >> -> Jlabel (_loc, inline_string s, inline_stmt st)
+  | <:lam_astmt< Jstmt_nil $_$ >> -> Jstmt_nil _loc
+  | <:lam_astmt< Jstmt_cons ($_$, $s1$, $s2$) >> -> Jstmt_cons (_loc, inline_stmt s1, inline_stmt s2)
 (*| Lprim (Pccall { prim_name = "$inline_antistmt" }, [s]) -> *)(* XXX *)
   | _ -> raise (Failure "bad inline stmt")
 

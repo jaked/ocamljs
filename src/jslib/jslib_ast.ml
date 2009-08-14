@@ -43,6 +43,19 @@ let rec list_of_exp x acc =
     | Jexp_cons (_, e1, e2) -> list_of_exp e1 (list_of_exp e2 acc)
     | e -> e :: acc
 
+external loc_of_stmt : stmt -> Loc.t = "%field0"
+
+let rec stmt_of_list = function
+  | [] -> Jstmt_nil Loc.ghost
+  | [e] -> e
+  | e::es -> Jstmt_cons (loc_of_stmt e, e, stmt_of_list es)
+
+let rec list_of_stmt x acc =
+  match x with
+    | Jstmt_nil _ -> acc
+    | Jstmt_cons (_, e1, e2) -> list_of_stmt e1 (list_of_stmt e2 acc)
+    | e -> e :: acc
+
 module Meta =
 struct
 

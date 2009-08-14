@@ -197,8 +197,8 @@ module Gram :
     val parse_tokens_after_filter :
       'a Entry.t -> (Token.t * Loc.t) Stream.t -> 'a
   end
-val statement : Jslib_ast.stmt Gram.Entry.t
+val statementList : Jslib_ast.stmt Gram.Entry.t
 val expression : Jslib_ast.exp Gram.Entry.t
-val parse_file : string -> Jslib_ast.stmt list
-val parse_stdin : unit -> Jslib_ast.stmt list
-val parse_string : string -> Jslib_ast.stmt list
+val parse_file : string -> Jslib_ast.stmt
+val parse_stdin : unit -> Jslib_ast.stmt
+val parse_string : string -> Jslib_ast.stmt
