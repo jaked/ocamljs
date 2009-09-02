@@ -6,7 +6,7 @@ clean:
 	rm -f myocamlbuild.ml sample.ml
 
 myocamlbuild.ml:
-	ln -s ../../myocamlbuild.ml
+	ln -s ../../../tools/myocamlbuild.ml
 
 sample.ml:
 	ln -s ../sample.ml

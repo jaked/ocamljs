@@ -1,4 +1,4 @@
-DIRS=jscomp
+DIRS=jscomp jslib
 
 all:
 	for dir in $(DIRS); do \

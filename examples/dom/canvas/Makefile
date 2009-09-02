@@ -6,4 +6,4 @@ clean:
 	rm -f myocamlbuild.ml
 
 myocamlbuild.ml:
-	ln -s ../../myocamlbuild.ml
+	ln -s ../../../tools/myocamlbuild.ml

@@ -154,7 +154,18 @@ let find_packages () =
 let find_syntaxes () = ["camlp4o"; "camlp4r"]
 
 (* ocamlfind command *)
-let ocamlfind x = S[Sh"OCAMLFIND_COMMANDS=ocamljs=../../../src/jscomp/_build/jsmain.byte"; A"../../../bin/ocamlfindjs"; x]
+let ocamlfind x =
+  let ocamlfindjs =
+    if Pathname.exists "../../bin/ocamlfindjs" then "../../../bin/ocamlfindjs"
+    else if Pathname.exists "../../../bin/ocamlfindjs" then "../../../../bin/ocamlfindjs"
+    else "ocamlfindjs" in
+  let ocamljs =
+    if Pathname.exists "../../src/jscomp/_build/jsmain.byte" then Some "../../../src/jscomp/_build/jsmain.byte"
+    else if Pathname.exists "../../../src/jscomp/_build/jsmain.byte" then Some "../../../../src/jscomp/_build/jsmain.byte"
+    else None in
+  match ocamljs with
+    | Some ocamljs -> S[Sh ("OCAMLFIND_COMMANDS=ocamljs=" ^ ocamljs); A ocamlfindjs; x]
+    | None -> S[A ocamlfindjs; x]
 
 ;;
 
