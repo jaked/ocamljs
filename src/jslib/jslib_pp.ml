@@ -213,6 +213,7 @@ let prec = function
   | Jnull _ -> pPrimary
   | Jfun _ -> pPrimary
   | Jbool _ -> pPrimary
+  | Jregexp _ -> pPrimary
 
   | Jfieldref _ -> pMember
   | Jnew _ -> pMember
@@ -269,6 +270,7 @@ and exp ppf = function
   | Jnum (_, n) -> fprintf ppf "%s" n
   | Jnull _ -> fprintf ppf "null"
   | Jbool (_, b) -> fprintf ppf "%B" b
+  | Jregexp (_, r, f) -> fprintf ppf "/%s/%s" r f
   | Jfun (_, io, is, ss) ->
       fprintf ppf "@[<hv>function %a@[<hv 1>(%a)@]%a@]" (opt_nbsp id) io ids is block ss
 

@@ -14,7 +14,7 @@ BFILES=$(addprefix _build/,$(FILES))
 all: myocamlbuild.ml
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
-	ocamlbuild -verbose 10 jslib.cma jslib.cmxa syntax_quotations.cmo syntax_inline.cmo syntax_lambda.cmo
+	ocamlbuild jslib.cma jslib.cmxa syntax_quotations.cmo syntax_inline.cmo syntax_lambda.cmo
 	ocamlfind remove -destdir ../../stage jslib
 	ocamlfind install -destdir ../../stage jslib META $(BFILES)
 

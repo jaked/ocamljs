@@ -31,6 +31,7 @@ type token =
     | FLOAT of string
     | STRING1 of string
     | STRING2 of string
+    | REGEXP of string
     | ANTIQUOT of string * string
     | EOI
 
@@ -50,6 +51,7 @@ module Token = struct
       | FLOAT s      -> sf "FLOAT %s" s
       | STRING1 s    -> sf "STRING \"%s\"" s
       | STRING2 s    -> sf "STRING \"%s\"" s
+      | REGEXP s     -> sf "REGEXP \"%s\"" s
       | ANTIQUOT (n, s) -> sf "ANTIQUOT %s: %S" n s
       | EOI          -> sf "EOI"
 
@@ -62,7 +64,7 @@ module Token = struct
 
   let extract_string =
     function
-      | KEYWORD s | IDENT s | INT s | FLOAT s | STRING1 s | STRING2 s -> s
+      | KEYWORD s | IDENT s | INT s | FLOAT s | STRING1 s | STRING2 s | REGEXP s -> s
       | tok ->
           invalid_arg ("Cannot extract a string from this token: "^
                           to_string tok)
@@ -214,9 +216,20 @@ let regexp qname = (ncname ':')? ncname
 
 let illegal c = error c "Illegal character"
 
+
+(*
+  thanks to Stephen Weeks for this idea (from javascript.lex in
+  svn://mlton.org/mltonlib/trunk/com/entain/javascript/unstable)
+*)
+let slash = ref `Reg
+
 let rec token c = lexer
   | newline -> next_line c; token c c.lexbuf
   | blank+ -> token c c.lexbuf
+
+  | "return" | "throw" | "do" | "else" | "in" | "new" | "typeof" ->
+      slash := `Reg;
+      IDENT (L.utf8_lexeme c.lexbuf)
 
   | qname ->
       let id = L.utf8_lexeme c.lexbuf in
@@ -225,17 +238,53 @@ let rec token c = lexer
         if len > 1 && id.[0] = '$' && id.[1] = '$'
         then String.sub id 1 (len - 1)
         else id in
+      slash := `Div;
       IDENT (id)
 
   | '-'? ['0'-'9']+ '.' ['0'-'9']* ->
-      (FLOAT (L.utf8_lexeme c.lexbuf))
+      slash := `Div;
+      FLOAT (L.utf8_lexeme c.lexbuf)
 
   | '-'? ['0'-'9']+ ->
-      (INT (L.utf8_lexeme c.lexbuf))
+      slash := `Div;
+      INT (L.utf8_lexeme c.lexbuf)
 
-  | [ "{}()[].;,<>+-*%&|^!~?:=/" ]
+  | '/' ->
+      if !slash = `Reg
+      then begin
+        set_start_loc c;
+        regexp c c.lexbuf;
+        slash := `Div;
+        REGEXP (get_stored_string c)
+      end
+      else begin
+        slash := `Reg;
+        KEYWORD (L.utf8_lexeme c.lexbuf)
+      end
+
+  | "/=" ->
+      if !slash = `Reg
+      then begin
+        set_start_loc c;
+        store_ascii c '=';
+        regexp c c.lexbuf;
+        slash := `Div;
+        REGEXP (get_stored_string c)
+      end
+      else begin
+        slash := `Reg;
+        KEYWORD (L.utf8_lexeme c.lexbuf)
+      end
+
+  | "++" | "--" (* XXX `Div is wrong when these appear as prefix ops *)
+  | [ "])"] ->
+      slash := `Div;
+      KEYWORD (L.utf8_lexeme c.lexbuf)
+
+  | [ "{}([.;,<>+-*%&|^!~?:=" ]
   | "<=" | ">=" | "==" | "!=" | "===" | "!==" | "++" | "--" | "<<" | ">>" | ">>>" | "&&"
-  | "||" | "+=" | "-=" | "*=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "|=" | "^=" | "/=" ->
+  | "||" | "+=" | "-=" | "*=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "|=" | "^=" ->
+      slash := `Reg;
       KEYWORD (L.utf8_lexeme c.lexbuf)
 
   | '"' | "'" ->
@@ -243,6 +292,7 @@ let rec token c = lexer
       set_start_loc c;
       string c double_quote c.lexbuf;
       let s = get_stored_string c in
+      slash := `Div;
       (if double_quote then STRING2 s else STRING1 s)
   | "/*" ->
       tcomment c c.lexbuf;
@@ -252,6 +302,7 @@ let rec token c = lexer
       c.enc := Ulexing.Latin1;
       let aq = antiquot c lexbuf in
       c.enc := Ulexing.Utf8;
+      slash := `Div; (* XXX ? *)
       aq
   | eof -> EOI
   | _ -> illegal c
@@ -288,6 +339,13 @@ and string c double = lexer
 | _ ->
     store_lexeme c;
     string c double c.lexbuf
+
+and regexp c = lexer
+| '/' -> ()
+(* XXX handle escapes *)
+| _ ->
+    store_lexeme c;
+    regexp c c.lexbuf
 
 and antiquot c = lexer
 | '$' -> ANTIQUOT ("", "")

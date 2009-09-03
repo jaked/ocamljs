@@ -78,6 +78,7 @@ and exp =
     | Jnum of      loc * string
     | Jnull of     loc
     | Jbool of     loc * bool
+    | Jregexp of   loc * string * string
     | Jfun of      loc * string option * string list * stmt
     | Jfieldref of loc * exp * string
     | Junop of     loc * unop * exp

@@ -207,6 +207,7 @@ expression: [
   | s = a_STRING -> Jstring (_loc, s, false)
   | s = STRING2 -> Jstring (_loc, s, true)
   | v = a_IDENT -> Jvar (_loc, v)
+  | r = REGEXP -> Jregexp (_loc, r, "")
   | "this" -> Jthis (_loc)
   | "null" -> Jnull (_loc)
   | "true" -> Jbool (_loc, true)
