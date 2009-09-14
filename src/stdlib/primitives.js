@@ -267,7 +267,6 @@ var caml_ml_channel_size = function () { throw "caml_ml_channel_size"; }
 var caml_ml_channel_size_64 = function () { throw "caml_ml_channel_size_64"; }
 var caml_ml_close_channel = function () { throw "caml_ml_close_channel"; }
 
-// see print_endline hack below
 var caml_ml_flush = function (c) { }
 
 var caml_ml_input = function () { throw "caml_ml_input"; }
@@ -278,9 +277,7 @@ var caml_ml_open_descriptor_in = function () { return 0; } // XXX
 var caml_ml_open_descriptor_out = function () { return 0; } // XXX
 var caml_ml_out_channels_list = function () { return 0; }
 
-// this is a hack to make print_endline work in the standalone js
-// interpreter for running tests
-var caml_ml_output = function (c, b, s, l) { print(b); }
+var caml_ml_output = function (c, b, s, l) { print_verbatim(b); }
 var caml_ml_output_char = function (c, ch) {  }
 
 var caml_ml_output_int = function () { throw "caml_ml_output_int"; }

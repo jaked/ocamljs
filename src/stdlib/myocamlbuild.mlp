@@ -11,4 +11,5 @@ rule "ocaml/stdlib/sys.ml"
          chmod (A"-w") "ocaml/stdlib/sys.ml"]
   end;;
 
-Pathname.define_context "." ["."; "ocaml/stdlib"]
+Pathname.define_context "." ["."; "ocaml/stdlib"];
+Pathname.define_context "ocaml/stdlib" ["."; "ocaml/stdlib"];

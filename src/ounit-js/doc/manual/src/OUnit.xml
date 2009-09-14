@@ -1,0 +1,242 @@
+<!DOCTYPE book PUBLIC "-//Davenport//DTD DocBook V3.0//EN">
+
+<book>
+
+<title>OUnit User's Guide</title>
+
+<bookinfo>
+  <authorgroup>
+    <author>
+      <firstname>Maas-Maarten</firstname>
+      <surname>Zeeman</surname>
+      <authorblurb>
+        <para>
+          <address>
+            <email>mmzeeman@xs4all.nl</email>
+          </address>
+        </para>
+      </authorblurb>
+    </author>
+  </authorgroup>
+
+  <copyright>
+    <year>2003</year>
+    <year>2004</year>
+    <year>2005</year>
+    <holder>Maas-Maarten Zeeman</holder>
+  </copyright>
+
+  <abstract>
+    <para>
+    Ounit is a unit testing framework for Ocaml, inspired by HUnit for
+    Haskell, and JUnit for Java. This guide describes how to use
+    OUnit, assuming you are familiar with Ocaml, though not
+    necessarily with JUnit.
+    </para>
+
+  </abstract>
+
+  <releaseinfo>
+    This manual describes how to write unit-tests for OCaml programs.
+  </releaseinfo>
+    
+  <legalnotice>
+    <title>License</title>
+
+    <para>
+    
+    <orderedlist>
+      <listitem>
+        <para>
+          The package OUnit is Copyright &copy; 2002, 2003, 2004, 2005 by
+          Maas-Maarten Zeeman.
+        </para>
+      </listitem>
+
+      <listitem>
+        <para>
+          Permission is hereby granted, free of charge, to any person
+          obtaining a copy of this document and the OUnit software
+          ("the Software"), to deal in the Software without
+          restriction, including without limitation the rights to use,
+          copy, modify, merge, publish, distribute, sublicense, and/or
+          sell copies of the Software, and to permit persons to whom
+          the Software is furnished to do so, subject to the following
+          conditions:
+        </para>
+      </listitem>
+
+      <listitem>
+        <para>
+          The above copyright notice and this permission notice shall
+          be included in all copies or substantial portions of the
+          Software.
+        </para>
+      </listitem>
+
+      <listitem>
+        <para>
+          The Software is provided ``as is'', without warranty of any
+          kind, express or implied, including but not limited to the
+          warranties of merchantability, fitness for a particular
+          purpose and noninfringement.  In no event shall Maas-Maarten
+          Zeeman be liable for any claim, damages or other liability,
+          whether in an action of contract, tort or otherwise, arising
+          from, out of or in connection with the Software or the use
+          or other dealings in the software.
+        </para>
+      </listitem>
+    </orderedlist>
+  </legalnotice>
+</bookinfo>
+
+<chapter>
+<title>What is Unit Testing?</title>
+
+  <para>
+    A test-oriented methodology for software development is most
+    effective whent tests are easy to create, change, and execute. The
+    JUnit tool pioneerded for test-first development in Java. OUnit is
+    an adaptation of JUnit to Ocaml, a general purpose functional
+    programming language.
+  </para>
+
+  <para>
+    With OUnit, as with JUnit, you can easily create tests, name them,
+    group them into suites, and execute them, with the framework
+    checking the results automatically. Test specification in OUnit is
+    even more concise and flexible than in JUnit, thanks to the nature
+    of the Ocaml language, or the functional programming paradigm in
+    general.
+  </para>
+
+  <para>
+    The next section helps you to get started using OUnit in simple
+    ways.
+  </para>
+
+<chapter>
+<title>Getting Started</title>
+
+<para>
+  In the Ocaml module 'tests.ml' where your tests will reside, import
+  module OUnit
+
+  <programlisting>
+    open OUnit
+  </programlisting>
+
+  Define test cases as appropriate
+
+  <programlisting>
+    let test1 = 
+      TestCase (fun _ -> 
+        assert_equal "x" (unity "x"));; 
+
+    let test2 = 
+      TestCase (fun _ -> 
+        assert_equal 100 (unity 100));;
+  </programlisting>
+
+  Name the test cases and group them together::
+
+  <programlisting>
+    let suite = TestLabel ("suite", 
+                  TestList [ TestLabel ("test1", test1); 
+                             TestLabel ("test2", test2)]);;
+  </programlisting>
+
+  And compile the module
+
+  <screen>
+    $ocamlfind ocamlc -c tests.ml
+    File "tests.ml", line 3, characters 48-51:    Unbound value foo
+  </screen>
+
+  Now it is time to program 'foo', create a new module named 'foo.ml',
+  and type
+
+  <programlisting>
+    let unity a = a
+  </programlisting>
+
+  And compile
+
+  <screen>
+    $ocamlc -c foo.ml
+  </screen>
+
+  The 'Foo' module must now also be opened in the 'Tests' module, so
+  we need to add the following line.::
+
+  <programlisting>
+    open Foo
+  </programlisting>
+
+  Now it is possible to compile <filename>test.ml</filename>
+
+  <screen>
+    $ocamlc -c foo.cmo tests.ml
+  </screen>
+
+  With the ocamlunit toplevel it is possible to run the tests
+  interactively
+
+  <screen>
+    $ ./ocamlunit
+    #         Objective Caml version 3.04
+
+    # load "tests.cmo";;
+    # OUnit.run_test_tt Tests.suite;;
+    ..
+    Ran: 2 tests in: 0.00 Seconds
+    OK
+    - : OUnit.counts =
+    {OUnit.cases = 2; OUnit.tried = 2; OUnit.errors = 0; OUnit.failures = 0}
+    #
+  </screen>
+
+  You can specify the tests even more succinctly using special
+  operators.
+
+  <programlisting>
+    let suite = 
+      "suite" >::: ["test1" >:: test1; "test2" >:: test2;];;
+  </programlisting>
+
+  It is also possible to add the following line to the 'Tests'
+  module.
+
+  <programlisting>
+    let _ = 
+      run_test_tt suite
+  </programlisting>
+
+  When compiled as follows:
+
+  <screen>
+    $ocamlfind ocamlc -o tests -package oUnit -linkpkg foo.cmo tests.ml
+  </screen>
+
+  A executable named 'tests' will be created. When run it produces the
+  following output.
+
+  <screen>
+    $ ./tests
+    ..
+    Ran: 2 tests in: 0.00 Seconds
+    OK
+  </screen>
+
+Test Case
+
+  A test case is the unit of test execution. That is distinct test
+  cases are executed independently. The failure of one is independant
+  of the failure of any other, provided the test case does not rely on
+  side-effects. 
+    
+</para>
+
+</book>
+    
+

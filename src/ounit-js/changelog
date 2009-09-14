@@ -1,0 +1,34 @@
+ocaml-unit-1.0.2
+
+  - Refactored OUnit package. The test result and test event data structures
+    are now clearly separated.
+
+ocaml-unit-1.0.1
+  
+  - Added optional compare function to assert_equal, and a float compare
+    function. Thanks go to Daniel Buenzli
+
+ocaml-unit-1.0.0
+ 
+  - Add bracket support (Thanks go to Laurent Vaucher)
+
+  - Add an example for bracket usage
+
+ocaml-unit-0.1.0
+
+  - Makefile improvements
+
+ocaml-unit-0.0.3
+
+  - Added findlib support
+
+ocaml-unit-0.0.2
+
+  - Added assert_raises which checkes if an exception is raised. 
+    (thanks go to Keita Yamaguchi, for the idea)
+  
+  - Fixed (hopefully) the .depend file 
+
+ocaml-unit-0.0.1
+
+  - First release of ocaml-unit
