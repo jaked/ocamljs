@@ -1,4 +1,4 @@
-DIRS=jscomp jslib
+DIRS=jslib ocamljs stdlib
 
 all:
 	for dir in $(DIRS); do \

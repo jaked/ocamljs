@@ -1,9 +1,11 @@
+open OUnit
+
 class printable_point x_init =
 object (s)
   val mutable x = x_init
   method get_x = x
   method move d = x <- x + d
-  method print = print_endline (string_of_int s#get_x)
+  method print = string_of_int s#get_x
 end
 
 class printable_colored_point y c =
@@ -12,11 +14,10 @@ object (self)
   method color = c
   inherit printable_point y as super
   method print =
-    super#print;
-    print_endline self#color
+    super#print ^ self#color
 end
 
-;;
-
-let p= new printable_colored_point 5 "red" in
-p#print
+let tests = "Oo_super" >:: begin fun () ->
+  let p= new printable_colored_point 5 "red" in
+  assert_equal p#print "5red"
+end

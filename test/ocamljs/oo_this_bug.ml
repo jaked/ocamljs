@@ -6,14 +6,16 @@
   variable.
 *)
 
+open OUnit
+
 class foo =
 object (self)
   method test1 =
-    print_endline "test"
+    "test"
   method test2 =
     (fun () -> self#test1)()
 end
 
-;;
-
-(new foo)#test2
+let tests = "Oo_this_bug" >:: begin fun () ->
+  assert_equal (new foo)#test2 "test"
+end

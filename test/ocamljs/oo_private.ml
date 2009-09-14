@@ -1,3 +1,5 @@
+open OUnit
+
 class restricted_point x_init =
 object (self)
   val mutable x = x_init
@@ -12,14 +14,13 @@ object (self)
   method virtual move : _
 end
 
-;;
-
-let p = new restricted_point 7 in
-print_endline (string_of_int p#get_x);
-p#bump;
-print_endline (string_of_int p#get_x);
-
-let p = new point_again 7 in
-print_endline (string_of_int p#get_x);
-p#move 10;
-print_endline (string_of_int p#get_x);
+let tests = "Oo_private" >:: begin fun () ->
+  let p = new restricted_point 7 in
+  assert_equal p#get_x 7;
+  p#bump;
+  assert_equal p#get_x 8;
+  let p = new point_again 7 in
+  assert_equal p#get_x 7;
+  p#move 10;
+  assert_equal p#get_x 17
+end

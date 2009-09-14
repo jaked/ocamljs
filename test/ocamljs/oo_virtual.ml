@@ -1,3 +1,5 @@
+open OUnit
+
 class virtual abstract_point x_init =
 object (self)
   method virtual get_x : int
@@ -26,14 +28,14 @@ object
   method get_offset = x - x_init
 end
 
-;;
+let tests = "Oo_virtual" >:: begin fun () ->
+  let p = new point 7 in
+  assert_equal p#get_offset 0;
+  p#move 10;
+  assert_equal p#get_offset 10;
 
-let p = new point 7 in
-print_endline (string_of_int p#get_offset);
-p#move 10;
-print_endline (string_of_int p#get_offset);
-
-let p2 = new point2 7 in
-print_endline (string_of_int p2#get_offset);
-p2#move 10;
-print_endline (string_of_int p2#get_offset);
+  let p2 = new point2 7 in
+  assert_equal p2#get_offset 0;
+  p2#move 10;
+  assert_equal p2#get_offset 10;
+end

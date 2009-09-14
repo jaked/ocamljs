@@ -1,3 +1,5 @@
+open OUnit
+
 class point x_init =
 object
   val mutable x = x_init
@@ -13,8 +15,8 @@ object
   method color = c
 end
 
-;;
-
-let p = new colored_point 5 "red" in
-print_endline (string_of_int p#get_x);
-print_endline p#color;
+let tests = "Oo_inherit" >:: begin fun () ->
+  let p = new colored_point 5 "red" in
+  assert_equal p#get_x 5;
+  assert_equal p#color "red";
+end
