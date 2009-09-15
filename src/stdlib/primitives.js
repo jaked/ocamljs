@@ -309,6 +309,9 @@ var caml_obj_truncate = function(o, s) { o.length = s; }
 var caml_output_value = function () { throw "caml_output_value"; }
 var caml_output_value_to_string = function () { throw "caml_output_value_to_string"; }
 var caml_output_value_to_buffer = function () { throw "caml_output_value_to_buffer"; }
+var caml_record_backtrace = function () { throw "caml_record_backtrace"; }
+var caml_backtrace_status = function () { throw "caml_backtrace_status"; }
+var caml_get_exception_backtrace = function () { throw "caml_get_exception_backtrace"; }
 var caml_register_named_value = function (n, v) { oc$$nv[n] = v; }
 var caml_string_compare = function (s1, s2) {
   if (oc$$slt(s1, s2)) return -1;
