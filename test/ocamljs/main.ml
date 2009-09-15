@@ -15,6 +15,7 @@ let tests = "Ocamljs" >::: [
   Oo_this_bug.tests;
   Oo_virtual.tests;
   Raiseargs.tests;
+  Tail_calls.tests;
 ]
 
 ;;

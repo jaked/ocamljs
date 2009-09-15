@@ -1,1 +1,2 @@
 <*> : pkg_ounit-js
+<tail_calls.ml> : syntax_camlp4o,pkg_jslib.inline,pkg_ocamljs

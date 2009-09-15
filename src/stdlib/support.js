@@ -128,9 +128,13 @@ function ___m(m, t, a)
 }
 @end @*/
 
+var $in_tail = false;
+
 // tail call
 function __m(m, t, args)
 {
+  if (m.$oc && !$in_tail)
+    return _m(m, t, args);
   args.$m = m;
   args.$t = t;
   args.$tr = true;
@@ -141,10 +145,17 @@ function __(t, args) { return __m(t, t, args); }
 // non tail call
 function _m(m, t, args)
 {
-  var v = __m(m, t, args);
-  while (v && v.$tr)
-    v = ___m(v.$m, v.$t, v);
-  return v;
+  var old_in_tail = $in_tail;
+  $in_tail = true;
+  try {
+    var v = __m(m, t, args);
+    while (v && v.$tr)
+      v = ___m(v.$m, v.$t, v);
+    return v;
+  }
+  finally {
+    $in_tail = old_in_tail;
+  }
 }
 function _(t, args) { return _m(t, t, args); }
 

@@ -42,7 +42,7 @@ object
   method shift : 'a
   method slice : int -> int -> 'a js_array
   method sort : 'a js_array
-  method sort_compare_ : ('a -> 'a -> int) Ocamljs.jsfun -> 'a js_array
+  method sort_compare_ : ('a -> 'a -> int) -> 'a js_array
   (* method splice : ? *)
   method toLocaleString : string
   method toString : string

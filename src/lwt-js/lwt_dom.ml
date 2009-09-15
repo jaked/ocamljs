@@ -21,7 +21,7 @@
 let sleep t =
   let res = Lwt.wait () in
   let timeout () = Lwt.wakeup res () in
-  ignore (Dom.window#setTimeout (Ocamljs.jsfun timeout) t);
+  ignore (Dom.window#setTimeout timeout t);
   res
 
 let yield () = sleep 0.
@@ -44,6 +44,6 @@ let http_request ?(headers=[]) meth url =
       if not !fired then Lwt.wakeup res r;
       fired := true
     end in
-  r#_set_onreadystatechange (Ocamljs.jsfun onreadystatechange);
+  r#_set_onreadystatechange onreadystatechange;
   r#send (match body with Some body -> body | _ -> Ocamljs.null ());
   res

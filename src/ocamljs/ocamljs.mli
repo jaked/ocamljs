@@ -40,13 +40,6 @@ val option_of_nullable : 'a -> 'a option
 val nullable_of_option : 'a option -> 'a
 val is_null : 'a -> bool
 
-type 'a jsfun
-val jsfun : ('a -> 'b) -> ('a -> 'b) jsfun
-val jsfun2 : ('a1 -> 'a2 -> 'b) -> ('a1 -> 'a2 -> 'b) jsfun
-val jsfun3 : ('a1 -> 'a2 -> 'a3 -> 'b) -> ('a1 -> 'a2 -> 'a3 -> 'b) jsfun
-val jsfun4 : ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'b) -> ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'b) jsfun
-val jsfun5 : ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b) -> ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b) jsfun
-
 module Inline :
 sig
   module Jslib_ast :

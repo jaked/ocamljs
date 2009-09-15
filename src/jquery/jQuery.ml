@@ -27,7 +27,7 @@ object
   (* ----------- *)
 
   (* jQuery Object Accessors *)
-  method each : (int -> Dom.element -> bool) Ocamljs.jsfun -> unit
+  method each : (int -> Dom.element -> bool) -> unit
   method size : int
   method _get_length : int
   method _get_selector : string
@@ -41,9 +41,9 @@ object
   method data : string -> 'a
   method data_store_ : string -> 'a -> unit
   method removeData : string -> unit
-  method queue : string -> (unit -> unit) Ocamljs.jsfun array
-  method queue_enqueue_ : string -> (unit -> unit) Ocamljs.jsfun -> unit
-  method queue_replace_ : string -> (unit -> unit) Ocamljs.jsfun array -> unit
+  method queue : string -> (unit -> unit) array
+  method queue_enqueue_ : string -> (unit -> unit) -> unit
+  method queue_replace_ : string -> (unit -> unit) array -> unit
   method dequeue : string -> unit
 
   (* Attributes *)
@@ -82,9 +82,9 @@ object
   (* Filtering *)
   method eq : int -> jQuery
   method filter : string -> jQuery
-  method filter_fn_ : (int -> bool) Ocamljs.jsfun -> jQuery
+  method filter_fn_ : (int -> bool) -> jQuery
   method is : string -> bool
-  method map : (int -> Dom.element -> 'a) Ocamljs.jsfun -> jQuery
+  method map : (int -> Dom.element -> 'a) -> jQuery
   method not : string -> jQuery
   method not_element_ : Dom.element -> jQuery
   method not_elements_ : Dom.element array -> jQuery
@@ -196,13 +196,13 @@ object
   (* ------ *)
 
   (* Page Load *)
-  method ready : ((string -> jQuery) -> unit) Ocamljs.jsfun -> unit
+  method ready : ((string -> jQuery) -> unit) -> unit
 
   (* Event Handling *)
-  method bind : string -> (Dom.event -> bool) Ocamljs.jsfun -> unit
-  method bind_data_ : string -> 'a -> (Dom.event -> bool) Ocamljs.jsfun -> unit
-  method one : string -> (Dom.event -> bool) Ocamljs.jsfun -> unit
-  method one_data_ : string -> 'a -> (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method bind : string -> (Dom.event -> bool) -> unit
+  method bind_data_ : string -> 'a -> (Dom.event -> bool) -> unit
+  method one : string -> (Dom.event -> bool) -> unit
+  method one_data_ : string -> 'a -> (Dom.event -> bool) -> unit
   method trigger : string -> unit
   method trigger_data_ : string -> 'a array -> unit
   method trigger_event_ : Dom.event -> unit
@@ -216,121 +216,121 @@ object
   method triggerHandler_obj_ : 'a -> unit
   method triggerHandler_objdata_ : 'a -> 'b array -> unit
   method unbind : string -> unit
-  method unbind_fn_ : string -> (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method unbind_fn_ : string -> (Dom.event -> bool) -> unit
   method unbind_event_ : Dom.event -> unit
   method unbind_eventfn_ :
-    Dom.event -> (Dom.event -> bool) Ocamljs.jsfun -> unit
+    Dom.event -> (Dom.event -> bool) -> unit
   method unbind_obj_ : 'a -> unit
-  method unbind_objfn_ : 'a -> (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method unbind_objfn_ : 'a -> (Dom.event -> bool) -> unit
   method unbind_all_ : unit
 
   (* Live Events *)
-  method live : string -> (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method live : string -> (Dom.event -> bool) -> unit
   method die : string -> unit
-  method die_fn_ : string -> (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method die_fn_ : string -> (Dom.event -> bool) -> unit
   method die_all_ : unit
 
   (* Interaction Helpers *)
   method hover :
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun -> unit
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) -> unit
   method toggle_2_ :
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun -> unit
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) -> unit
   method toggle_3_ :
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun -> unit
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) -> unit
   method toggle_4_ :
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun -> unit
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) -> unit
   method toggle_5_ :
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun ->
-    (Dom.mouseEvent -> unit) Ocamljs.jsfun -> unit
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) ->
+    (Dom.mouseEvent -> unit) -> unit
 
   (* Event Helpers *)
-  method blur : (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method blur : (Dom.event -> bool) -> unit
   method blur_trigger_ : unit
-  method change : (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method change : (Dom.event -> bool) -> unit
   method change_trigger_ : unit
-  method click : (Dom.mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method click : (Dom.mouseEvent -> bool) -> unit
   method click_trigger_ : unit
-  method dblclick : (Dom.mouseEvent -> bool) Ocamljs.jsfun -> unit
+  method dblclick : (Dom.mouseEvent -> bool) -> unit
   method dblclick_trigger_ : unit
-  method error : (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method error : (Dom.event -> bool) -> unit
   method error_trigger_ : unit
-  method focus : (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method focus : (Dom.event -> bool) -> unit
   method focus_trigger_ : unit
-  method keydown : (Dom.keyEvent -> bool) Ocamljs.jsfun -> unit
+  method keydown : (Dom.keyEvent -> bool) -> unit
   method keydown_trigger_ : unit
-  method keypress : (Dom.keyEvent -> bool) Ocamljs.jsfun -> unit
+  method keypress : (Dom.keyEvent -> bool) -> unit
   method keypress_trigger_ : unit
-  method keyup : (Dom.keyEvent -> bool) Ocamljs.jsfun -> unit
+  method keyup : (Dom.keyEvent -> bool) -> unit
   method keyup_trigger_ : unit
-  method load_event_ : (Dom.event -> bool) Ocamljs.jsfun -> unit
-  method mousedown : (Dom.mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method mouseenter : (Dom.mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method mouseleave : (Dom.mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method mousemove : (Dom.mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method mouseout : (Dom.mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method mouseover : (Dom.mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method mouseup : (Dom.mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method resize : (Dom.event -> bool) Ocamljs.jsfun -> unit
-  method scroll : (Dom.event -> bool) Ocamljs.jsfun -> unit
-  method select : (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method load_event_ : (Dom.event -> bool) -> unit
+  method mousedown : (Dom.mouseEvent -> bool) -> unit
+  method mouseenter : (Dom.mouseEvent -> bool) -> unit
+  method mouseleave : (Dom.mouseEvent -> bool) -> unit
+  method mousemove : (Dom.mouseEvent -> bool) -> unit
+  method mouseout : (Dom.mouseEvent -> bool) -> unit
+  method mouseover : (Dom.mouseEvent -> bool) -> unit
+  method mouseup : (Dom.mouseEvent -> bool) -> unit
+  method resize : (Dom.event -> bool) -> unit
+  method scroll : (Dom.event -> bool) -> unit
+  method select : (Dom.event -> bool) -> unit
   method select_trigger_ : unit
-  method submit : (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method submit : (Dom.event -> bool) -> unit
   method submit_trigger_ : unit
-  method unload : (Dom.event -> bool) Ocamljs.jsfun -> unit
+  method unload : (Dom.event -> bool) -> unit
 
   (* Effects *)
   (* ------- *)
 
   (* Basics *)
   method show : unit
-  method show_ms_ : int -> (unit -> unit) Ocamljs.jsfun -> unit
-  method show_speed_ : string -> (unit -> unit) Ocamljs.jsfun -> unit
+  method show_ms_ : int -> (unit -> unit) -> unit
+  method show_speed_ : string -> (unit -> unit) -> unit
   method hide : unit
-  method hide_ms_ : int -> (unit -> unit) Ocamljs.jsfun -> unit
-  method hide_speed_ : string -> (unit -> unit) Ocamljs.jsfun -> unit
+  method hide_ms_ : int -> (unit -> unit) -> unit
+  method hide_speed_ : string -> (unit -> unit) -> unit
   method toggle : unit
   method toggle_switch_ : bool -> unit
-  method toggle_ms_ : int -> (unit -> unit) Ocamljs.jsfun -> unit
-  method toggle_speed_ : string -> (unit -> unit) Ocamljs.jsfun -> unit
+  method toggle_ms_ : int -> (unit -> unit) -> unit
+  method toggle_speed_ : string -> (unit -> unit) -> unit
 
   (* Sliding *)
   method slideDown : unit
-  method slideDown_ms_ : int -> (unit -> unit) Ocamljs.jsfun -> unit
-  method slideDown_speed_ : string -> (unit -> unit) Ocamljs.jsfun -> unit
+  method slideDown_ms_ : int -> (unit -> unit) -> unit
+  method slideDown_speed_ : string -> (unit -> unit) -> unit
   method slideUp : unit
-  method slideUp_ms_ : int -> (unit -> unit) Ocamljs.jsfun -> unit
-  method slideUp_speed_ : string -> (unit -> unit) Ocamljs.jsfun -> unit
+  method slideUp_ms_ : int -> (unit -> unit) -> unit
+  method slideUp_speed_ : string -> (unit -> unit) -> unit
   method slideToggle : unit
-  method slideToggle_ms_ : int -> (unit -> unit) Ocamljs.jsfun -> unit
-  method slideToggle_speed_ : string -> (unit -> unit) Ocamljs.jsfun -> unit
+  method slideToggle_ms_ : int -> (unit -> unit) -> unit
+  method slideToggle_speed_ : string -> (unit -> unit) -> unit
 
   (* Fading *)
   method fadeIn : unit
-  method fadeIn_ms_ : int -> (unit -> unit) Ocamljs.jsfun -> unit
-  method fadeIn_speed_ : string -> (unit -> unit) Ocamljs.jsfun -> unit
+  method fadeIn_ms_ : int -> (unit -> unit) -> unit
+  method fadeIn_speed_ : string -> (unit -> unit) -> unit
   method fadeOut : unit
-  method fadeOut_ms_ : int -> (unit -> unit) Ocamljs.jsfun -> unit
-  method fadeOut_speed_ : string -> (unit -> unit) Ocamljs.jsfun -> unit
+  method fadeOut_ms_ : int -> (unit -> unit) -> unit
+  method fadeOut_speed_ : string -> (unit -> unit) -> unit
   method fadeTo : int -> float -> unit
-  method fadeTo_ms_ : int -> float -> (unit -> unit) Ocamljs.jsfun -> unit
-  method fadeTo_speed_ : string -> float -> (unit -> unit) Ocamljs.jsfun -> unit
+  method fadeTo_ms_ : int -> float -> (unit -> unit) -> unit
+  method fadeTo_speed_ : string -> float -> (unit -> unit) -> unit
 
   (* Custom *)
   method animate : 'a -> unit
   method animate_ms_ :
-    'a -> int -> string -> (unit -> unit) Ocamljs.jsfun -> unit
+    'a -> int -> string -> (unit -> unit) -> unit
   method animate_speed_ :
-    'a -> string -> string -> (unit -> unit) Ocamljs.jsfun -> unit
+    'a -> string -> string -> (unit -> unit) -> unit
   method animate_custom_ : 'a -> 'b -> unit
   method stop : bool -> bool -> unit
 
@@ -341,19 +341,19 @@ object
   method load : string -> unit
   method load_fn_ :
     string -> 'a ->
-    (string -> string -> Dom.xMLHttpRequest -> unit) Ocamljs.jsfun -> unit
+    (string -> string -> Dom.xMLHttpRequest -> unit) -> unit
 
   (* Ajax Events *)
   method ajaxComplete :
-    (Dom.event -> Dom.xMLHttpRequest -> 'a -> unit) Ocamljs.jsfun -> unit
+    (Dom.event -> Dom.xMLHttpRequest -> 'a -> unit) -> unit
   method ajaxError :
-    (Dom.event -> Dom.xMLHttpRequest -> 'a -> 'b -> unit) Ocamljs.jsfun -> unit
+    (Dom.event -> Dom.xMLHttpRequest -> 'a -> 'b -> unit) -> unit
   method ajaxSend :
-    (Dom.event -> Dom.xMLHttpRequest -> 'a -> unit) Ocamljs.jsfun -> unit
-  method ajaxStart : (Dom.event -> unit) Ocamljs.jsfun -> unit
-  method ajaxStop : (Dom.event -> unit) Ocamljs.jsfun -> unit
+    (Dom.event -> Dom.xMLHttpRequest -> 'a -> unit) -> unit
+  method ajaxStart : (Dom.event -> unit) -> unit
+  method ajaxStop : (Dom.event -> unit) -> unit
   method ajaxSuccess :
-    (Dom.event -> Dom.xMLHttpRequest -> 'a -> unit) Ocamljs.jsfun -> unit
+    (Dom.event -> Dom.xMLHttpRequest -> 'a -> unit) -> unit
 
   (* Misc *)
   method serialize : string
@@ -370,7 +370,7 @@ let jQuery_elements = (Ocamljs.var "jQuery" : Dom.element array -> jQuery)
 (* Shorthand for $(document).ready() *)
 let jQuery_ready func =
   (jQuery_element (Dom.document :> Dom.element))
-    #ready (Ocamljs.jsfun func)
+    #ready func
 
 (* Invoking Plugins *)
 let jQuery_plugin jQuery (name : string) args =
@@ -413,18 +413,18 @@ object
   (* Ajax Requests *)
   method ajax : 'a -> Dom.xMLHttpRequest
   method get :
-    string -> 'a -> ('b -> string -> unit) Ocamljs.jsfun -> Dom.xMLHttpRequest
+    string -> 'a -> ('b -> string -> unit) -> Dom.xMLHttpRequest
   method get_typed_ :
-    string -> 'a -> ('b -> string -> unit) Ocamljs.jsfun -> string ->
+    string -> 'a -> ('b -> string -> unit) -> string ->
     Dom.xMLHttpRequest
   method getJSON :
-    string -> 'a -> ('b -> string -> unit) Ocamljs.jsfun -> Dom.xMLHttpRequest
+    string -> 'a -> ('b -> string -> unit) -> Dom.xMLHttpRequest
   method getScript :
-    string -> ('b -> string -> unit) Ocamljs.jsfun -> Dom.xMLHttpRequest
+    string -> ('b -> string -> unit) -> Dom.xMLHttpRequest
   method post :
-    string -> 'a -> ('b -> string -> unit) Ocamljs.jsfun -> Dom.xMLHttpRequest
+    string -> 'a -> ('b -> string -> unit) -> Dom.xMLHttpRequest
   method post_typed_ :
-    string -> 'a -> ('b -> string -> unit) Ocamljs.jsfun -> string ->
+    string -> 'a -> ('b -> string -> unit) -> string ->
     Dom.xMLHttpRequest
 
   (* Misc Ajax *)
@@ -436,14 +436,14 @@ object
   method _get_boxModel : bool
 
   (* Array and Object operations *)
-  method each : 'a -> (int -> 'b -> bool) Ocamljs.jsfun -> unit
+  method each : 'a -> (int -> 'b -> bool) -> unit
   method extend_obj_ : bool -> 'a -> 'b -> unit
-  method grep : 'a array -> (int -> 'a -> bool) Ocamljs.jsfun -> 'a array
+  method grep : 'a array -> (int -> 'a -> bool) -> 'a array
   method grep_invert_ :
-    'a array -> (int -> 'a -> bool) Ocamljs.jsfun -> bool -> 'a array
+    'a array -> (int -> 'a -> bool) -> bool -> 'a array
   method makeArray : 'a -> 'b array
-  method map : 'a array -> ('a -> 'b) Ocamljs.jsfun -> 'b array
-  method map_index_ : 'a array -> ('a -> int -> 'b) Ocamljs.jsfun -> 'b array
+  method map : 'a array -> ('a -> 'b) -> 'b array
+  method map_index_ : 'a array -> ('a -> int -> 'b) -> 'b array
   method inArray : 'a -> 'a array -> int
   method merge : 'a array -> 'a array -> 'a array
   method unique : 'a array -> 'a array
@@ -466,22 +466,3 @@ let jQuery_util = (Ocamljs.var "jQuery" : jQuery_util)
 (* Invoking Plugins *)
 let jQuery_plugin_static (name : string) =
   Ocamljs.hashref jQuery_util name
-
-(* Callbacks *)
-(* --------- *)
-
-external caml_callback2 : ('a1 -> 'a2 -> 'b) -> 'a1 -> 'a2 -> 'b = "caml_callback2"
-external caml_callback3 : ('a1 -> 'a2 -> 'a3 -> 'b) -> 'a1 -> 'a2 -> 'a3 -> 'b = "caml_callback3"
-external caml_callback4 : ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'b) -> 'a1 -> 'a2 -> 'a3 -> 'a4 -> 'b = "caml_callback4"
-external caml_callback5 : ('a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b) -> 'a1 -> 'a2 -> 'a3 -> 'a4 -> 'a5 -> 'b = "caml_callback5"
-
-external function_ : 'a -> 'b = "$function"
-external this : unit -> 'a = "$this"
-
-(* These functions work like Ocamljs.jsfun* but take "this" as an additional
-   first argument, since many jQuery methods pass values to callbacks as
-   "this". *)
-let jqfun f = (function_ (fun a -> caml_callback2 f (this ()) a))
-let jqfun2 f = (function_ (fun a b -> caml_callback3 f (this ()) a b))
-let jqfun3 f = (function_ (fun a b c -> caml_callback4 f (this ()) a b c))
-let jqfun4 f = (function_ (fun a b c d -> caml_callback5 f (this ()) a b c d))

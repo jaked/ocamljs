@@ -321,8 +321,8 @@ object
   method _set_tabIndex : int -> unit
   method _get_tagName : string
 
-  method addEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
-  method addEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
+  method addEventListener : string -> (event -> unit) -> bool -> unit
+  method addEventListener_mouseEvent_ : string -> (mouseEvent -> unit) -> bool -> unit
   method blur : unit
   method click : unit
   method dispatchEvent : #event -> unit
@@ -330,24 +330,24 @@ object
   method getAttribute : string -> string
   method getElementsByTagName : string -> 'a
   method removeAttribute : string -> unit
-  method removeEventListener : string -> (event -> unit) Ocamljs.jsfun -> bool -> unit
-  method removeEventListener_mouseEvent_ : string -> (mouseEvent -> unit) Ocamljs.jsfun -> bool -> unit
+  method removeEventListener : string -> (event -> unit) -> bool -> unit
+  method removeEventListener_mouseEvent_ : string -> (mouseEvent -> unit) -> bool -> unit
   method setAttribute : string -> string -> unit
 
-  method _set_onblur : (event -> bool) Ocamljs.jsfun -> unit
-  method _set_onclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_oncontextmenu : (mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_ondblclick : (mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_onfocus : (event -> bool) Ocamljs.jsfun -> unit
-  method _set_onkeydown : (keyEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_onkeypress : (keyEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_onkeyup : (keyEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_onmousedown : (mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_onmousemove : (mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_onmouseout : (mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_onmouseover : (mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_onmouseup : (mouseEvent -> bool) Ocamljs.jsfun -> unit
-  method _set_onresize : (event -> bool) Ocamljs.jsfun -> unit
+  method _set_onblur : (event -> bool) -> unit
+  method _set_onclick : (mouseEvent -> bool) -> unit
+  method _set_oncontextmenu : (mouseEvent -> bool) -> unit
+  method _set_ondblclick : (mouseEvent -> bool) -> unit
+  method _set_onfocus : (event -> bool) -> unit
+  method _set_onkeydown : (keyEvent -> bool) -> unit
+  method _set_onkeypress : (keyEvent -> bool) -> unit
+  method _set_onkeyup : (keyEvent -> bool) -> unit
+  method _set_onmousedown : (mouseEvent -> bool) -> unit
+  method _set_onmousemove : (mouseEvent -> bool) -> unit
+  method _set_onmouseout : (mouseEvent -> bool) -> unit
+  method _set_onmouseover : (mouseEvent -> bool) -> unit
+  method _set_onmouseup : (mouseEvent -> bool) -> unit
+  method _set_onresize : (event -> bool) -> unit
 end
 
 class type anchor =
@@ -425,17 +425,17 @@ end
 
 class type window =
 object
-  method _set_onload : (unit -> unit) Ocamljs.jsfun -> unit
-  method _set_onbeforeunload : (unit -> string) Ocamljs.jsfun -> unit
+  method _set_onload : (unit -> unit) -> unit
+  method _set_onbeforeunload : (unit -> string) -> unit
   method _get_location : location
 
   method alert : string -> unit
   method confirm : string -> bool
 
-  method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> interval_id
+  method setInterval : (unit -> unit) -> float -> interval_id
   method clearInterval : interval_id -> unit
 
-  method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> timeout_id
+  method setTimeout : (unit -> unit) -> float -> timeout_id
   method clearTimeout : timeout_id -> unit
 end
 
@@ -479,7 +479,7 @@ object
 
   method _get_elements : #element array
 
-  method _set_onsubmit : (unit -> bool) Ocamljs.jsfun -> unit
+  method _set_onsubmit : (unit -> bool) -> unit
 end
 
 class type button =
@@ -529,7 +529,7 @@ object
 
   method select : unit
 
-  method _set_onchange : (unit -> unit) Ocamljs.jsfun -> unit
+  method _set_onchange : (unit -> unit) -> unit
 end
 
 class type option =
@@ -728,7 +728,7 @@ end
 
 class type xMLHttpRequest =
 object
-  method _set_onreadystatechange : (unit -> unit) Ocamljs.jsfun -> unit
+  method _set_onreadystatechange : (unit -> unit) -> unit
   method _get_readyState : int
   (* method _get_responseXML : Dom.document ? *)
   method _get_responseText : string

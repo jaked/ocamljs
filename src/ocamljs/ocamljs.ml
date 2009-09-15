@@ -51,8 +51,6 @@ let nullable_of_option x =
 
 let is_null a = a = null ()
 
-type 'a jsfun = 'a
-
 module Inline =
 struct
   module Jslib_ast =
@@ -68,11 +66,3 @@ struct
 
   let _loc = ()
 end
-
-open Inline
-
-let jsfun f = << function (a) { return _m($f$, this, [a]); } >>
-let jsfun2 f = << function (a1, a2) { return _m($f$, this, [a1, a2]); } >>
-let jsfun3 f = << function (a1, a2, a3) { return _m($f$, this, [a1, a2, a3]); } >>
-let jsfun4 f = << function (a1, a2, a3, a4) { return _m($f$, this, [a1, a2, a3, a4]); } >>
-let jsfun5 f = << function (a1, a2, a3, a4, a5) { return _m($f$, this, [a1, a2, a3, a4, a5]); } >>

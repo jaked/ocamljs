@@ -157,8 +157,8 @@ sig
     inherit supports
     method addEventListener : string -> #dOMEventListener -> bool -> unit
     method removeEventListener : string -> #dOMEventListener -> bool -> unit
-    method addEventListener_fun_ : string -> (#dOMEvent -> unit) Ocamljs.jsfun -> bool -> unit
-    method removeEventListener_fun_ : string -> (#dOMEvent -> unit) Ocamljs.jsfun -> bool -> unit
+    method addEventListener_fun_ : string -> (#dOMEvent -> unit) -> bool -> unit
+    method removeEventListener_fun_ : string -> (#dOMEvent -> unit) -> bool -> unit
     method dispatchEvent : #dOMEvent -> bool
   end
 
@@ -265,9 +265,9 @@ sig
   class type dOMJSWindow =
   object
     inherit supports
-    method setTimeout : (unit -> unit) Ocamljs.jsfun -> float -> int
+    method setTimeout : (unit -> unit) -> float -> int
     method clearTimeout : int -> unit
-    method setInterval : (unit -> unit) Ocamljs.jsfun -> float -> int
+    method setInterval : (unit -> unit) -> float -> int
     method clearInterval : int -> unit
     method openDialog : string -> string -> string -> unit
   end
@@ -553,8 +553,8 @@ sig
   class type xMLHttpRequest =
   object
     inherit supports
-    method _set_onreadystatechange : (unit -> unit) Ocamljs.jsfun -> unit
-    method _set_onload : (unit -> unit) Ocamljs.jsfun -> unit
+    method _set_onreadystatechange : (unit -> unit) -> unit
+    method _set_onload : (unit -> unit) -> unit
     method _open : string -> string -> bool -> unit
     method setRequestHeader : string -> string -> unit
     method getResponseHeader : string -> string
