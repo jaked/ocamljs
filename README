@@ -7,10 +7,14 @@ for details and installation instructions.
 For a quick start:
 
   1. ./configure -srcdir SRCDIR, where SRCDIR is the path of an unpacked
-     OCaml source tree (version 3.10.2 or 3.11.0)
+     OCaml source tree (version 3.10.2, 3.11.0, or 3.11.1)
   2. make
   3. make install
   4. make examples
 
-Ocamljs is written by Jake Donham with contributions from Haoyang Wang
-and Mike Wells.
+Ocamljs is written by Jake Donham with contributions from
+
+  Dave Benjamin (jQuery binding)
+  Haoyang Wang
+  Mike Wells
+  Stepan Zastupov
