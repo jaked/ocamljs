@@ -50,53 +50,133 @@ let pPrimary = 36
 
 module JSString =
 struct
-  open String
 
-  (* adapted from stdlib/string.ml *)
-  external is_printable: char -> bool = "caml_is_printable"
-  external char_code: char -> int = "%identity"
-  external char_chr: int -> char = "%identity"
+  (* UChar and UTF8 taken from camomile 0.7.2 *)
+  module UChar : sig
+    type t
+    external uint_code : t -> int = "%identity"
+    type uchar = t
+    val of_int : int -> uchar
+  end =
+  struct
+    (* $Id: uChar.ml,v 1.4 2004/09/04 16:07:38 yori Exp $ *)
+    (* Copyright 2002, 2003 Yamagata Yoriyuki. distributed with LGPL *)
+    
+    type t = int
+
+    external uint_code : t -> int = "%identity"
+
+    let chr_of_uint n = 
+      if n lsr 31 = 0 then n else 
+      invalid_arg "UChar.char_of_uint"
+      
+    type uchar = t
+
+    let of_int n = chr_of_uint n
+  end
+
+  module UTF8 : sig
+    type t = string
+    val iter : (UChar.t -> unit) -> t -> unit
+  end =
+  struct
+    (* $Id: uTF8.ml,v 1.11 2004/09/04 16:07:38 yori Exp $ *)
+    (* Copyright 2002, 2003 Yamagata Yoriyuki. distributed with LGPL *)
+
+    type t = string
+
+    let look s i =
+      let n' =
+        let n = Char.code s.[i] in
+        if n < 0x80 then n else
+        if n <= 0xdf then
+          (n - 0xc0) lsl 6 lor (0x7f land (Char.code s.[i + 1]))
+        else if n <= 0xef then
+          let n' = n - 0xe0 in
+          let m0 = Char.code s.[i + 2] in
+          let m = Char.code (String.unsafe_get s (i + 1)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          n' lsl 6 lor (0x7f land m0)
+        else if n <= 0xf7 then
+          let n' = n - 0xf0 in
+          let m0 = Char.code s.[i + 3] in
+          let m = Char.code (String.unsafe_get s (i + 1)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          let m = Char.code (String.unsafe_get s (i + 2)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          n' lsl 6 lor (0x7f land m0)     
+        else if n <= 0xfb then
+          let n' = n - 0xf8 in
+          let m0 = Char.code s.[i + 4] in
+          let m = Char.code (String.unsafe_get s (i + 1)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          let m = Char.code (String.unsafe_get s (i + 2)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          let m = Char.code (String.unsafe_get s (i + 3)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          n' lsl 6 lor (0x7f land m0)     
+        else if n <= 0xfd then
+          let n' = n - 0xfc in
+          let m0 = Char.code s.[i + 5] in
+          let m = Char.code (String.unsafe_get s (i + 1)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          let m = Char.code (String.unsafe_get s (i + 2)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          let m = Char.code (String.unsafe_get s (i + 3)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          let m = Char.code (String.unsafe_get s (i + 4)) in
+          let n' = n' lsl 6 lor (0x7f land m) in
+          n' lsl 6 lor (0x7f land m0)
+        else invalid_arg "UTF8.look"
+      in
+      UChar.of_int n'
+    
+    let rec search_head s i =
+      if i >= String.length s then i else
+      let n = Char.code (String.unsafe_get s i) in
+      if n < 0x80 || n >= 0xc2 then i else
+      search_head s (i + 1)
+
+    let next s i = 
+      let n = Char.code s.[i] in
+      if n < 0x80 then i + 1 else
+      if n < 0xc0 then search_head s (i + 1) else
+      if n <= 0xdf then i + 2
+      else if n <= 0xef then i + 3
+      else if n <= 0xf7 then i + 4
+      else if n <= 0xfb then i + 5
+      else if n <= 0xfd then i + 6
+      else invalid_arg "UTF8.next"
+    
+    let rec iter_aux proc s i =
+      if i >= String.length s then () else
+      let u = look s i in
+      proc u;
+      iter_aux proc s (next s i)
+    
+    let iter proc s = iter_aux proc s 0
+  end
+
+  let sprint_uchar u =
+    let n = UChar.uint_code u in
+    let n2 = n land 0xffff in
+    let n1 = n lsr 16 in
+    if n1 = 0
+    then Printf.sprintf "\\u%04X" n2
+    else Printf.sprintf "\\U%04X%04X" n1 n2
 
   let escaped s =
-    let n = ref 0 in
-    for i = 0 to length s - 1 do
-      n := !n +
-        (match unsafe_get s i with
-            '"' | '\\' | '\n' | '\t' | '\r' -> 2
-          | c -> if is_printable c then 1 else 4)
-    done;
-    if !n = length s then s else begin
-      let s' = create !n in
-      n := 0;
-      for i = 0 to length s - 1 do
-        begin
-          match unsafe_get s i with
-              ('"' | '\\') as c ->
-                unsafe_set s' !n '\\'; incr n; unsafe_set s' !n c
-            | '\n' ->
-                unsafe_set s' !n '\\'; incr n; unsafe_set s' !n 'n'
-            | '\t' ->
-                unsafe_set s' !n '\\'; incr n; unsafe_set s' !n 't'
-            | '\r' ->
-                unsafe_set s' !n '\\'; incr n; unsafe_set s' !n 'r'
-            | c ->
-                if is_printable c then
-                  unsafe_set s' !n c
-                else begin
-                  let a = char_code c in
-                  unsafe_set s' !n '\\';
-                  incr n;
-                  unsafe_set s' !n (char_chr (48 + a / 100));
-                  incr n;
-                  unsafe_set s' !n (char_chr (48 + (a / 10) mod 10));
-                  incr n;
-                  unsafe_set s' !n (char_chr (48 + a mod 10))
-                end
-        end;
-        incr n
-      done;
-      s'
-    end
+    let buf = Buffer.create 0 in
+    let proc u =
+      let n = UChar.uint_code u in
+      if n > 0x7f || n < 0
+      then Buffer.add_string buf (sprint_uchar u)
+      else if n = 39
+      then Buffer.add_string buf "\\'"
+      else Buffer.add_string buf (String.escaped (String.make 1 (Char.chr n))) in
+
+    UTF8.iter proc s;
+    Buffer.contents buf
 
 end
 
