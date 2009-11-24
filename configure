@@ -41,7 +41,7 @@ get_path () {
 # defaults:
 
 set_defaults () {
-    srcdir="/usr/local/src/ocaml-3.11.0"
+    srcdir="/usr/local/src/ocaml-3.11.1"
     bindir=`dirname $ocamlc`
     libdir=`ocamlc -where`
 }
@@ -80,7 +80,7 @@ usage: ./configure [ options ]
 _EOF_
 	cat <<_EOF_ >&2
 -srcdir dir
-        OCaml source is in this directory (default /usr/local/src/ocaml-3.10.2)
+        OCaml source is in this directory (default /usr/local/src/ocaml-3.11.1)
 
 -bindir dir
         Install binaries into this directory (default same as ocamlc)
