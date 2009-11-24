@@ -234,6 +234,8 @@ object
   method _set_minHeight : string -> unit
   method _get_minWidth : string
   method _set_minWidth : string -> unit
+  method _get_opacity : float
+  method _set_opacity : float -> unit
   method _get_orphans : string
   method _set_orphans : string -> unit
   method _get_widows : string
@@ -320,6 +322,8 @@ object
   method _get_tabIndex : int
   method _set_tabIndex : int -> unit
   method _get_tagName : string
+  method _set_title : string -> unit
+  method _get_title : string
 
   method addEventListener : string -> (event -> unit) -> bool -> unit
   method addEventListener_mouseEvent_ : string -> (mouseEvent -> unit) -> bool -> unit
@@ -522,6 +526,7 @@ object
   method _get_src : string
   method _set_src : string -> unit
   method _get_type : string
+  method _set_type : string -> unit
   method _get_useMap : string
   method _set_useMap : string -> unit
   method _get_value : string
