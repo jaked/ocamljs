@@ -126,7 +126,7 @@ let draw_board d =
 let disable_events d =
   for y = 0 to d.cf.nbrows - 1 do
     for x = 0 to d.cf.nbcols - 1 do
-      d.dom.(y).(x)#_set_onclick (Ocamljs.jsfun (fun _ -> Dom.window#alert "GAME OVER"; false))
+      d.dom.(y).(x)#_set_onclick (fun _ -> Dom.window#alert "GAME OVER"; false)
     done
   done
 
@@ -176,11 +176,11 @@ let init_table d div =
   ignore (buf#appendChild img);
   img#_set_src "sprites/bomb.png";
   img#_set_onclick
-    (Ocamljs.jsfun (fun _ ->
+    (fun _ ->
       (match !mode with
         | Normal -> mode := Flag ; img#_set_src "sprites/flag.png"
         | Flag -> mode := Normal ; img#_set_src "sprites/bomb.png");
-      false));
+      false);
   ignore (buf#appendChild (dd#createElement "br"));
   for y = 0 to d.cf.nbrows - 1 do
     let imgs = ref [] in
@@ -189,7 +189,7 @@ let init_table d div =
       imgs := img :: !imgs ;
       img#_set_src "sprites/normal.png";
       img#_set_onclick
-        (Ocamljs.jsfun (fun _ ->
+        (fun _ ->
           (match !mode with
             | Normal ->
                 if d.bd.(x).(y).seen then ()
@@ -203,7 +203,7 @@ let init_table d div =
             | Flag ->
                 d.bd.(x).(y).flag <- not d.bd.(x).(y).flag ;
                 draw_cell img d.bd.(x).(y));
-          false));
+          false);
       ignore (buf#appendChild img);
     done ;
     ignore (buf#appendChild (dd#createElement "br"));

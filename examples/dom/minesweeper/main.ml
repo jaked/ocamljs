@@ -6,9 +6,9 @@ let int_input name value =
   input#setAttribute "type" "text";
   input#_set_value (string_of_int !value);
   input#_set_onchange
-    (Ocamljs.jsfun (fun _ ->
+    (fun _ ->
       (value := try int_of_string input#_get_value with _ -> !value);
-      input#_set_value (string_of_int !value)));
+      input#_set_value (string_of_int !value));
   ignore (res#appendChild input);
   res
 
@@ -18,7 +18,7 @@ let button name callback =
   let input = (d#createElement "input" : Dom.input) in
   input#setAttribute "type" "submit";
   input#_set_value name;
-  input#_set_onclick (Ocamljs.jsfun callback);
+  input#_set_onclick callback;
   ignore (res#appendChild input);
   res
 
@@ -53,4 +53,4 @@ let onload _ =
 
 ;;
 
-Dom.window#_set_onload (Ocamljs.jsfun onload)
+Dom.window#_set_onload onload

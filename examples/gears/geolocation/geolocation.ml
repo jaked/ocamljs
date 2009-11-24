@@ -24,8 +24,8 @@ let init () =
     try
       let geolocation = (Gears.factory#create "beta.geolocation" : Gears.geolocation) in
       geolocation#getCurrentPosition
-        (Ocamljs.jsfun successCallback)
-        (Ocamljs.jsfun errorCallback)
+        successCallback
+        errorCallback
         << { enableHighAccuracy: true, gearsRequestAddress: true } >>
     with e ->
       setError ("Error using Geolocation API: " ^ << e.message >>)

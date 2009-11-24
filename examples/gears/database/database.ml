@@ -64,5 +64,5 @@ let handleSubmit () =
 
 init ();
 
-Dom.window#_set_onload (Ocamljs.jsfun (fun () ->
-  (getElementById "form" : Dom.form)#_set_onsubmit (Ocamljs.jsfun handleSubmit)));
+Dom.window#_set_onload (fun () ->
+  (getElementById "form" : Dom.form)#_set_onsubmit handleSubmit);
