@@ -1,0 +1,2 @@
+<*.ml*> : pkg_ocamljs,pkg_javascript,pkg_dom
+
