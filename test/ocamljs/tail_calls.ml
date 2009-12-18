@@ -23,10 +23,9 @@ let tests = "Tail_calls" >::: [
   end;
 
   (*
-    don't have a good idea how to support this case. maybe we could
-    explicitly check whether the previous function on the stack is _m?
+    maybe wrap <:stmt< >> in $in_tail off / on?
 
-  "tail call from js" >:: begin fun () ->
+  "tail call from inline js" >:: begin fun () ->
     let foo () = 3 in
     let bar () = foo () in
     let baz = 0 in
@@ -36,4 +35,13 @@ let tests = "Tail_calls" >::: [
     assert_equal baz 3
   end;
   *)
+
+  "tail call from js" >:: begin fun () ->
+    let foo () = 3 in
+    let bar () = foo () in
+    let baz = 0 in
+    let (js : unit -> unit) = << function () { $exp:baz$ = $bar$ (); } >> in
+    js ();
+    assert_equal baz 3
+  end;
 ]

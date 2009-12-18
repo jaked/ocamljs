@@ -29,48 +29,30 @@ var oc$$nv = {}
 
 // XXX name these sensibly and compactify code afterwards
 
-function ___m(m, t, a)
-{
-  function ap(a1, a2) {
-    var a = new Array();
-    for (var i=0; i < a1.length; i++) a.push(a1[i]);
-    for (var i=0; i < a2.length; i++) a.push(a2[i]);
-    return a;
-  }
-
-  while (true) {
-    // non-ocamljs functions can't be under/over-applied
-    if (!m.$oc)
-      return m.apply(t, a);
-
-    var al = a.length;
-    var ml = m.length;
-
-    if (al < ml)
-    {
-      switch (ml - al) {
-      case 1: return _f(function (z) { return m.apply(t, ap(a, arguments)) });
-      case 2: return _f(function (z,y) { return m.apply(t, ap(a, arguments)) });
-      case 3: return _f(function (z,y,x) { return m.apply(t, ap(a, arguments)) });
-      case 4: return _f(function (z,y,x,w) { return m.apply(t, ap(a, arguments)) });
-      case 5: return _f(function (z,y,x,w,v) { return m.apply(t, ap(a, arguments)) });
-      case 6: return _f(function (z,y,x,w,v,u) { return m.apply(t, ap(a, arguments)) });
-      case 7: return _f(function (z,y,x,w,v,u,s) { return m.apply(t, ap(a, arguments)) });
-      default: throw "unimplemented";
-      }
-    }
-    else if (al == ml)
-      return m.apply(t, a);
-    else // al > ml
-    {
-      m = _m(m, t, a.slice(0, ml));
-      t = m;
-      a = a.slice(ml);
-    }
-  }
+function ___a(m, t, a) {
+  return m.apply(t, a);
 }
 
 /*@cc_on @if (@_win32 && @_jscript_version >= 5)
+function ___a(m, t, a) {
+  if (m.apply)
+    return m.apply(t, a);
+  else
+    // IE < 8 doesn't support apply for DOM methods, but does support "cached" methods bound to an object
+    switch (a.length) {
+    case 0: return m();
+    case 1: return m(a[0]);
+    case 2: return m(a[0], a[1]);
+    case 3: return m(a[0], a[1], a[2]);
+    case 4: return m(a[0], a[1], a[2], a[3]);
+    case 5: return m(a[0], a[1], a[2], a[3], a[4]);
+    case 6: return m(a[0], a[1], a[2], a[3], a[4], a[5]);
+    case 7: return m(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
+    default: throw "unimplemented";
+    }
+}
+@end @*/
+
 function ___m(m, t, a)
 {
   function ap(a1, a2) {
@@ -81,25 +63,6 @@ function ___m(m, t, a)
   }
 
   while (true) {
-    // non-ocamljs functions can't be under/over-applied
-    if (!m.$oc) {
-      if (m.apply)
-        return m.apply(t, a);
-      else
-        // IE < 8 doesn't support apply for DOM methods, but does support "cached" methods bound to an object
-        switch (a.length) {
-        case 0: return m();
-        case 1: return m(a[0]);
-        case 2: return m(a[0], a[1]);
-        case 3: return m(a[0], a[1], a[2]);
-        case 4: return m(a[0], a[1], a[2], a[3]);
-        case 5: return m(a[0], a[1], a[2], a[3], a[4]);
-        case 6: return m(a[0], a[1], a[2], a[3], a[4], a[5]);
-        case 7: return m(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
-        default: throw "unimplemented";
-        }
-    }
-
     var al = a.length;
     var ml = m.length;
 
@@ -126,35 +89,50 @@ function ___m(m, t, a)
     }
   }
 }
-@end @*/
 
 var $in_tail = false;
 
 // tail call
 function __m(m, t, args)
 {
-  if (m.$oc && !$in_tail)
-    return _m(m, t, args);
-  args.$m = m;
-  args.$t = t;
-  args.$tr = true;
-  return args;
+  if (m.$oc) {
+    if ($in_tail) {
+      args.$m = m;
+      args.$t = t;
+      args.$tr = true;
+      return args;
+    }
+    else
+      return _m(m, t, args);
+  }
+  else {
+    var old_in_tail = $in_tail;
+    $in_tail = false;
+    try { return ___a(m, t, args); }
+    finally { $in_tail = old_in_tail; }
+  }
 }
 function __(t, args) { return __m(t, t, args); }
 
 // non tail call
 function _m(m, t, args)
 {
-  var old_in_tail = $in_tail;
-  $in_tail = true;
-  try {
-    var v = __m(m, t, args);
-    while (v && v.$tr)
-      v = ___m(v.$m, v.$t, v);
-    return v;
+  if (m.$oc) {
+    var old_in_tail = $in_tail;
+    $in_tail = true;
+    try {
+      var v = __m(m, t, args);
+      while (v && v.$tr)
+        v = ___m(v.$m, v.$t, v);
+      return v;
+    }
+    finally { $in_tail = old_in_tail; }
   }
-  finally {
-    $in_tail = old_in_tail;
+  else {
+    var old_in_tail = $in_tail;
+    $in_tail = false;
+    try { return ___a(m, t, args); }
+    finally { $in_tail = old_in_tail; }
   }
 }
 function _(t, args) { return _m(t, t, args); }
