@@ -1,0 +1,83 @@
+--- camlinternalMod.ml.orig	2010-01-13 20:20:27.000000000 -0500
++++ camlinternalMod.ml	2010-01-13 20:21:12.000000000 -0500
+@@ -1,3 +1,23 @@
++(*
++ * This file is part of ocamljs, OCaml to Javascript compiler
++ * Copyright (C) 2007-9 Skydeck, Inc
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Library General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Library General Public License for more details.
++ *
++ * You should have received a copy of the GNU Library General Public
++ * License along with this library; if not, write to the Free
++ * Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
++ * MA 02111-1307, USA
++ *)
++
+ (***********************************************************************)
+ (*                                                                     *)
+ (*                           Objective Caml                            *)
+@@ -22,12 +42,7 @@
+ let rec init_mod loc shape =
+   match shape with
+   | Function ->
+-      let pad1 = 1 and pad2 = 2 and pad3 = 3 and pad4 = 4
+-      and pad5 = 5 and pad6 = 6 and pad7 = 7 and pad8 = 8 in
+-      Obj.repr(fun _ ->
+-        ignore pad1; ignore pad2; ignore pad3; ignore pad4;
+-        ignore pad5; ignore pad6; ignore pad7; ignore pad8;
+-        raise (Undefined_recursive_module loc))
++      Obj.repr (fun _ -> raise (Undefined_recursive_module loc))
+   | Lazy ->
+       Obj.repr (lazy (raise (Undefined_recursive_module loc)))
+   | Class ->
+@@ -35,34 +50,13 @@
+   | Module comps ->
+       Obj.repr (Array.map (init_mod loc) comps)
+ 
+-let overwrite o n =
+-  assert (Obj.size o >= Obj.size n);
+-  for i = 0 to Obj.size n - 1 do
+-    Obj.set_field o i (Obj.field n i)
+-  done
+-
+ let rec update_mod shape o n =
+   match shape with
+-  | Function ->
+-      if Obj.tag n = Obj.closure_tag && Obj.size n <= Obj.size o
+-      then begin overwrite o n; Obj.truncate o (Obj.size n) (* PR #4008 *) end
+-      else overwrite o (Obj.repr (fun x -> (Obj.obj n : _ -> _) x))
+-  | Lazy ->
+-      if Obj.tag n = Obj.lazy_tag then
+-        Obj.set_field o 0 (Obj.field n 0)
+-      else if Obj.tag n = Obj.forward_tag then begin (* PR#4316 *)
+-        Obj.set_tag o Obj.forward_tag;
+-        Obj.set_field o 0 (Obj.field n 0)
+-      end else begin
+-        (* forwarding pointer was shortcut by GC *)
+-        Obj.set_tag o Obj.forward_tag;
+-        Obj.set_field o 0 n
+-      end
+-  | Class ->
+-      assert (Obj.tag n = 0 && Obj.size n = 4);
+-      overwrite o n
+-  | Module comps ->
+-      assert (Obj.tag n = 0 && Obj.size n >= Array.length comps);
+-      for i = 0 to Array.length comps - 1 do
+-        update_mod comps.(i) (Obj.field o i) (Obj.field n i)
+-      done
++    | Module comps ->
++        assert (Obj.tag n = 0 && Obj.size n >= Array.length comps);
++        for i = 0 to Array.length comps - 1 do
++          match comps.(i) with
++            | Module _ -> update_mod comps.(i) (Obj.field o i) (Obj.field n i)
++            | _ -> Obj.set_field o i (Obj.field n i)
++        done
++    | _ -> assert false

@@ -1,5 +1,5 @@
---- ocaml/stdlib/pervasives.ml	2006-11-17 00:34:01.000000000 -0800
-+++ pervasives.ml	2009-04-09 15:00:24.000000000 -0700
+--- pervasives.ml.orig	2010-01-13 16:22:20.000000000 -0500
++++ pervasives.ml	2010-01-13 16:20:07.000000000 -0500
 @@ -1,3 +1,25 @@
 +(*
 + * This file is part of ocamljs, OCaml to Javascript compiler

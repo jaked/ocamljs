@@ -1,5 +1,5 @@
---- ocaml/stdlib/camlinternalMod.ml	2007-10-26 08:39:04.000000000 -0700
-+++ camlinternalMod.ml	2009-04-08 13:48:57.000000000 -0700
+--- camlinternalMod.ml.orig	2010-01-13 19:43:15.000000000 -0500
++++ camlinternalMod.ml	2010-01-13 19:49:04.000000000 -0500
 @@ -1,3 +1,23 @@
 +(*
 + * This file is part of ocamljs, OCaml to Javascript compiler
