@@ -572,6 +572,7 @@ object
   method _set_name : string -> unit
   method _get_size : int
   method _set_size : int -> unit
+  method _set_onchange : (unit -> unit) -> unit
 
   method add : option -> option -> unit
   method add_ie_ : option -> int -> unit
