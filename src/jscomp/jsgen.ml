@@ -323,21 +323,11 @@ let rec comp_expr tail expr =
         << _f($exp:e$) >>
 
     | IFDEF OCAML_3_10_2 THEN Lapply(e, es) ELSE Lapply(e, es, _) ENDIF ->
-        begin
-          match es with
-              (* goofy hack from typecore.ml *)
-            | [o; Lconst(Const_block(0, []))] ->
-                let app = if tail then "__m" else "_m" in
-                let ce = comp_expr false e in
-                let co = comp_expr false o in
-                << $id:app$($exp:ce$, $co$, []) >>
-            | _ ->
-                let app = if tail then "__" else "_" in
-                let ce = comp_expr false e in
-                let ces = List.map (comp_expr false) es in
-                << $id:app$($exp:ce$, [$list:ces$]) >>
-        end
-
+        let app = if tail then "__" else "_" in
+        let ce = comp_expr false e in
+        let ces = List.map (comp_expr false) es in
+        << $id:app$($exp:ce$, [$list:ces$]) >>
+ 
     | Lifthenelse (i, t, e) ->
         let ci = comp_expr false i in
         let ct = comp_expr tail t in
@@ -418,11 +408,22 @@ let rec comp_expr tail expr =
         end
 
     | Lsend (Self, m, o, args) ->
+        let inh =
+          match m with
+            | Lvar id ->
+                (* see hack in typecore.ml *)
+                let flags_field = 2 in
+                let repr = Obj.repr id in
+                let flags = (Obj.obj (Obj.field repr flags_field)) in
+                flags land 4 > 0
+            | _ -> false in
         let app = if tail then "__m" else "_m" in
         let cm = comp_expr false m in
         let co = comp_expr false o in
         let cargs = List.map (comp_expr false) args in
-        << $id:app$($co$._m[$cm$], $co$, [$list:cargs$]) >>
+        if inh
+        then << $id:app$($cm$, $co$, [$list:cargs$]) >>
+        else << $id:app$($co$._m[$cm$], $co$, [$list:cargs$]) >>
 
     | _ -> unimplemented "comp_expr" expr
 
