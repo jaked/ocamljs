@@ -232,6 +232,7 @@ var caml_hash_univ_param = function (count, limit, obj) {
 var caml_input_value = function () { throw "caml_input_value"; }
 var caml_input_value_from_string = function () { throw "caml_input_value_from_string"; }
 var caml_install_signal_handler = function () { throw "caml_install_signal_handler"; }
+var caml_int_compare = function (i1, i2) { return (i1 > i2) - (i1 < i2); }
 var caml_int32_compare = function (i1, i2) { return (i1 > i2) - (i1 < i2); }
 var caml_int64_compare = function (i1, i2) { throw "caml_int64_compare"; }
 var caml_int64_float_of_bits = function (s) {
