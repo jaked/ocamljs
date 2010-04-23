@@ -256,7 +256,9 @@ let comp_prim p es =
 
     | Pisint, [e] -> << typeof $e$ == 'number' >>
 
-    | (Pidentity | Pignore | Pfloatofint | Pintoffloat |
+    | Pintoffloat, [e] -> Jbinop(_loc, Jlsr, e, << 0 >>);
+
+    | (Pidentity | Pignore | Pfloatofint |
        Pintofbint _ | Pbintofint _ | Pcvtbint _), [e] ->
         e
 
