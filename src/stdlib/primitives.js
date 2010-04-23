@@ -155,6 +155,14 @@ var caml_fill_string = function(s, o, l, c) {
   for (var i = 0; i < l; i++)
     oc$$ssetu(s, o + i, c);
 }
+var caml_float_compare = function (v1, v2) {
+  if (v1 === v2) return 0;
+  if (v1 < v2) return -1;
+  if (v1 > v2) return 1;
+  if (v1 === v1) return 1;
+  if (v2 === v2) return -1;
+  return 0;
+}
 var caml_float_of_string = function (s) {
   var f = parseFloat(s);
   return isNaN(f) ? caml_failwith("float_of_string") : f;
