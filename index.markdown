@@ -13,15 +13,15 @@ programming.
 
 The current version of `ocamljs` can be downloaded from
 
-  http://code.google.com/p/ocamljs
+ * [http://code.google.com/p/ocamljs](http://code.google.com/p/ocamljs)
 
 and new development is at
 
-  http://github.com/jaked/ocamljs
+ * [http://github.com/jaked/ocamljs](http://github.com/jaked/ocamljs)
 
 `Ocamljs` is written by Jake Donham, with contributions from
 
-  * Dave Benjamin (jQuery binding)
-  * Haoyang Wang
-  * Mike Wells
-  * Stepan Zastupov
+ * Dave Benjamin (jQuery binding)
+ * Haoyang Wang
+ * Mike Wells
+ * Stepan Zastupov
