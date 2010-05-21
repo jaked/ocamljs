@@ -56,7 +56,7 @@ let copy o =
     var s = $o$._s;
     var i;
     for (i=0; i < s; i++)
-      $exp:c$[i] = $o$[i];
+      $c$[i] = $o$[i];
   >>;
   set_id c last_id;
   c
@@ -333,11 +333,11 @@ let init_class table =
   table.constructor <- << function () { } >>;
   Meths.iter
     (fun met lab ->
-      <:stmt< $exp:table.constructor$.prototype[$met$] = $table.methods$[$lab$]; >>)
+      <:stmt< $table.constructor$.prototype[$met$] = $table.methods$[$lab$]; >>)
     table.methods_by_name;
   <:stmt<
-    $exp:table.constructor$.prototype._m = $table.methods$;
-    $exp:table.constructor$.prototype._s = $table.size$;
+    $table.constructor$.prototype._m = $table.methods$;
+    $table.constructor$.prototype._s = $table.size$;
   >>
 
 let inherits cla vals virt_meths concr_meths (_, super, _, env) top =

@@ -72,26 +72,26 @@ let length b = b.length
 
 let clear b =
   b.length <- 0;
-  <:stmt< $exp:b.array$.length = 0; >>
+  <:stmt< $b.array$.length = 0; >>
 
 let reset = clear
 
 let add_char b c =
   b.string <- None;
   b.length <- b.length + 1;
-  <:stmt< $exp:b.array$.push(String.fromCharCode($c$)); >>
+  <:stmt< $b.array$.push(String.fromCharCode($c$)); >>
 
 let add_substring b s offset len =
   if offset < 0 || len < 0 || offset > String.length s - len
   then invalid_arg "Buffer.add_substring";
   b.string <- None;
   b.length <- b.length + len;
-  <:stmt< $exp:b.array$.push($s$.substring($offset$, $offset$ + $len$)); >>
+  <:stmt< $b.array$.push($s$.substring($offset$, $offset$ + $len$)); >>
 
 let add_string b s =
   b.string <- None;
   b.length <- b.length + String.length s;
-  <:stmt< $exp:b.array$.push($s$); >>
+  <:stmt< $b.array$.push($s$); >>
 
 let add_buffer b bs =
   add_string b (contents bs)

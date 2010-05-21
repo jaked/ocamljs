@@ -75,7 +75,10 @@ let add_quotation name entry mexpr =
   let parse_quot_string entry loc s =
     let q = !Camlp4_config.antiquotations in
     let () = Camlp4_config.antiquotations := true in
+    let nea = !Jslib_parse.non_exp_antiquots in
+    let () = Jslib_parse.non_exp_antiquots := false in
     let res = Jslib_parse.Gram.parse_string entry loc s in
+    let () = Jslib_parse.non_exp_antiquots := nea in
     let () = Camlp4_config.antiquotations := q in
     res in
   let expand_expr loc loc_name_opt s =

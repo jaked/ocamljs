@@ -17,7 +17,7 @@ let tests = "Tail_calls" >::: [
     let baz = 0 in
     <:stmt<
       $$in_tail = false;
-      $exp:baz$ = $bar$ ();
+      $baz$ = $bar$ ();
     >>;
     assert_equal baz 3
   end;
@@ -30,7 +30,7 @@ let tests = "Tail_calls" >::: [
     let bar () = foo () in
     let baz = 0 in
     <:stmt<
-      $exp:baz$ = $bar$ ();
+      $baz$ = $bar$ ();
     >>;
     assert_equal baz 3
   end;
