@@ -297,6 +297,9 @@ let rec token c = lexer
   | "/*" ->
       tcomment c c.lexbuf;
       token c c.lexbuf
+  | "//" ->
+      lcomment c c.lexbuf;
+      token c c.lexbuf
   | "$" ->
       set_start_loc c;
       c.enc := Ulexing.Latin1;
@@ -312,6 +315,11 @@ and tcomment c = lexer
 | eof -> error c "Unterminated comment"
 | newline -> next_line c; tcomment c c.lexbuf
 | _ -> tcomment c c.lexbuf
+
+and lcomment c = lexer
+| eof -> ()
+| newline -> next_line c
+| _ -> lcomment c c.lexbuf
 
 and string c double = lexer
 | '"' | "'" ->
