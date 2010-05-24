@@ -61,8 +61,8 @@ struct
 
   external inline_exp : Jslib_ast.exp -> 'a = "$inline_exp"
   external inline_stmt : Jslib_ast.stmt -> unit = "$inline_stmt"
+  external inline_rstmt : Jslib_ast.stmt -> 'a = "$inline_rstmt"
   external inline_antiexp : 'a -> Jslib_ast.exp = "$inline_antiexp"
-  external inline_antistmt : 'a -> Jslib_ast.stmt = "$inline_antistmt"
 
   let _loc = ()
 end

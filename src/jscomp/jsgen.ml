@@ -567,6 +567,7 @@ and comp_expr_st tail expr k =
         comp_expr_st tail (Lsequence (e, Lconst (Const_pointer 0))) k
 
     | Lprim (Pccall { prim_name = "$inline_stmt" }, [e]) -> inline_stmt e
+    | Lprim (Pccall { prim_name = "$inline_rstmt" }, [e]) -> inline_stmt e
 
     | Lstaticcatch (e1, (lab, args), e2) ->
         (* The raised flag indicates whether e1 exits normally or via
@@ -724,7 +725,6 @@ and inline_stmt = function
   | <:lam_astmt< Jlabel ($_$, $s$, $st$) >> -> Jlabel (_loc, inline_string s, inline_stmt st)
   | <:lam_astmt< Jstmt_nil $_$ >> -> Jstmt_nil _loc
   | <:lam_astmt< Jstmt_cons ($_$, $s1$, $s2$) >> -> Jstmt_cons (_loc, inline_stmt s1, inline_stmt s2)
-(*| Lprim (Pccall { prim_name = "$inline_antistmt" }, [s]) -> *)(* XXX *)
   | _ -> raise (Failure "bad inline stmt")
 
 and inline_unop = function

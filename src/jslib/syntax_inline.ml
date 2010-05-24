@@ -62,10 +62,7 @@ object
     function
       | <:expr@_loc< $anti:s$ >>
       | <:expr@_loc< $str:s$ >> as e ->
-        handle_antiquot_in_string s e TheAntiquotSyntax.parse_expr _loc (fun n e ->
-          match n with
-            | "stmt" -> <:expr< inline_antistmt $e$ >>
-            | "exp" | _ -> <:expr< inline_antiexp $e$ >>)
+        handle_antiquot_in_string s e TheAntiquotSyntax.parse_expr _loc (fun n e -> <:expr< inline_antiexp $e$ >>)
       | e -> super#expr e
 end
 
@@ -86,9 +83,10 @@ let add_quotation name entry mexpr =
     let () = MetaLoc.loc_name := loc_name_opt in
     let meta_ast = mexpr loc ast in
     let exp_ast = antiquot_expander#expr meta_ast in
-    if name = "exp"
-    then <:expr@loc< inline_exp $exp_ast$ >>
-    else <:expr@loc< inline_stmt $exp_ast$ >> in
+    match name with
+      | "exp" -> <:expr@loc< inline_exp $exp_ast$ >>
+      | "stmt" -> <:expr@loc< inline_stmt $exp_ast$ >>
+      | "rstmt" -> <:expr@loc< inline_rstmt $exp_ast$ >> in
   let expand_str_item loc loc_name_opt s =
     let exp_ast = expand_expr loc loc_name_opt s in
     <:str_item@loc< $exp:exp_ast$ >> in
@@ -106,4 +104,5 @@ let add_quotation name entry mexpr =
 
 add_quotation "exp" Jslib_parse.expression ME.meta_exp;
 add_quotation "stmt" Jslib_parse.statementList ME.meta_stmt;
+add_quotation "rstmt" Jslib_parse.statementList ME.meta_stmt;
 Q.default := "exp";
