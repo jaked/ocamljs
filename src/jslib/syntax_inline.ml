@@ -86,7 +86,8 @@ let add_quotation name entry mexpr =
     match name with
       | "exp" -> <:expr@loc< inline_exp $exp_ast$ >>
       | "stmt" -> <:expr@loc< inline_stmt $exp_ast$ >>
-      | "rstmt" -> <:expr@loc< inline_rstmt $exp_ast$ >> in
+      | "rstmt" -> <:expr@loc< inline_rstmt $exp_ast$ >>
+      | _ -> assert false in
   let expand_str_item loc loc_name_opt s =
     let exp_ast = expand_expr loc loc_name_opt s in
     <:str_item@loc< $exp:exp_ast$ >> in
