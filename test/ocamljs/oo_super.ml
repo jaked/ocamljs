@@ -13,11 +13,14 @@ object (self)
   val c = c
   method color = c
   inherit printable_point y as super
+  method move1 n =
+    super#move n
   method print =
     super#print ^ self#color
 end
 
 let tests = "Oo_super" >:: begin fun () ->
-  let p= new printable_colored_point 5 "red" in
-  assert_equal p#print "5red"
+  let p = new printable_colored_point 5 "red" in
+  p#move1 10;
+  assert_equal p#print "15red"
 end

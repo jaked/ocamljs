@@ -34,6 +34,25 @@ let test_lookahead_not_brace_function =
         | Some (KEYWORD "function", _) -> raise Stream.Failure
         | _ -> ())
 
+let non_exp_antiquots = ref true
+
+let antiquot ns =
+  Gram.Entry.of_parser "antiquot"
+    (fun strm ->
+       match Stream.peek strm with
+         | Some (ANTIQUOT (n, s), _) when List.mem n ns && !non_exp_antiquots->
+             Stream.junk strm;
+             (n, s)
+         | _ -> raise Stream.Failure)
+
+(* annoying but there is no way to pass args to entries in rules *)
+let antiquot_id = antiquot [""; "id"]
+let antiquot_str = antiquot [""; "str"; "`str"]
+let antiquot_int = antiquot [""; "int"; "`int"]
+let antiquot_flo = antiquot [""; "flo"; "`flo"]
+let antiquot_list = antiquot ["list"]
+let antiquot_stmt = antiquot ["stmt"; ""; "anti"]
+
 let a_IDENT = Gram.Entry.mk "a_IDENT"
 let a_STRING = Gram.Entry.mk "a_STRING"
 let a_NUM = Gram.Entry.mk "a_NUM"
@@ -63,25 +82,26 @@ let maybe_stmt_cons _loc s1 s2 =
 EXTEND Gram
 
 a_IDENT: [[
-  `ANTIQUOT (""|"id" as n, s) -> mk_anti n s (* not ' ? *)
+  (n, s) = antiquot_id -> mk_anti n s (* not ' ? *)
 | s = IDENT -> s
 ]];
 
 a_STRING: [[
-  `ANTIQUOT (""|"str"|"`str" as n, s) -> mk_anti n s
+  (n, s) = antiquot_str -> mk_anti n s
 | s = STRING1 -> s
 ]];
 
 a_NUM: [[
-  `ANTIQUOT (""|"int"|"`int" as n, s) -> mk_anti n s
-| `ANTIQUOT (""|"flo"|"`flo" as n, s) -> mk_anti n s
+  (n, s) = antiquot_int -> mk_anti n s
+| (n, s) = antiquot_flo -> mk_anti n s
 | s = INT -> s
 | s = FLOAT -> s
+| s = HEX -> string_of_int (int_of_string s) (* parse 0x etc.; XXX maybe should preserve hex? *)
 ]];
 
 comma_expr: [[
   e1 = SELF; ","; e2 = SELF -> Jexp_cons (_loc, e1, e2)
-| `ANTIQUOT ("list" as n, s) -> Jexp_Ant (_loc, mk_anti ~c:"exp" n s)
+| (n, s) = antiquot_list -> Jexp_Ant (_loc, mk_anti ~c:"exp" n s)
 | e = expression LEVEL "AssignmentExpression" -> e
 | -> Jexp_nil _loc
 ]];
@@ -220,7 +240,7 @@ expression: [
 
 (* A.4 Statements *)
 statement: [[
-  `ANTIQUOT ("stmt"|""|"anti" as n, s) -> Jstmt_Ant (_loc, mk_anti ~c:"stmt" n s)
+  (n, s) = antiquot_stmt -> Jstmt_Ant (_loc, mk_anti ~c:"stmt" n s)
 | ss = block -> Jblock (_loc, ss)
 | "var"; vars =
     LIST1 [ i = a_IDENT;
@@ -256,7 +276,7 @@ statement: [[
 ]];
 
 statementList: [[
-  `ANTIQUOT ("list" as n, s); s2 = SELF ->
+  (n, s) = antiquot_list; s2 = SELF ->
     maybe_stmt_cons _loc (Jstmt_Ant (_loc, mk_anti ~c:"stmt" n s)) s2
 | s1 = statement; s2 = SELF -> maybe_stmt_cons _loc s1 s2
 | -> Jstmt_nil _loc
@@ -276,7 +296,7 @@ sourceElement: [[
 ]];
 
 sourceElements: [[
-  `ANTIQUOT ("list" as n, s); s2 = SELF ->
+  (n, s) = antiquot_list; s2 = SELF ->
     maybe_stmt_cons _loc (Jstmt_Ant (_loc, mk_anti ~c:"stmt" n s)) s2
 | s1 = sourceElement; s2 = SELF -> maybe_stmt_cons _loc s1 s2
 | -> Jstmt_nil _loc

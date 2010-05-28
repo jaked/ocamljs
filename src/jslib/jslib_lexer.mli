@@ -27,6 +27,7 @@ type token =
   | IDENT of string
   | INT of string
   | FLOAT of string
+  | HEX of string
   | STRING1 of string
   | STRING2 of string
   | REGEXP of string

@@ -1,5 +1,5 @@
---- printf.ml.orig	2010-01-13 19:44:19.000000000 -0500
-+++ printf.ml	2010-01-13 19:49:46.000000000 -0500
+--- printf.ml.orig	2010-03-03 18:04:04.000000000 -0500
++++ printf.ml	2010-03-03 18:04:04.000000000 -0500
 @@ -1,3 +1,23 @@
 +(*
 + * This file is part of ocamljs, OCaml to Javascript compiler

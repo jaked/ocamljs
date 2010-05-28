@@ -155,6 +155,14 @@ var caml_fill_string = function(s, o, l, c) {
   for (var i = 0; i < l; i++)
     oc$$ssetu(s, o + i, c);
 }
+var caml_float_compare = function (v1, v2) {
+  if (v1 === v2) return 0;
+  if (v1 < v2) return -1;
+  if (v1 > v2) return 1;
+  if (v1 === v1) return 1;
+  if (v2 === v2) return -1;
+  return 0;
+}
 var caml_float_of_string = function (s) {
   var f = parseFloat(s);
   return isNaN(f) ? caml_failwith("float_of_string") : f;
@@ -232,6 +240,7 @@ var caml_hash_univ_param = function (count, limit, obj) {
 var caml_input_value = function () { throw "caml_input_value"; }
 var caml_input_value_from_string = function () { throw "caml_input_value_from_string"; }
 var caml_install_signal_handler = function () { throw "caml_install_signal_handler"; }
+var caml_int_compare = function (i1, i2) { return (i1 > i2) - (i1 < i2); }
 var caml_int32_compare = function (i1, i2) { return (i1 > i2) - (i1 < i2); }
 var caml_int64_compare = function (i1, i2) { throw "caml_int64_compare"; }
 var caml_int64_float_of_bits = function (s) {
