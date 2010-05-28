@@ -318,7 +318,12 @@ let rec comp_expr tail expr =
             Lprim (Pccall { prim_name = "$inline_stmt" }, _))->
         exp_of_stmts (comp_expr_st tail expr kreturn)
 
-    | Lvar i -> << $id:jsident_of_ident i$ >>
+    | Lvar id ->
+        begin match Ident.name id with
+          | "true" -> << true >>
+          | "false" -> << false >>
+          | _ -> << $id:jsident_of_ident id$ >>
+        end
 
     | Lfunction (_, args, e) ->
         let e = Jfun (_loc, None, List.map jsident_of_ident args, comp_expr_st true e kreturn) in

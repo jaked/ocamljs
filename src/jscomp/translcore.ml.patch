@@ -1,0 +1,15 @@
+--- ocaml/bytecomp/translcore.ml	2008-08-27 06:23:21.000000000 -0400
++++ translcore.ml	2010-05-28 18:57:31.000000000 -0400
+@@ -656,7 +656,11 @@
+       let ll = transl_list args in
+       begin match cstr.cstr_tag with
+         Cstr_constant n ->
+-          Lconst(Const_pointer n)
++          begin match e.exp_type.desc with
++            | Tconstr (Pident id, [], _) when Ident.name id = "bool" ->
++                Lvar(Ident.create (match n with 0 -> "false" | 1 -> "true" | _ -> assert false))
++            | _ -> Lconst(Const_pointer n)
++          end
+       | Cstr_block n ->
+           begin try
+             Lconst(Const_block(n, List.map extract_constant ll))
