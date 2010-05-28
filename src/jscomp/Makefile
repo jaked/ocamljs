@@ -4,7 +4,7 @@ ifeq ($(OCAML_3_10_2),1)
 OCAMLBUILD_FLAGS=-tag OCAML_3_10_2
 endif
 
-ML=translobj.ml translclass.ml typecore.ml
+ML=translcore.ml translobj.ml translclass.ml typecore.ml
 MLI=$(addsuffix .mli,$(basename $(ML)))
 
 all: myocamlbuild.ml ocaml $(ML) $(MLI) prereqs ocamljs # ocamljs.opt
