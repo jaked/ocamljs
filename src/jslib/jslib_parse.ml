@@ -96,6 +96,7 @@ a_NUM: [[
 | (n, s) = antiquot_flo -> mk_anti n s
 | s = INT -> s
 | s = FLOAT -> s
+| s = HEX -> string_of_int (int_of_string s) (* parse 0x etc.; XXX maybe should preserve hex? *)
 ]];
 
 comma_expr: [[

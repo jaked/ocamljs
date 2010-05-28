@@ -29,6 +29,7 @@ type token =
     | IDENT of string
     | INT of string
     | FLOAT of string
+    | HEX of string
     | STRING1 of string
     | STRING2 of string
     | REGEXP of string
@@ -49,6 +50,7 @@ module Token = struct
       | IDENT s      -> sf "IDENT %S" s
       | INT s        -> sf "INT %s" s
       | FLOAT s      -> sf "FLOAT %s" s
+      | HEX s        -> sf "HEX %s" s
       | STRING1 s    -> sf "STRING \"%s\"" s
       | STRING2 s    -> sf "STRING \"%s\"" s
       | REGEXP s     -> sf "REGEXP \"%s\"" s
@@ -64,7 +66,7 @@ module Token = struct
 
   let extract_string =
     function
-      | KEYWORD s | IDENT s | INT s | FLOAT s | STRING1 s | STRING2 s | REGEXP s -> s
+      | KEYWORD s | IDENT s | INT s | FLOAT s | HEX s | STRING1 s | STRING2 s | REGEXP s -> s
       | tok ->
           invalid_arg ("Cannot extract a string from this token: "^
                           to_string tok)
@@ -248,6 +250,10 @@ let rec token c = lexer
   | '-'? ['0'-'9']+ ->
       slash := `Div;
       INT (L.utf8_lexeme c.lexbuf)
+
+  | "0x" ['0'-'9''a'-'f''A'-'F']+ ->
+      slash := `Div;
+      HEX (L.utf8_lexeme c.lexbuf)
 
   | '/' ->
       if !slash = `Reg
