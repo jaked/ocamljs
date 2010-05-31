@@ -101,7 +101,7 @@ and stmt =
     | Jthrow of    loc * exp
     | Jexps of     loc * exp
     | Jtrycatch of loc * stmt * (string * stmt) option * stmt
-    | Jfor of      loc * exp option * exp option * exp option * stmt
+    | Jfor of      loc * (string * exp option) list * exp option * exp option * exp option * stmt
     | Jdowhile of  loc * stmt * exp
     | Jwhile of    loc * exp * stmt
     | Jblock of    loc * stmt

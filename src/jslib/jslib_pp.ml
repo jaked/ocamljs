@@ -414,24 +414,24 @@ and aexps ppf e =
     | _ ->
         (expp pAssignment) ppf e
 
+and variableDeclarationList ppf = function
+  | [ (i, None) ] -> fprintf ppf "@[<hv 2>var %s@]" i
+  | [ (i, Some e) ] -> fprintf ppf "@[<hv 2>var %s =@ %a@]" i (expp pAssignment) e
+  | vars ->
+      let fvars ppf vars =
+        let comma = ref false in
+        List.iter
+          (fun (i, e) ->
+             if !comma then fprintf ppf ",@ " else comma := true;
+             match e with
+               | Some e -> fprintf ppf "%s =@;<1 2>%a" i (expp pAssignment) e
+               | None -> fprintf ppf "%s" i)
+          vars in
+      fprintf ppf "@[<hv 2>var@ %a@]" fvars vars
+
 and stmt ppf = function
   | Jvars (_, vars) ->
-      begin
-        match vars with
-          | [ (i, None) ] -> fprintf ppf "@[<hv 2>var %s;@]" i
-          | [ (i, Some e) ] -> fprintf ppf "@[<hv 2>var %s =@ %a;@]" i (expp pAssignment) e
-          | _ ->
-              let fvars ppf vars =
-                let comma = ref false in
-                List.iter
-                  (fun (i, e) ->
-                    if !comma then fprintf ppf ",@ " else comma := true;
-                    match e with
-                      | Some e -> fprintf ppf "%s =@;<1 2>%a" i (expp pAssignment) e
-                      | None -> fprintf ppf "%s" i)
-                  vars in
-              fprintf ppf "@[<hv 2>var@ %a;@]" fvars vars
-      end
+      fprintf ppf "%a;" variableDeclarationList vars
 
   | Jfuns (_, i, is, ss) ->
       fprintf ppf "@[<hv>function %s @[<hv 1>(%a)@]%a@]" i ids is block ss
@@ -480,8 +480,11 @@ and stmt ppf = function
   | Jtrycatch (_, ss, Some (ci, css), fss) ->
       fprintf ppf "@[<hv>try%a@ catch (%s)%a finally%a@]" block ss ci block css block fss
 
-  | Jfor (_, e1, e2, e3, s) ->
+  | Jfor (_, [], e1, e2, e3, s) ->
       fprintf ppf "@[<hv>for @[<hv 1>(%a;@ %a;@ %a)@]%a@]" (opt (expp p)) e1 (opt (expp p)) e2 (opt (expp p)) e3 maybe_block s
+  | Jfor (_, vars, None, e2, e3, s) ->
+      fprintf ppf "@[<hv>for @[<hv 1>(%a;@ %a;@ %a)@]%a@]" variableDeclarationList vars (opt (expp p)) e2 (opt (expp p)) e3 maybe_block s
+  | Jfor _ -> assert false
 
   | Jdowhile (_, s, e) ->
       fprintf ppf "@[<hv>do%a@ while (%a);@]" maybe_block s (expp p) e

@@ -451,19 +451,17 @@ and comp_expr_st tail expr k =
           match d with
             | Upto -> << $jv$ <= $ce2$ >>, << $jv$++ >>
             | Downto -> << $jv$ >= $ce2$ >>, << $jv$-- >> in
-        <:stmt<
-          var $id:i$;
-          $ (* wrap loop body in a function / call so closures over loop var work *)
-            Jfor (_loc,
-                 Some << $id:i$ = $ce1$ >>,
-                 Some te,
-                 Some ie,
-                 Jblock(_loc,
-                       Jexps (_loc,
-                             Jcall(_loc,
+        (* wrap loop body in a function / call so closures over loop var work *)
+        Jfor (_loc,
+              [ i, Some ce1 ],
+              None,
+              Some te,
+              Some ie,
+              Jblock(_loc,
+                     Jexps (_loc,
+                            Jcall(_loc,
                                   Jfun(_loc, None, [i], ce3),
                                   jv))))
-          $ >>
 
     | Lwhile (e1, e2) ->
         Jwhile (_loc, comp_expr false e1, comp_expr_st false e2 keffect)
@@ -695,10 +693,12 @@ and inline_exp = function
   | Lprim (Pccall { prim_name = "$inline_antiexp" }, [e]) -> comp_expr false e
   | _ -> raise (Failure "bad inline exp")
 
+and inline_variableDeclarationList seol = inline_list (inline_pair inline_string (inline_option inline_exp)) seol
+
 and inline_stmt = function
   | Lconst (Const_block _) as cb -> inline_stmt (makeblock_of_const cb)
   | <:lam_astmt< Jvars ($_$, $seol$) >> ->
-      Jvars (_loc, inline_list (inline_pair inline_string (inline_option inline_exp)) seol)
+      Jvars (_loc, inline_variableDeclarationList seol)
   | <:lam_astmt< Jfuns ($_$, $s$, $sl$, $stl$) >> ->
       Jfuns (_loc, inline_string s, inline_list inline_string sl, inline_stmt stl)
   | <:lam_astmt< Jreturn ($_$, $eo$) >> -> Jreturn (_loc, inline_option inline_exp eo)
@@ -717,8 +717,9 @@ and inline_stmt = function
                 inline_stmt sl1,
                 inline_option (inline_pair inline_string inline_stmt) sslpo,
                 inline_stmt sl2)
-  | <:lam_astmt< Jfor ($_$, $eo1$, $eo2$, $eo3$, $s$) >> ->
+  | <:lam_astmt< Jfor ($_$, $vars$, $eo1$, $eo2$, $eo3$, $s$) >> ->
       Jfor (_loc,
+           inline_variableDeclarationList vars,
            inline_option inline_exp eo1,
            inline_option inline_exp eo2,
            inline_option inline_exp eo3,

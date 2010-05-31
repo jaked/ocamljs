@@ -224,23 +224,27 @@ expression: [
   ]
 ];
 
+variableDeclarationList: [[
+  LIST1
+    [ i = a_IDENT; e = OPT [ "="; e = expression LEVEL "AssignmentExpression" -> e ] -> (i, e) ]
+    SEP ","
+]];
+
 (* A.4 Statements *)
 statement: [[
   (n, s) = antiquot_stmt -> Jstmt_Ant (_loc, mk_anti ~c:"stmt" n s)
 | ss = block -> Jblock (_loc, ss)
-| "var"; vars =
-    LIST1 [ i = a_IDENT;
-            e = OPT [ "="; e = expression LEVEL "AssignmentExpression" -> e ] -> (i, e) ]
-      SEP ",";
-  ";" -> Jvars (_loc, vars)
+| "var"; vars = variableDeclarationList; ";" -> Jvars (_loc, vars)
 | ";" -> Jstmt_nil (_loc)
 | test_lookahead_not_brace_function; e = expression; ";" -> Jexps (_loc, e)
 | "if"; "("; e = expression; ")"; s1 = statement; "else"; s2 = statement -> Jites(_loc, e, s1, Some s2)
 | "if"; "("; e = expression; ")"; s1 = statement -> Jites(_loc, e, s1, None)
 | "do"; s = statement; "while"; "("; e = expression; ")"; ";" -> Jdowhile (_loc, s, e)
 | "while"; "("; e = expression; ")"; s = statement -> Jwhile (_loc, e, s)
+| "for"; "("; "var"; vars = variableDeclarationList; ";"; e2 = OPT expression; ";"; e3 = OPT expression; ")"; s = statement ->
+    Jfor (_loc, vars, None, e2, e3, s)
 | "for"; "("; e1 = OPT expression; ";"; e2 = OPT expression; ";"; e3 = OPT expression; ")"; s = statement ->
-    Jfor (_loc, e1, e2, e3, s)
+    Jfor (_loc, [], e1, e2, e3, s)
 | "continue"; i = OPT a_IDENT; ";" -> Jcontinue (_loc, i)
 | "break"; i = OPT a_IDENT; ";" -> Jbreak (_loc, i)
 | "return"; e = OPT expression; ";" -> Jreturn (_loc, e)
