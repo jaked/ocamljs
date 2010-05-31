@@ -53,24 +53,9 @@ let antiquot_flo = antiquot [""; "flo"; "`flo"]
 let antiquot_list = antiquot ["list"]
 let antiquot_stmt = antiquot ["stmt"; ""; "anti"]
 
-let a_IDENT = Gram.Entry.mk "a_IDENT"
-let a_STRING = Gram.Entry.mk "a_STRING"
-let a_NUM = Gram.Entry.mk "a_NUM"
-
-(* A.3 Expressions *)
 let expression = Gram.Entry.mk "expression"
-let comma_expr = Gram.Entry.mk "comma_expr"
-
-(* A.4 Statements *)
-let statement = Gram.Entry.mk "statement"
-let block = Gram.Entry.mk "block"
 let statementList = Gram.Entry.mk "statementList"
-let caseClause = Gram.Entry.mk "caseClause"
-
-(* A.5 Functions and Programs *)
 let program = Gram.Entry.mk "program"
-let sourceElement = Gram.Entry.mk "sourceElement"
-let sourceElements = Gram.Entry.mk "sourceElements"
 
 let maybe_stmt_cons _loc s1 s2 =
   match s2 with
@@ -80,6 +65,7 @@ let maybe_stmt_cons _loc s1 s2 =
 ;;
 
 EXTEND Gram
+  GLOBAL: expression statementList program;
 
 a_IDENT: [[
   (n, s) = antiquot_id -> mk_anti n s (* not ' ? *)
