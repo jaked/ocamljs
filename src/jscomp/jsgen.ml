@@ -677,6 +677,7 @@ and inline_exp = function
   | <:lam_exp< $flo:s$ >> -> <:exp< $flo:inline_string s$ >> (* XXX :num ? *)
   | <:lam_exp< null >> -> <:exp< null >>
   | <:lam_aexp< Jbool ($_$, $b$) >> -> Jbool (_loc, inline_bool b) (* XXX :bool ? *)
+  | <:lam_aexp< Jregexp ($_$, $re$, $flags$) >> -> Jregexp (_loc, inline_string re, inline_string flags)
   | <:lam_aexp< Jfun ($_$, $so$, $sl$, $stl$) >> ->
       Jfun (_loc,
            inline_option inline_string so,
