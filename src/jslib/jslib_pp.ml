@@ -50,23 +50,23 @@ let pPrimary = 36
 
 module JSString =
 struct
-  let sprint_uchar n =
-    let n2 = n land 0xffff in
-    let n1 = n lsr 16 in
-    if n1 = 0
-    then Printf.sprintf "\\u%04X" n2
-    else Printf.sprintf "\\U%04X%04X" n1 n2 (* XXX is this JS spec? *)
+  external is_printable: char -> bool = "caml_is_printable"
 
   let escaped s =
     let buf = Buffer.create 0 in
-    let proc n =
-      if n > 0x7f || n < 0
-      then Buffer.add_string buf (sprint_uchar n)
-      else if n = 39
-      then Buffer.add_string buf "\\'"
-      else Buffer.add_string buf (String.escaped (String.make 1 (Char.chr n))) in
-
-    Array.iter proc (Utf8.to_int_array s 0 (String.length s));
+    let escaped = function
+      | '\'' -> Buffer.add_string buf "\\'"
+      | '"' -> Buffer.add_string buf "\\\""
+      | '\\' -> Buffer.add_string buf "\\\\"
+      | '\n' -> Buffer.add_string buf "\\n"
+      | '\t' -> Buffer.add_string buf "\\t"
+      | '\r' -> Buffer.add_string buf "\\r"
+      | '\b' -> Buffer.add_string buf "\\b"
+      | c ->
+          if is_printable c
+          then Buffer.add_char buf c
+          else Printf.bprintf buf "\\x%02X" (Char.code c) in
+    String.iter escaped s;
     Buffer.contents buf
 end
 
