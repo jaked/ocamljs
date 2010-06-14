@@ -171,6 +171,7 @@ let regexp identchar =
   ['A'-'Z' 'a'-'z' '_' '\192'-'\214' '\216'-'\246' '\248'-'\255' '\'' '0'-'9' ]
 let regexp ident = (lowercase|uppercase) identchar*
 let regexp locname = ident
+let regexp hex_digit = ['0'-'9''a'-'f''A'-'F']
 
 let regexp newline = ('\010' | '\013' | "\013\010")
 let regexp blank = [' ' '\009' '\012']
@@ -249,7 +250,7 @@ let rec token c = lexer
       slash := `Div;
       INT (L.utf8_lexeme c.lexbuf)
 
-  | "0x" ['0'-'9''a'-'f''A'-'F']+ ->
+  | "0x" hex_digit+ ->
       slash := `Div;
       HEX (L.utf8_lexeme c.lexbuf)
 
@@ -341,7 +342,10 @@ and string c double = lexer
 | '\\' ['0'-'9']+ ';' ->
     store_code c (parse_char c 10 1);
     string c double c.lexbuf
-| '\\' 'x' ['0'-'9' 'a'-'f' 'A'-'F']+ ';' ->
+| '\\' 'x' hex_digit+ ';' ->
+    store_code c (parse_char c 16 2);
+    string c double c.lexbuf
+| '\\' 'u' hex_digit hex_digit hex_digit hex_digit ->
     store_code c (parse_char c 16 2);
     string c double c.lexbuf
 | '\\' ->
