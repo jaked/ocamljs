@@ -242,11 +242,11 @@ let rec token c = lexer
       slash := `Div;
       IDENT (id)
 
-  | '-'? ['0'-'9']+ '.' ['0'-'9']* ->
+  | (* '-'? *) ['0'-'9']+ '.' ['0'-'9']* ->
       slash := `Div;
       FLOAT (L.utf8_lexeme c.lexbuf)
 
-  | '-'? ['0'-'9']+ ->
+  | (* '-'? *) ['0'-'9']+ ->
       slash := `Div;
       INT (L.utf8_lexeme c.lexbuf)
 
