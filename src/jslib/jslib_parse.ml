@@ -74,7 +74,7 @@ a_IDENT: [[
 
 a_STRING: [[
   (n, s) = antiquot_str -> mk_anti n s
-| s = STRING1 -> s
+| s = STRING -> s (* XXX ignores double-quote flag *)
 ]];
 
 a_NUM: [[
@@ -210,8 +210,7 @@ expression: [
 | "PrimaryExpression" NONA [
     `ANTIQUOT ("exp"|""|"anti" as n, s) -> Jexp_Ant (_loc, mk_anti ~c:"exp" n s)
   | i = a_NUM -> Jnum (_loc, i)
-  | s = a_STRING -> Jstring (_loc, s, false)
-  | s = STRING2 -> Jstring (_loc, s, true)
+  | s = a_STRING -> Jstring (_loc, s, true)
   | v = a_IDENT -> Jvar (_loc, v)
   | r = REGEXP -> Jregexp (_loc, r, "")
   | "this" -> Jthis (_loc)

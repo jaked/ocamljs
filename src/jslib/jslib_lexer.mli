@@ -28,8 +28,7 @@ type token =
   | INT of string
   | FLOAT of string
   | HEX of string
-  | STRING1 of string
-  | STRING2 of string
+  | STRING of string * bool
   | REGEXP of string
   | ANTIQUOT of string * string
   | EOI

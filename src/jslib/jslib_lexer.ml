@@ -30,8 +30,7 @@ type token =
     | INT of string
     | FLOAT of string
     | HEX of string
-    | STRING1 of string
-    | STRING2 of string
+    | STRING of string * bool
     | REGEXP of string
     | ANTIQUOT of string * string
     | EOI
@@ -51,8 +50,7 @@ module Token = struct
       | INT s        -> sf "INT %s" s
       | FLOAT s      -> sf "FLOAT %s" s
       | HEX s        -> sf "HEX %s" s
-      | STRING1 s    -> sf "STRING \"%s\"" s
-      | STRING2 s    -> sf "STRING \"%s\"" s
+      | STRING (s,_) -> sf "STRING \"%s\"" s
       | REGEXP s     -> sf "REGEXP \"%s\"" s
       | ANTIQUOT (n, s) -> sf "ANTIQUOT %s: %S" n s
       | EOI          -> sf "EOI"
@@ -66,7 +64,7 @@ module Token = struct
 
   let extract_string =
     function
-      | KEYWORD s | IDENT s | INT s | FLOAT s | HEX s | STRING1 s | STRING2 s | REGEXP s -> s
+      | KEYWORD s | IDENT s | INT s | FLOAT s | HEX s | STRING (s,_) | REGEXP s -> s
       | tok ->
           invalid_arg ("Cannot extract a string from this token: "^
                           to_string tok)
@@ -299,7 +297,7 @@ let rec token c = lexer
       string c double_quote c.lexbuf;
       let s = get_stored_string c in
       slash := `Div;
-      (if double_quote then STRING2 s else STRING1 s)
+      (STRING (s, double_quote))
   | "/*" ->
       tcomment c c.lexbuf;
       token c c.lexbuf
