@@ -259,8 +259,11 @@ var caml_int_of_string = function (s) {
   var i = parseInt(s, 10);
   return isNaN(i) ? caml_failwith("int_of_string") : i;
 }
+var caml_int32_of_string = caml_int_of_string;
+var caml_int64_of_string = caml_int_of_string;
+var caml_nativeint_of_string = caml_int_of_string;
 var caml_invalid_argument = function (s) { throw $(Invalid_argument$18g, s); }
-var caml_is_printable = function (c) { return c > 21 && c < 127; } // XXX get this right
+var caml_is_printable = function (c) { return c > 31 && c < 127; } // XXX get this right
 var caml_lessthan = function (v1, v2) { return compare_val(v1, v2, 0) -1 < -1; }
 var caml_lessequal = function (v1, v2) { return compare_val(v1, v2, 0) -1 <= -1; }
 var caml_make_vect = function (l, i) {
@@ -334,3 +337,179 @@ var caml_sys_get_argv = function () { return $("", $()); } // XXX put something 
 var caml_sys_get_config = function () { return $("js", 32); } // XXX browser name?
 var caml_sys_open = function () { throw "caml_sys_open"; }
 var caml_sys_random_seed = function() { throw "caml_sys_random_seed"; }
+
+function Short(tbl, n) {
+  var s = tbl.charCodeAt(n * 2) + (tbl.charCodeAt(n * 2 + 1) << 8);
+  return s & 32768 ? s + -65536 : s;
+}
+
+var caml_lex_engine = function (tbl, start_state, lexbuf)
+{
+  var state, base, backtrk, c;
+
+  state = start_state;
+  if (state >= 0) {
+    /* First entry */
+    lexbuf[6] = lexbuf[4] = lexbuf[5];
+    lexbuf[7] = -1;
+  } else {
+    /* Reentry after refill */
+    state = -state - 1;
+  }
+  while(1) {
+    /* Lookup base address or action number for current state */
+    base = Short(tbl[0], state);
+    if (base < 0) return -base-1;
+    /* See if it's a backtrack point */
+    backtrk = Short(tbl[1], state);
+    if (backtrk >= 0) {
+      lexbuf[6] = lexbuf[5];
+      lexbuf[7] = backtrk;
+    }
+    /* See if we need a refill */
+    if (lexbuf[5] >= lexbuf[2]){
+      if (lexbuf[8] === false){
+        return -state - 1;
+      }else{
+        c = 256;
+      }
+    }else{
+      /* Read next input char */
+      c = lexbuf[1].charCodeAt(lexbuf[5]);
+      lexbuf[5] += 1;
+    }
+    /* Determine next state */
+    if (Short(tbl[4], base + c) == state)
+      state = Short(tbl[3], base + c);
+    else
+      state = Short(tbl[2], state);
+    /* If no transition on this char, return to last backtrack point */
+    if (state < 0) {
+      lexbuf[5] = lexbuf[6];
+      if (lexbuf[7] == -1) {
+        caml_failwith("lexing: empty token");
+      } else {
+        return lexbuf[7];
+      }
+    }else{
+      /* Erase the EOF condition only if the EOF pseudo-character was
+         consumed by the automaton (i.e. there was no backtrack above)
+       */
+      if (c == 256) lexbuf[8] = false;
+    }
+  }
+}
+
+/***********************************************/
+/* New lexer engine, with memory of positions  */
+/***********************************************/
+
+function run_mem(p, pc, mem, curr_pos) {
+  for (;;) {
+    var dst, src ;
+
+    dst = p.charCodeAt(pc++) ;
+    if (dst == 0xff)
+      return ;
+    src = p.charCodeAt(pc++) ;
+    if (src == 0xff) {
+      /*      fprintf(stderr,"[%hhu] <- %d\n",dst,Int_val(curr_pos)) ;*/
+      mem[dst] = curr_pos ;
+    } else {
+      /*      fprintf(stderr,"[%hhu] <- [%hhu]\n",dst,src) ; */
+      mem[dst] = mem[src] ;
+    }
+  }
+}
+
+function run_tag(p, pc, mem) {
+  for (;;) {
+    var dst, src ;
+
+    dst = p.charCodeAt(pc++) ;
+    if (dst == 0xff)
+      return ;
+    src = p.charCodeAt(pc++) ;
+    if (src == 0xff) {
+      /*      fprintf(stderr,"[%hhu] <- -1\n",dst) ; */
+      mem[dst] = -1 ;
+    } else {
+      /*      fprintf(stderr,"[%hhu] <- [%hhu]\n",dst,src) ; */
+      mem[dst] = mem[src] ;
+    }
+  }
+}
+
+var caml_new_lex_engine = function (tbl, start_state, lexbuf)
+{
+  var state, base, backtrk, c, pstate ;
+  state = start_state;
+  if (state >= 0) {
+    /* First entry */
+    lexbuf[6] = lexbuf[4] = lexbuf[5];
+    lexbuf[7] = -1;
+  } else {
+    /* Reentry after refill */
+    state = -state - 1;
+  }
+  while(1) {
+    /* Lookup base address or action number for current state */
+    base = Short(tbl[0], state);
+    if (base < 0) {
+      var pc_off = Short(tbl[5], state) ;
+      run_tag(tbl[10], pc_off, lexbuf[9]);
+      /*      fprintf(stderr,"Perform: %d\n",-base-1) ; */
+      return -base-1;
+    }
+    /* See if it's a backtrack point */
+    backtrk = Short(tbl[1], state);
+    if (backtrk >= 0) {
+      var pc_off =  Short(tbl[6], state);
+      run_tag(tbl[10], pc_off, lexbuf[9]);
+      lexbuf[6] = lexbuf[5];
+      lexbuf[7] = backtrk;
+
+    }
+    /* See if we need a refill */
+    if (lexbuf[5] >= lexbuf[2]){
+      if (lexbuf[8] === false){
+        return -state - 1;
+      }else{
+        c = 256;
+      }
+    }else{
+      /* Read next input char */
+      c = lexbuf[1].charCodeAt(lexbuf[5]);
+      lexbuf[5] += 1;
+    }
+    /* Determine next state */
+    pstate=state ;
+    if (Short(tbl[4], base + c) == state)
+      state = Short(tbl[3], base + c);
+    else
+      state = Short(tbl[2], state);
+    /* If no transition on this char, return to last backtrack point */
+    if (state < 0) {
+      lexbuf[5] = lexbuf[6];
+      if (lexbuf[7] == -1) {
+        caml_failwith("lexing: empty token");
+      } else {
+        return lexbuf[7];
+      }
+    }else{
+      /* If some transition, get and perform memory moves */
+      var base_code = Short(tbl[5], pstate) ;
+      var pc_off ;
+      if (Short(tbl[9], base_code + c) == pstate)
+        pc_off = Short(tbl[8], base_code + c) ;
+      else
+        pc_off = Short(tbl[7], pstate) ;
+      if (pc_off > 0) 
+        run_mem(tbl[10], pc_off, lexbuf[9], lexbuf[5]) ;
+      /* Erase the EOF condition only if the EOF pseudo-character was
+         consumed by the automaton (i.e. there was no backtrack above)
+       */
+      if (c == 256) lexbuf[8] = false;
+    }
+  }
+}
