@@ -50,27 +50,23 @@ let pPrimary = 36
 
 module JSString =
 struct
-  open Jslib_camomile
-
-  let sprint_uchar u =
-    let n = UChar.uint_code u in
+  let sprint_uchar n =
     let n2 = n land 0xffff in
     let n1 = n lsr 16 in
     if n1 = 0
     then Printf.sprintf "\\u%04X" n2
-    else Printf.sprintf "\\U%04X%04X" n1 n2
+    else Printf.sprintf "\\U%04X%04X" n1 n2 (* XXX is this JS spec? *)
 
   let escaped s =
     let buf = Buffer.create 0 in
-    let proc u =
-      let n = UChar.uint_code u in
+    let proc n =
       if n > 0x7f || n < 0
-      then Buffer.add_string buf (sprint_uchar u)
+      then Buffer.add_string buf (sprint_uchar n)
       else if n = 39
       then Buffer.add_string buf "\\'"
       else Buffer.add_string buf (String.escaped (String.make 1 (Char.chr n))) in
 
-    UTF8.iter proc s;
+    Array.iter proc (Utf8.to_int_array s 0 (String.length s));
     Buffer.contents buf
 end
 
