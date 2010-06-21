@@ -281,8 +281,8 @@ let inline_string = function
   | _ -> raise (Failure "bad inline string")
 
 let inline_bool = function
-  | Lconst (Const_pointer 0) -> false
-  | Lconst (Const_pointer 1) -> true
+  | Lvar id when Ident.name id = "false" -> false
+  | Lvar id when Ident.name id = "true" -> true
   | _ -> raise (Failure "bad inline bool")
 
 let makeblock_of_const = function
