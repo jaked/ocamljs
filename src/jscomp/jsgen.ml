@@ -280,10 +280,16 @@ let inline_string = function
   | Lconst (Const_base (Const_string s)) -> s
   | _ -> raise (Failure "bad inline string")
 
-let inline_bool = function
-  | Lvar id when Ident.name id = "false" -> false
-  | Lvar id when Ident.name id = "true" -> true
-  | _ -> raise (Failure "bad inline bool")
+let rec inline_bool = function
+    (* bool literals from expanded inline code get an extra $inline_exp in translcore.ml *)
+  | Lprim (Pccall { prim_name = "$inline_exp" }, [ <:lam_aexp< Jbool ($_$, $b$) >> ]) -> inline_bool b
+
+  | Lconst (Const_pointer 0) -> false
+  | Lconst (Const_pointer 1) -> true
+
+  | l ->
+      Format.fprintf Format.str_formatter "bad inline bool: %a@." Printlambda.lambda l;
+      raise (Failure (Format.flush_str_formatter ()))
 
 let makeblock_of_const = function
   | Lconst (Const_block (tag, cs)) ->
@@ -318,12 +324,7 @@ let rec comp_expr tail expr =
             Lprim (Pccall { prim_name = "$inline_stmt" }, _))->
         exp_of_stmts (comp_expr_st tail expr kreturn)
 
-    | Lvar id ->
-        begin match Ident.name id with
-          | "true" -> << true >>
-          | "false" -> << false >>
-          | _ -> << $id:jsident_of_ident id$ >>
-        end
+    | Lvar id -> << $id:jsident_of_ident id$ >>
 
     | Lfunction (_, args, e) ->
         let e = Jfun (_loc, None, List.map jsident_of_ident args, comp_expr_st true e kreturn) in

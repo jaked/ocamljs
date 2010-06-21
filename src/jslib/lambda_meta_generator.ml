@@ -313,15 +313,12 @@ let filter st =
           let meta_int _loc s = $m.int$ _loc s
           let meta_float _loc s = $m.flo$ _loc s
           let meta_char _loc s = $m.chr$ _loc s
-(*
           let meta_bool _loc b =
-            Lambda.Lconst
-              (Lambda.Const_pointer
-                  ($m.int$ _loc (match b with false -> "0" | true -> "1")))
-*)
-          let meta_bool _loc = function
-            | false -> $m_uid m "False"$
-            | true  -> $m_uid m "True"$
+            $m_app m
+              (m_id m (meta_ident m <:ident< Lambda.Lconst >>))
+              (m_app m
+                 (m_id m (meta_ident m <:ident< Lambda.Const_pointer >>))
+                 <:expr< $m.int$ _loc (if b then "1" else "0") >>)$
           let rec meta_list mf_a _loc = function
             | [] -> $m_uid m "[]"$
             | x :: xs -> $m_app m (m_app m (m_uid m "::") <:expr< mf_a _loc x >>) <:expr< meta_list mf_a _loc xs >>$
