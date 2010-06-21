@@ -315,8 +315,8 @@ var caml_obj_dup = function (a) {
 }
 var caml_obj_is_block = function (o) { return !(typeof o == 'number') }
 var caml_obj_tag = function(o) { return o.t; }
-var caml_obj_set_tag = function(o, t) { o.$t = t; }
-var caml_obj_block = function(t, s) { if (s == 0) return t; else { var a = new Array(s); a.$t = t; return a; } }
+var caml_obj_set_tag = function(o, t) { o.t = t; }
+var caml_obj_block = function(t, s) { if (s == 0) return t; else { var a = new Array(s); a.t = t; return a; } }
 var caml_obj_truncate = function(o, s) { o.length = s; }
 var caml_output_value = function () { throw "caml_output_value"; }
 var caml_output_value_to_string = function () { throw "caml_output_value_to_string"; }
@@ -337,6 +337,8 @@ var caml_sys_get_argv = function () { return $("", $()); } // XXX put something 
 var caml_sys_get_config = function () { return $("js", 32); } // XXX browser name?
 var caml_sys_open = function () { throw "caml_sys_open"; }
 var caml_sys_random_seed = function() { throw "caml_sys_random_seed"; }
+
+// lexing.c
 
 function Short(tbl, n) {
   var s = tbl.charCodeAt(n * 2) + (tbl.charCodeAt(n * 2 + 1) << 8);
@@ -512,4 +514,186 @@ var caml_new_lex_engine = function (tbl, start_state, lexbuf)
       if (c == 256) lexbuf[8] = false;
     }
   }
+}
+
+// parsing.c
+
+var caml_parser_trace = false
+
+/* Auxiliary for printing token just read */
+
+function token_name(names, number)
+{
+  var n = 0;
+  for (/*nothing*/; number > 0; number--) {
+    var i = names.indexOf("\x00", n);
+    if (i == -1) return "<unknown token>";
+    n = i + 1;
+  }
+  return names.substr(n, names.indexOf("\x00", n) - n);
+}
+
+function print_token(tables, state, tok)
+{
+  if (typeof tok == 'number') {
+    print("State " + state + ": read token " + token_name(tables[14], tok));
+  } else {
+    print("State " + state + ": read token " + token_name(tables[15], tok.t) + "(" + tok[0] + ")");
+  }      
+}      
+
+/* The pushdown automata */
+
+var caml_parse_engine = function (tables, env, cmd, arg)
+{
+  var state;
+  var sp, asp;
+  var errflag;
+  var n, n1, n2, m, state1;
+
+  loop: while (true) switch (cmd) {
+
+  case 0:
+    state = 0;
+    sp = env[13];
+    errflag = 0;
+
+  case -1:
+    n = Short(tables[5], state);
+    if (n != 0) { cmd = -7; continue loop; }
+    if (env[6] >= 0) { cmd = -2; continue loop; }
+    env[13] = sp; env[14] = state; env[15] = errflag;
+    return 0;
+                                /* The ML code calls the lexer and updates */
+                                /* symb_start and symb_end */
+  case 1:
+    sp = env[13]; state = env[14]; errflag = env[15];
+    if (!(typeof arg == 'number')) {
+      env[6] = tables[2][arg.t];
+      env[7] = arg[0];
+    } else {
+      env[6] = tables[1][arg];
+      env[7] = 0;
+    }
+    if (caml_parser_trace) print_token(tables, state, arg);
+    
+  case -2:
+    n1 = Short(tables[7], state);
+    n2 = n1 + env[6];
+    if (n1 != 0 && n2 >= 0 && n2 <= tables[10] &&
+        Short(tables[12], n2) == env[6]) { cmd = -4; continue loop; }
+    n1 = Short(tables[8], state);
+    n2 = n1 + env[6];
+    if (n1 != 0 && n2 >= 0 && n2 <= tables[10] &&
+        Short(tables[12], n2) == env[6]) {
+      n = Short(tables[11], n2);
+      cmd = -7; continue loop;
+    }
+    if (errflag > 0) { cmd = -3; continue; }
+    env[13] = sp; env[14] = state; env[15] = errflag;
+    return 5;
+                                /* The ML code calls the error function */
+  case 5:
+    sp = env[13]; state = env[14]; errflag = env[15];
+  case -3:
+    if (errflag < 3) {
+      errflag = 3;
+      while (1) {
+        state1 = env[0][sp];
+        n1 = Short(tables[7], state1);
+        n2 = n1 + 256;
+        if (n1 != 0 && n2 >= 0 && n2 <= tables[10] &&
+            Short(tables[12], n2) == 256) {
+          if (caml_parser_trace) 
+            print("Recovering in state " + state1);
+          cmd = -5; continue loop;
+        } else {
+          if (caml_parser_trace){
+            print("Discarding state " + state1);
+          }
+          if (sp <= env[5]) {
+            if (caml_parser_trace){
+              print("No more states to discard");
+            }
+            return 1; /* The ML code raises Parse_error */
+          }
+          sp--;
+        }
+      }
+    } else {
+      if (env[6] == 0)
+        return 1; /* The ML code raises Parse_error */
+      if (caml_parser_trace) print("Discarding last token read");
+      env[6] = -1;
+      cmd = -1; continue loop;
+    }
+    
+  case -4:
+    env[6] = -1;
+    if (errflag > 0) errflag--;
+  case -5:
+    if (caml_parser_trace)
+      print("State " + state + ": shift to state " + Short(tables[11], n2));
+    state = Short(tables[11], n2);
+    sp++;
+    if (sp < env[4]) { cmd = -6; continue loop; }
+    env[13] = sp; env[14] = state; env[15] = errflag;
+    return 2;
+                                 /* The ML code resizes the stacks */
+  case 2:
+    sp = env[13]; state = env[14]; errflag = env[15];
+  case -6:
+    env[0][sp] = state;
+    env[1][sp] = env[7];
+    env[2][sp] = env[8];
+    env[3][sp] = env[9];
+    cmd = -1; continue loop;
+
+  case -7:
+    if (caml_parser_trace)
+      print("State " + state + ": reduce by rule " + n);
+    m = Short(tables[4], n);
+    env[10] = sp;
+    env[12] = n;
+    env[11] = m;
+    sp = sp - m + 1;
+    m = Short(tables[3], n);
+    state1 = env[0][sp - 1];
+    n1 = Short(tables[9], m);
+    n2 = n1 + state1;
+    if (n1 != 0 && n2 >= 0 && n2 <= tables[10] &&
+        Short(tables[12], n2) == state1) {
+      state = Short(tables[11], n2);
+    } else {
+      state = Short(tables[6], m);
+    }
+    if (sp < env[4]) { cmd = -8; continue loop; }
+    env[13] = sp; env[14] = state; env[15] = errflag;
+    return 3;
+                                /* The ML code resizes the stacks */
+  case 3:
+    sp = env[13]; state = env[14]; errflag = env[15];
+  case -8:
+    env[13] = sp; env[14] = state; env[15] = errflag;
+    return 4;
+                                /* The ML code calls the semantic action */
+  case 4:
+    sp = env[13]; state = env[14]; errflag = env[15];
+    env[0][sp] = state;
+    env[1][sp] = arg;
+    asp = env[10];
+    env[3][sp] = env[3][asp];
+    if (sp > asp) {
+      /* This is an epsilon production. Take symb_start equal to symb_end. */
+      env[2][sp] = env[3][asp];
+    }
+    cmd = -1; continue loop;
+  }
+}
+
+var caml_set_parser_trace = function (flag)
+{
+  var oldflag = caml_parser_trace;
+  caml_parser_trace = flag;
+  return oldflag;
 }
