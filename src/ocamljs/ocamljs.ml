@@ -51,6 +51,14 @@ let nullable_of_option x =
 
 let is_null a = a = null ()
 
+(* for backward compatibility *)
+type 'a jsfun = 'a
+external jsfun : 'a -> 'a = "%identity"
+external jsfun2 : 'a -> 'a = "%identity"
+external jsfun3 : 'a -> 'a = "%identity"
+external jsfun4 : 'a -> 'a = "%identity"
+external jsfun5 : 'a -> 'a = "%identity"
+
 module Inline =
 struct
   module Jslib_ast =
