@@ -281,8 +281,13 @@ let inline_string = function
   | _ -> raise (Failure "bad inline string")
 
 let rec inline_bool = function
+(*
   | Lprim (Pccall { prim_name = "$false" }, _) -> false
   | Lprim (Pccall { prim_name = "$true" }, _) -> true
+*)
+
+  | Lconst (Const_pointer 0) -> false
+  | Lconst (Const_pointer 1) -> true
 
   | l ->
       Format.fprintf Format.str_formatter "bad inline bool: %a@?" Printlambda.lambda l;
