@@ -205,6 +205,9 @@ let comp_prim p es =
     | Pisout, [h; e] -> << $e$ < 0 || $e$ > $h$ >> (* XXX bind e to var? *)
     | Pabsfloat, [e] -> << Math.abs($exp:e$) >>
 
+      (* special case for bool matching; if e is number, equiv to e !== 0 *)
+    | Pintcomp Cneq, [ e; << 0 >> ] -> << $e$ >>
+
     | (Pintcomp c | Pbintcomp (_, c) | Pfloatcomp c), [e1; e2] ->
         comp_comparison c e1 e2
 
@@ -281,13 +284,8 @@ let inline_string = function
   | _ -> raise (Failure "bad inline string")
 
 let rec inline_bool = function
-(*
   | Lprim (Pccall { prim_name = "$false" }, _) -> false
   | Lprim (Pccall { prim_name = "$true" }, _) -> true
-*)
-
-  | Lconst (Const_pointer 0) -> false
-  | Lconst (Const_pointer 1) -> true
 
   | l ->
       Format.fprintf Format.str_formatter "bad inline bool: %a@?" Printlambda.lambda l;

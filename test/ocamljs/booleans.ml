@@ -6,7 +6,6 @@ type t = {
 }
 
 let tests = "Booleans" >::: [
-(*
   "literals" >:: begin fun () ->
     assert_bool "true" << true  === $true$ >>;
     assert_bool "false" << false === $false$ >>;
@@ -17,5 +16,4 @@ let tests = "Booleans" >::: [
     x.x <- true;
     assert_bool "" << true === $x.x$ >>;
   end;
-*)
 ]
