@@ -53,20 +53,9 @@ all:
 	$(OCAMLBUILD) all
 	$(OCAMLFIND) remove -destdir ../../stage $(NAME)
 	$(OCAMLFIND) install -destdir ../../stage $(NAME) _build/META \
-	  $(wildcard _build/src/*/*.mli) \
-	  $(wildcard _build/src/*/*.cmi) \
-	  $(wildcard _build/src/*/*.cmx) \
-	  $(wildcard _build/src/*/*.cma) \
-	  $(wildcard _build/src/*/*.cmxa) \
-	  $(wildcard _build/src/*/*.cmjsa) \
-	  $(wildcard _build/src/*/*.so) \
-	  $(wildcard _build/src/*/*.a) \
-	  $(wildcard _build/src/*/stubs/*.so) \
-	  $(wildcard _build/src/*/stubs/*.a) \
-	  $(wildcard _build/src/*/stubs/*.dll) \
-	  $(wildcard _build/src/top/private/toplevel.top) \
-	  _build/syntax/pa_lwt.cmo \
-	  _build/syntax/pa_log.cmo
+	  _build/src/core/*.mli \
+	  _build/src/core/*.cmi \
+	  _build/src/core/*.cmjsa
 
 byte:
 	$(OCAMLBUILD) byte
