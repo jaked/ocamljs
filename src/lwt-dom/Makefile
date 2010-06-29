@@ -3,7 +3,9 @@
 all: myocamlbuild.ml
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
-	ocamlbuild lwt-js.cmjsa
+	ocamlbuild lwt_dom.cmjs
+	ocamlfind remove -destdir ../../stage lwt-dom
+	ocamlfind install -destdir ../../stage lwt-dom META _build/*.cmi _build/*.cmjs
 
 doc:
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
@@ -11,10 +13,10 @@ doc:
 	ocamlbuild -no-links doc.docdir/index.html
 
 install:
-	ocamlfind install lwt-js META _build/*.cmi _build/*.cmjsa
+	ocamlfind install lwt-dom META _build/*.cmi _build/*.cmjs
 
 uninstall:
-	ocamlfind remove lwt-js
+	ocamlfind remove lwt-dom
 
 clean:
 	ocamlbuild -clean

@@ -18,16 +18,16 @@
  * MA 02111-1307, USA
  *)
 
-let sleep t =
-  let res = Lwt.wait () in
-  let timeout () = Lwt.wakeup res () in
-  ignore (Dom.window#setTimeout timeout t);
-  res
+let sleep ms =
+  let t, u = Lwt.wait () in
+  let timeout () = Lwt.wakeup u () in
+  ignore (Dom.window#setTimeout timeout ms);
+  t
 
 let yield () = sleep 0.
 
 let http_request ?(headers=[]) meth url =
-  let res = Lwt.wait () in
+  let t, u = Lwt.wait () in
   let meth, body =
     match meth with
       | `Get -> "GET", None
@@ -41,9 +41,9 @@ let http_request ?(headers=[]) meth url =
   let onreadystatechange () =
     if r#_get_readyState = 4
     then begin
-      if not !fired then Lwt.wakeup res r;
+      if not !fired then Lwt.wakeup u r;
       fired := true
     end in
   r#_set_onreadystatechange onreadystatechange;
   r#send (match body with Some body -> body | _ -> Ocamljs.null ());
-  res
+  t

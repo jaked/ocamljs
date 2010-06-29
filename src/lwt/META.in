@@ -5,6 +5,7 @@ version = "@VERSION@"
 exists_if = "lwt.cma,lwt.cmxa,lwt.cmxs"
 archive(byte) = "lwt.cma"
 archive(native) = "lwt.cmxa"
+archive(js) = "lwt.cmjsa"
 
 package "react" (
   exists_if = "lwt_react.cma,lwt_react.cmxa,lwt_react.cmxs"

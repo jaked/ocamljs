@@ -51,6 +51,22 @@ DESTDIR := $(shell $(OCAMLFIND) printconf destdir)
 
 all:
 	$(OCAMLBUILD) all
+	$(OCAMLFIND) remove -destdir ../../stage $(NAME)
+	$(OCAMLFIND) install -destdir ../../stage $(NAME) _build/META \
+	  $(wildcard _build/src/*/*.mli) \
+	  $(wildcard _build/src/*/*.cmi) \
+	  $(wildcard _build/src/*/*.cmx) \
+	  $(wildcard _build/src/*/*.cma) \
+	  $(wildcard _build/src/*/*.cmxa) \
+	  $(wildcard _build/src/*/*.cmjsa) \
+	  $(wildcard _build/src/*/*.so) \
+	  $(wildcard _build/src/*/*.a) \
+	  $(wildcard _build/src/*/stubs/*.so) \
+	  $(wildcard _build/src/*/stubs/*.a) \
+	  $(wildcard _build/src/*/stubs/*.dll) \
+	  $(wildcard _build/src/top/private/toplevel.top) \
+	  _build/syntax/pa_lwt.cmo \
+	  _build/syntax/pa_log.cmo
 
 byte:
 	$(OCAMLBUILD) byte
@@ -73,24 +89,33 @@ dist:
 	DARCS_REPO=$(PWD) darcs dist -d $(NAME)-$(VERSION)
 
 install:
-	mkdir -p "$(DESTDIR)"
-	$(OCAMLFIND) install $(NAME) -destdir "$(DESTDIR)" _build/META \
-	  $(wildcard _build/src/*/*.mli) \
-	  $(wildcard _build/src/*/*.cmi) \
-	  $(wildcard _build/src/*/*.cmx) \
-	  $(wildcard _build/src/*/*.cma) \
-	  $(wildcard _build/src/*/*.cmxa) \
-	  $(wildcard _build/src/*/*.so) \
-	  $(wildcard _build/src/*/*.a) \
-	  $(wildcard _build/src/*/stubs/*.so) \
-	  $(wildcard _build/src/*/stubs/*.a) \
-	  $(wildcard _build/src/*/stubs/*.dll) \
-	  $(wildcard _build/src/top/private/toplevel.top) \
-	  _build/syntax/pa_lwt.cmo \
-	  _build/syntax/pa_log.cmo
+	v=`ocamlfind -query -format %v lwt`; \
+	if [ "x$$v" = "x" ]; then \
+	  mkdir -p "$(DESTDIR)"; \
+	  $(OCAMLFIND) install $(NAME) -destdir "$(DESTDIR)" _build/META \
+	    $(wildcard _build/src/*/*.mli) \
+	    $(wildcard _build/src/*/*.cmi) \
+	    $(wildcard _build/src/*/*.cmx) \
+	    $(wildcard _build/src/*/*.cma) \
+	    $(wildcard _build/src/*/*.cmxa) \
+	    $(wildcard _build/src/*/*.cmjsa) \
+	    $(wildcard _build/src/*/*.so) \
+	    $(wildcard _build/src/*/*.a) \
+	    $(wildcard _build/src/*/stubs/*.so) \
+	    $(wildcard _build/src/*/stubs/*.a) \
+	    $(wildcard _build/src/*/stubs/*.dll) \
+	    $(wildcard _build/src/top/private/toplevel.top) \
+	    _build/syntax/pa_lwt.cmo \
+	    _build/syntax/pa_log.cmo; \
+	elif [ "x$$v" = "x2.1.1" ]; then \
+	  cp $(wildcard _build/src/*/*.cmjsa) $(DESTDIR)/lwt; \
+          cp _build/META $(DESTDIR)/lwt; \
+        else \
+	  echo "Lwt installed but not 2.1.1, not installing"; \
+	fi
 
 uninstall:
-	$(OCAMLFIND) remove $(NAME) -destdir "$(DESTDIR)"
+	echo "Not uninstalling Lwt" # $(OCAMLFIND) remove $(NAME) -destdir "$(DESTDIR)"
 
 reinstall: uninstall install
 
