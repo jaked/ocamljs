@@ -484,6 +484,7 @@ object
   method createElement : string -> #element
   method createTextNode : string -> text
   method getElementById : string -> #element
+  method getElementsByClassName : string -> #element array
   method _get_body : body
   method _get_cookie : string
   method _set_cookie : string -> unit
