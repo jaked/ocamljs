@@ -206,7 +206,7 @@ let comp_prim p es =
     | Pabsfloat, [e] -> << Math.abs($exp:e$) >>
 
       (* special case for bool matching; if e is number, equiv to e !== 0 *)
-    | Pintcomp Cneq, [ e; << 0 >> ] -> << $e$ >>
+    | Pintcomp Cneq, [ e; << 0 >> ] -> << !!$e$ >>
 
     | (Pintcomp c | Pbintcomp (_, c) | Pfloatcomp c), [e1; e2] ->
         comp_comparison c e1 e2
