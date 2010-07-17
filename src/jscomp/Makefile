@@ -9,23 +9,16 @@ MLI=$(addsuffix .mli,$(basename $(ML)))
 
 all: myocamlbuild.ml ocaml $(ML) $(MLI) prereqs ocamljs # ocamljs.opt
 
-%.ml : %.ml.patch
+%.ml : patches/$(OCAML_VERSION)/%.ml.patch
 	if [ -f ocaml/bytecomp/$@ ]; then cp ocaml/bytecomp/$@ .; \
 	elif [ -f ocaml/typing/$@ ]; then cp ocaml/typing/$@ .; \
 	fi
-	patch -p0 < $<
+	patch $@ $<
 
 %.mli :
 	if [ -f ocaml/bytecomp/$@ ]; then ln -s ocaml/bytecomp/$@ .; \
 	elif [ -f ocaml/typing/$@ ]; then ln -s ocaml/typing/$@ .; \
 	fi
-
-patches:
-	for ml in $(ML); do \
-	  if [ -f ocaml/bytecomp/$$ml ]; then diff -Naur ocaml/bytecomp/$$ml $$ml > $$ml.patch; \
-	  elif [ -f ocaml/typing/$$ml ]; then diff -Naur ocaml/typing/$$ml $$ml > $$ml.patch; \
-	  fi; \
-	done || exit 0
 
 doc:
 

@@ -1,5 +1,5 @@
---- ocaml/typing/typecore.ml	2009-11-09 06:42:39.000000000 -0500
-+++ typecore.ml	2010-03-23 14:34:13.000000000 -0400
+--- typecore.ml.orig	2010-07-17 07:56:48.000000000 -0400
++++ typecore.ml	2010-07-17 07:57:35.000000000 -0400
 @@ -1355,17 +1355,21 @@
                    let (obj_ty, res_ty) = filter_arrow env method_type "" in
                    unify env obj_ty desc.val_type;
