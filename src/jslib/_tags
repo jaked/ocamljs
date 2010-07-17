@@ -1,7 +1,7 @@
 <jslib_lexer.ml*>: syntax_camlp4o,pkg_camlp4,pkg_ulex
 <jslib_parse.ml*>: syntax_camlp4o,pkg_camlp4,pkg_camlp4.extend
 <jslib_pp.ml>: pkg_ulex
-<lambda_meta_generator.ml> : syntax_camlp4o,pkg_camlp4.macro,pkg_camlp4.quotations.o
+<lambda_meta_generator.ml> : syntax_camlp4o,pkg_camlp4.macro,pkg_camlp4.quotations.r
 <jslib_ast.ml*> : syntax_camlp4o,pkg_camlp4,pkg_camlp4.quotations,pkg_camlp4.foldgenerator,pkg_camlp4.metagenerator,lambda_meta_generator,pkg_camlp4.macro
 <syntax_quotations.ml> : syntax_camlp4o,pkg_camlp4,pkg_camlp4.quotations,pkg_camlp4.extend
 <syntax_inline.ml> : syntax_camlp4o,pkg_camlp4,pkg_camlp4.quotations,pkg_camlp4.extend
