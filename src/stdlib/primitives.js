@@ -314,7 +314,7 @@ var caml_obj_dup = function (a) {
   return d;
 }
 var caml_obj_is_block = function (o) { return !(typeof o == 'number') }
-var caml_obj_tag = function(o) { return o.t; }
+var caml_obj_tag = function(o) { return o.t || 0; }
 var caml_obj_set_tag = function(o, t) { o.t = t; }
 var caml_obj_block = function(t, s) { if (s == 0) return t; else { var a = new Array(s); a.t = t; return a; } }
 var caml_obj_truncate = function(o, s) { o.length = s; }
