@@ -50,134 +50,24 @@ let pPrimary = 36
 
 module JSString =
 struct
-
-  (* UChar and UTF8 taken from camomile 0.7.2 *)
-  module UChar : sig
-    type t
-    external uint_code : t -> int = "%identity"
-    type uchar = t
-    val of_int : int -> uchar
-  end =
-  struct
-    (* $Id: uChar.ml,v 1.4 2004/09/04 16:07:38 yori Exp $ *)
-    (* Copyright 2002, 2003 Yamagata Yoriyuki. distributed with LGPL *)
-    
-    type t = int
-
-    external uint_code : t -> int = "%identity"
-
-    let chr_of_uint n = 
-      if n lsr 31 = 0 then n else 
-      invalid_arg "UChar.char_of_uint"
-      
-    type uchar = t
-
-    let of_int n = chr_of_uint n
-  end
-
-  module UTF8 : sig
-    type t = string
-    val iter : (UChar.t -> unit) -> t -> unit
-  end =
-  struct
-    (* $Id: uTF8.ml,v 1.11 2004/09/04 16:07:38 yori Exp $ *)
-    (* Copyright 2002, 2003 Yamagata Yoriyuki. distributed with LGPL *)
-
-    type t = string
-
-    let look s i =
-      let n' =
-        let n = Char.code s.[i] in
-        if n < 0x80 then n else
-        if n <= 0xdf then
-          (n - 0xc0) lsl 6 lor (0x7f land (Char.code s.[i + 1]))
-        else if n <= 0xef then
-          let n' = n - 0xe0 in
-          let m0 = Char.code s.[i + 2] in
-          let m = Char.code (String.unsafe_get s (i + 1)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          n' lsl 6 lor (0x7f land m0)
-        else if n <= 0xf7 then
-          let n' = n - 0xf0 in
-          let m0 = Char.code s.[i + 3] in
-          let m = Char.code (String.unsafe_get s (i + 1)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          let m = Char.code (String.unsafe_get s (i + 2)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          n' lsl 6 lor (0x7f land m0)     
-        else if n <= 0xfb then
-          let n' = n - 0xf8 in
-          let m0 = Char.code s.[i + 4] in
-          let m = Char.code (String.unsafe_get s (i + 1)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          let m = Char.code (String.unsafe_get s (i + 2)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          let m = Char.code (String.unsafe_get s (i + 3)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          n' lsl 6 lor (0x7f land m0)     
-        else if n <= 0xfd then
-          let n' = n - 0xfc in
-          let m0 = Char.code s.[i + 5] in
-          let m = Char.code (String.unsafe_get s (i + 1)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          let m = Char.code (String.unsafe_get s (i + 2)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          let m = Char.code (String.unsafe_get s (i + 3)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          let m = Char.code (String.unsafe_get s (i + 4)) in
-          let n' = n' lsl 6 lor (0x7f land m) in
-          n' lsl 6 lor (0x7f land m0)
-        else invalid_arg "UTF8.look"
-      in
-      UChar.of_int n'
-    
-    let rec search_head s i =
-      if i >= String.length s then i else
-      let n = Char.code (String.unsafe_get s i) in
-      if n < 0x80 || n >= 0xc2 then i else
-      search_head s (i + 1)
-
-    let next s i = 
-      let n = Char.code s.[i] in
-      if n < 0x80 then i + 1 else
-      if n < 0xc0 then search_head s (i + 1) else
-      if n <= 0xdf then i + 2
-      else if n <= 0xef then i + 3
-      else if n <= 0xf7 then i + 4
-      else if n <= 0xfb then i + 5
-      else if n <= 0xfd then i + 6
-      else invalid_arg "UTF8.next"
-    
-    let rec iter_aux proc s i =
-      if i >= String.length s then () else
-      let u = look s i in
-      proc u;
-      iter_aux proc s (next s i)
-    
-    let iter proc s = iter_aux proc s 0
-  end
-
-  let sprint_uchar u =
-    let n = UChar.uint_code u in
-    let n2 = n land 0xffff in
-    let n1 = n lsr 16 in
-    if n1 = 0
-    then Printf.sprintf "\\u%04X" n2
-    else Printf.sprintf "\\U%04X%04X" n1 n2
+  external is_printable: char -> bool = "caml_is_printable"
 
   let escaped s =
     let buf = Buffer.create 0 in
-    let proc u =
-      let n = UChar.uint_code u in
-      if n > 0x7f || n < 0
-      then Buffer.add_string buf (sprint_uchar u)
-      else if n = 39
-      then Buffer.add_string buf "\\'"
-      else Buffer.add_string buf (String.escaped (String.make 1 (Char.chr n))) in
-
-    UTF8.iter proc s;
+    let escaped = function
+      | '\'' -> Buffer.add_string buf "\\'"
+      | '"' -> Buffer.add_string buf "\\\""
+      | '\\' -> Buffer.add_string buf "\\\\"
+      | '\n' -> Buffer.add_string buf "\\n"
+      | '\t' -> Buffer.add_string buf "\\t"
+      | '\r' -> Buffer.add_string buf "\\r"
+      | '\b' -> Buffer.add_string buf "\\b"
+      | c ->
+          if is_printable c
+          then Buffer.add_char buf c
+          else Printf.bprintf buf "\\x%02X" (Char.code c) in
+    String.iter escaped s;
     Buffer.contents buf
-
 end
 
 let id ppf i = fprintf ppf "%s" i
@@ -414,24 +304,24 @@ and aexps ppf e =
     | _ ->
         (expp pAssignment) ppf e
 
+and variableDeclarationList ppf = function
+  | [ (i, None) ] -> fprintf ppf "@[<hv 2>var %s@]" i
+  | [ (i, Some e) ] -> fprintf ppf "@[<hv 2>var %s =@ %a@]" i (expp pAssignment) e
+  | vars ->
+      let fvars ppf vars =
+        let comma = ref false in
+        List.iter
+          (fun (i, e) ->
+             if !comma then fprintf ppf ",@ " else comma := true;
+             match e with
+               | Some e -> fprintf ppf "%s =@;<1 2>%a" i (expp pAssignment) e
+               | None -> fprintf ppf "%s" i)
+          vars in
+      fprintf ppf "@[<hv 2>var@ %a@]" fvars vars
+
 and stmt ppf = function
   | Jvars (_, vars) ->
-      begin
-        match vars with
-          | [ (i, None) ] -> fprintf ppf "@[<hv 2>var %s;@]" i
-          | [ (i, Some e) ] -> fprintf ppf "@[<hv 2>var %s =@ %a;@]" i (expp pAssignment) e
-          | _ ->
-              let fvars ppf vars =
-                let comma = ref false in
-                List.iter
-                  (fun (i, e) ->
-                    if !comma then fprintf ppf ",@ " else comma := true;
-                    match e with
-                      | Some e -> fprintf ppf "%s =@;<1 2>%a" i (expp pAssignment) e
-                      | None -> fprintf ppf "%s" i)
-                  vars in
-              fprintf ppf "@[<hv 2>var@ %a;@]" fvars vars
-      end
+      fprintf ppf "%a;" variableDeclarationList vars
 
   | Jfuns (_, i, is, ss) ->
       fprintf ppf "@[<hv>function %s @[<hv 1>(%a)@]%a@]" i ids is block ss
@@ -480,8 +370,11 @@ and stmt ppf = function
   | Jtrycatch (_, ss, Some (ci, css), fss) ->
       fprintf ppf "@[<hv>try%a@ catch (%s)%a finally%a@]" block ss ci block css block fss
 
-  | Jfor (_, e1, e2, e3, s) ->
+  | Jfor (_, [], e1, e2, e3, s) ->
       fprintf ppf "@[<hv>for @[<hv 1>(%a;@ %a;@ %a)@]%a@]" (opt (expp p)) e1 (opt (expp p)) e2 (opt (expp p)) e3 maybe_block s
+  | Jfor (_, vars, None, e2, e3, s) ->
+      fprintf ppf "@[<hv>for @[<hv 1>(%a;@ %a;@ %a)@]%a@]" variableDeclarationList vars (opt (expp p)) e2 (opt (expp p)) e3 maybe_block s
+  | Jfor _ -> assert false
 
   | Jdowhile (_, s, e) ->
       fprintf ppf "@[<hv>do%a@ while (%a);@]" maybe_block s (expp p) e

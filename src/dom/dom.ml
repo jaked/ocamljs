@@ -76,7 +76,12 @@ class type keyEvent =
 object
   inherit event
 
+  method _get_altKey : bool
+  method _get_ctrlKey : bool
+  method _get_metaKey : bool
+  method _get_shiftKey : bool
   method _get_outputString : string
+  method _get_keyCode : int
   method _get_keyVal : int
   method _get_virtKeyVal : int
   method _get_inputGenerated : bool
@@ -327,6 +332,7 @@ object
 
   method addEventListener : string -> (event -> unit) -> bool -> unit
   method addEventListener_mouseEvent_ : string -> (mouseEvent -> unit) -> bool -> unit
+  method addEventListener_keyEvent_ : string -> (keyEvent -> unit) -> bool -> unit
   method blur : unit
   method click : unit
   method dispatchEvent : #event -> unit
@@ -336,6 +342,7 @@ object
   method removeAttribute : string -> unit
   method removeEventListener : string -> (event -> unit) -> bool -> unit
   method removeEventListener_mouseEvent_ : string -> (mouseEvent -> unit) -> bool -> unit
+  method removeEventListener_keyEvent_ : string -> (keyEvent -> unit) -> bool -> unit
   method setAttribute : string -> string -> unit
 
   method _set_onblur : (event -> bool) -> unit
@@ -471,6 +478,7 @@ object
   method createElement : string -> #element
   method createTextNode : string -> text
   method getElementById : string -> #element
+  method getElementsByClassName : string -> #element array
   method _get_body : body
   method _get_cookie : string
   method _set_cookie : string -> unit

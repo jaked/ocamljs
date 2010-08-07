@@ -101,10 +101,10 @@ module Js_string :
 sig
   external fromCharCode : int -> string = "@String.fromCharCode"
 
-  external match_ : string -> regexp -> string array = ".match"
-  external split : string -> string -> string array = ".split"
-  external indexOf : string -> string -> int = ".indexOf"
-  external replace : string -> regexp -> string -> string = ".replace"
+  external match_ : string -> regexp -> string array = "#match"
+  external split : string -> string -> string array = "#split"
+  external indexOf : string -> string -> int = "#indexOf"
+  external replace : string -> regexp -> string -> string = "#replace"
 end
 
 module Math :

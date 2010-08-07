@@ -1,1 +1,0 @@
-<lwt_dom.ml*> : syntax_camlp4o,pkg_jslib.inline,pkg_ocamljs,pkg_dom

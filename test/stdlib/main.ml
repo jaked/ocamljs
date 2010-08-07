@@ -5,6 +5,8 @@ let tests = "Stdlib" >::: [
   Stdlib_hashtbl.tests;
   Stdlib_pervasives.tests;
   Stdlib_printf.tests;
+  Stdlib_lexing.tests;
+  Stdlib_parsing_tests.tests;
 ]
 
 ;;

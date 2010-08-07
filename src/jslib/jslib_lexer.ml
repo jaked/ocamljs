@@ -30,8 +30,7 @@ type token =
     | INT of string
     | FLOAT of string
     | HEX of string
-    | STRING1 of string
-    | STRING2 of string
+    | STRING of string * bool
     | REGEXP of string
     | ANTIQUOT of string * string
     | EOI
@@ -51,8 +50,7 @@ module Token = struct
       | INT s        -> sf "INT %s" s
       | FLOAT s      -> sf "FLOAT %s" s
       | HEX s        -> sf "HEX %s" s
-      | STRING1 s    -> sf "STRING \"%s\"" s
-      | STRING2 s    -> sf "STRING \"%s\"" s
+      | STRING (s,_) -> sf "STRING \"%s\"" s
       | REGEXP s     -> sf "REGEXP \"%s\"" s
       | ANTIQUOT (n, s) -> sf "ANTIQUOT %s: %S" n s
       | EOI          -> sf "EOI"
@@ -66,7 +64,7 @@ module Token = struct
 
   let extract_string =
     function
-      | KEYWORD s | IDENT s | INT s | FLOAT s | HEX s | STRING1 s | STRING2 s | REGEXP s -> s
+      | KEYWORD s | IDENT s | INT s | FLOAT s | HEX s | STRING (s,_) | REGEXP s -> s
       | tok ->
           invalid_arg ("Cannot extract a string from this token: "^
                           to_string tok)
@@ -173,6 +171,7 @@ let regexp identchar =
   ['A'-'Z' 'a'-'z' '_' '\192'-'\214' '\216'-'\246' '\248'-'\255' '\'' '0'-'9' ]
 let regexp ident = (lowercase|uppercase) identchar*
 let regexp locname = ident
+let regexp hex_digit = ['0'-'9''a'-'f''A'-'F']
 
 let regexp newline = ('\010' | '\013' | "\013\010")
 let regexp blank = [' ' '\009' '\012']
@@ -243,15 +242,15 @@ let rec token c = lexer
       slash := `Div;
       IDENT (id)
 
-  | '-'? ['0'-'9']+ '.' ['0'-'9']* ->
+  | (* '-'? *) ['0'-'9']+ '.' ['0'-'9']* ->
       slash := `Div;
       FLOAT (L.utf8_lexeme c.lexbuf)
 
-  | '-'? ['0'-'9']+ ->
+  | (* '-'? *) ['0'-'9']+ ->
       slash := `Div;
       INT (L.utf8_lexeme c.lexbuf)
 
-  | "0x" ['0'-'9''a'-'f''A'-'F']+ ->
+  | "0x" hex_digit+ ->
       slash := `Div;
       HEX (L.utf8_lexeme c.lexbuf)
 
@@ -299,7 +298,7 @@ let rec token c = lexer
       string c double_quote c.lexbuf;
       let s = get_stored_string c in
       slash := `Div;
-      (if double_quote then STRING2 s else STRING1 s)
+      (STRING (s, double_quote))
   | "/*" ->
       tcomment c c.lexbuf;
       token c c.lexbuf
@@ -343,7 +342,10 @@ and string c double = lexer
 | '\\' ['0'-'9']+ ';' ->
     store_code c (parse_char c 10 1);
     string c double c.lexbuf
-| '\\' 'x' ['0'-'9' 'a'-'f' 'A'-'F']+ ';' ->
+| '\\' 'x' hex_digit+ ';' ->
+    store_code c (parse_char c 16 2);
+    string c double c.lexbuf
+| '\\' 'u' hex_digit hex_digit hex_digit hex_digit ->
     store_code c (parse_char c 16 2);
     string c double c.lexbuf
 | '\\' ->

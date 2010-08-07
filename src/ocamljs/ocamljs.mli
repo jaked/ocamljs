@@ -40,6 +40,14 @@ val option_of_nullable : 'a -> 'a option
 val nullable_of_option : 'a option -> 'a
 val is_null : 'a -> bool
 
+(* for backward compatibility *)
+type 'a jsfun = 'a
+external jsfun : 'a -> 'a = "%identity"
+external jsfun2 : 'a -> 'a = "%identity"
+external jsfun3 : 'a -> 'a = "%identity"
+external jsfun4 : 'a -> 'a = "%identity"
+external jsfun5 : 'a -> 'a = "%identity"
+
 module Inline :
 sig
   module Jslib_ast :

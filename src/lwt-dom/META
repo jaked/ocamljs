@@ -1,0 +1,5 @@
+name="Lwt-DOM"
+description="Lwt support for DOM stuff"
+version="0.2"
+requires="lwt dom"
+archive(js)="lwt_dom.cmjs"

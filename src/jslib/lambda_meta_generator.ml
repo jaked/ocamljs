@@ -186,7 +186,7 @@ let mk_meta m =
                                 ($m.com$ _loc
                                     ($fcall_of_ctyp t1$ _loc x1)
                                     ($fcall_of_ctyp t2$ _loc x2)) >>
-                        | <:ctyp< $t2$ $t1$ >> ->
+                        | <:ctyp< $t1$ $t2$ >> ->
                             <:expr< $fcall_of_ctyp t1$ $fcall_of_ctyp t2$ >>
                         | <:ctyp< '$s$ >> -> <:expr< $lid:mf_ s$ >>
                         | _ -> failure in
@@ -212,7 +212,7 @@ let mk_meta m =
             | <:ctyp< +'$s$ >> | <:ctyp< -'$s$ >> | <:ctyp< '$s$ >> ->
                 <:expr< fun $lid:mf_ s$ -> $acc$ >>
             | _ -> assert false
-          end tyvars <:expr< fun _loc -> function $match_case$ >>
+          end tyvars <:expr< fun _loc -> fun [ $match_case$ ] >>
         in <:binding< $binding_acc$ and $lid:"meta_"^tyname$ = $funct$ >>
     | Ast.TyDcl (_, _, _, _, _) -> binding_acc
     | _ -> assert false
@@ -247,15 +247,16 @@ let mk_abs_meta m =
                       | <:ctyp< $id:id$ >> ->
                           <:expr< $id:meta_ (string_of_ident id)$ >>
                       | <:ctyp< ($t1$ * $t2$) >> ->
-                          <:expr< fun _loc -> function
-                            | Ast.ExTup (_, Ast.ExCom (_, x1, x2)) ->
+                          <:expr< fun _loc -> fun
+                            [ Ast.ExTup (_, Ast.ExCom (_, x1, x2)) ->
                                 $m.tup$ _loc
                                   ($m.com$ _loc
                                       ($fcall_of_ctyp t1$ _loc x1)
                                       ($fcall_of_ctyp t2$ _loc x2))
                             | _ -> invalid_arg "tuple"
+                            ]
                           >>
-                      | <:ctyp< $t2$ $t1$ >> ->
+                      | <:ctyp< $t1$ $t2$ >> ->
                           <:expr< $fcall_of_ctyp t1$ $fcall_of_ctyp t2$ >>
                       | <:ctyp< '$s$ >> -> <:expr< $lid:mf_ s$ >>
                       | _ -> failure in
@@ -284,7 +285,7 @@ let mk_abs_meta m =
             | <:ctyp< +'$s$ >> | <:ctyp< -'$s$ >> | <:ctyp< '$s$ >> ->
                 <:expr< fun $lid:mf_ s$ -> $acc$ >>
             | _ -> assert false
-          end tyvars <:expr< fun _loc -> function $match_case$ >>
+          end tyvars <:expr< fun _loc -> fun [ $match_case$ ] >>
         in <:binding< $binding_acc$ and $lid:"meta_"^tyname$ = $funct$ >>
     | Ast.TyDcl (_, _, _, _, _) -> binding_acc
     | _ -> assert false
@@ -309,61 +310,65 @@ let filter st =
        let bi = mk_meta m in
        <:module_expr<
         struct
-          let meta_string _loc s = $m.str$ _loc s
-          let meta_int _loc s = $m.int$ _loc s
-          let meta_float _loc s = $m.flo$ _loc s
-          let meta_char _loc s = $m.chr$ _loc s
-(*
-          let meta_bool _loc b =
-            Lambda.Lconst
-              (Lambda.Const_pointer
-                  ($m.int$ _loc (match b with false -> "0" | true -> "1")))
-*)
-          let meta_bool _loc = function
-            | false -> $m_uid m "False"$
-            | true  -> $m_uid m "True"$
-          let rec meta_list mf_a _loc = function
-            | [] -> $m_uid m "[]"$
-            | x :: xs -> $m_app m (m_app m (m_uid m "::") <:expr< mf_a _loc x >>) <:expr< meta_list mf_a _loc xs >>$
-          let rec $bi$
+          value meta_string _loc s = $m.str$ _loc s;
+          value meta_int _loc s = $m.int$ _loc s;
+          value meta_float _loc s = $m.flo$ _loc s;
+          value meta_char _loc s = $m.chr$ _loc s;
+          value meta_bool _loc b =
+            $m_app m
+              (m_id m (meta_ident m <:ident< Lambda.Lconst >>))
+              (m_app m
+                 (m_id m (meta_ident m <:ident< Lambda.Const_pointer >>))
+                 <:expr< $m.int$ _loc (if b then "1" else "0") >>)$;
+          value rec meta_list mf_a _loc = fun
+            [ [] -> $m_uid m "[]"$
+            | [ x :: xs ] -> $m_app m (m_app m (m_uid m "::") <:expr< mf_a _loc x >>) <:expr< meta_list mf_a _loc xs >>$
+            ];
+          value rec $bi$;
         end >> in
      let mk_abs_meta_module m =
        let bi = mk_abs_meta m in
        <:module_expr<
         struct
-          let meta_string _loc = function
-            | Ast.ExStr (_loc, s) -> $m.str$ _loc s
+          value meta_string _loc = fun
+            [ Ast.ExStr (_loc, s) -> $m.str$ _loc s
             | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_string"
-          let meta_int _loc = function
-            | Ast.ExInt (loc, s) -> $m.int$ _loc s
+            ];
+          value meta_int _loc = fun
+            [ Ast.ExInt (loc, s) -> $m.int$ _loc s
             | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_int"
-          let meta_float _loc = function
-            | Ast.ExFlo (_loc, s) -> $m.flo$ _loc s
+            ];
+          value meta_float _loc = fun
+            [ Ast.ExFlo (_loc, s) -> $m.flo$ _loc s
             | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_float"
-          let meta_char _loc = function
-            | Ast.ExChr (_loc, s) -> $m.chr$ _loc s
+            ];
+          value meta_char _loc = fun
+            [ Ast.ExChr (_loc, s) -> $m.chr$ _loc s
             | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_char"
+            ];
 (*
-          let meta_bool _loc b =
+          value meta_bool _loc b =
             Lambda.Lconst
               (Lambda.Const_pointer
-                  ($m.int$ _loc (match b with false -> "0" | true -> "1")))
+                  ($m.int$ _loc (match b with false -> "0" | true -> "1")));
 *)
-          let meta_bool _loc = function
-            | <:expr< false >> -> $m_uid m "False"$
+          value meta_bool _loc = fun
+            [ <:expr< false >> -> $m_uid m "False"$
             | <:expr< true >> -> $m_uid m "True"$
             | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_bool"
-          let rec meta_list mf_a _loc = function
-            | <:expr< [] >> -> $m_uid m "[]"$
-            | <:expr< $x$ :: $xs$ >> -> $m_app m (m_app m (m_uid m "::") <:expr< mf_a _loc x >>) <:expr< meta_list mf_a _loc xs >>$
+            ];
+          value rec meta_list mf_a _loc = fun
+            [ <:expr< [] >> -> $m_uid m "[]"$
+            | <:expr< [ $x$ :: $xs$ ] >> -> $m_app m (m_app m (m_uid m "::") <:expr< mf_a _loc x >>) <:expr< meta_list mf_a _loc xs >>$
             | Ast.ExAnt (_loc, s) -> $id:m.ant$ (_loc, s)
             | _ -> invalid_arg "meta_list"
-          let rec $bi$
+            ];
+          value rec $bi$;
         end >> in
      match super#module_expr me with
      | <:module_expr< LambdaMetaGeneratorExpr($id:i$) >> ->

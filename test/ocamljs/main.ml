@@ -1,6 +1,7 @@
 open OUnit
 
 let tests = "Ocamljs" >::: [
+  Booleans.tests;
   Oo_class_arg.tests;
   Oo_class_let.tests;
   Oo_class.tests;

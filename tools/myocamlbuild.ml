@@ -11,12 +11,12 @@ let ocamljs = ref (A"ocamljs")
 let ocamljs_c tags arg out =
   let tags = tags++"ocaml"++"js" in
   Cmd (S [!ocamljs; A"-c"; T(tags++"compile");
-          ocaml_ppflags tags; flags_of_pathname arg;
+          ocaml_ppflags tags; (* flags_of_pathname arg; *)
           ocaml_include_flags arg; A"-o"; Px out; P arg])
 
 let ocamljs_link flag tags deps out =
   Cmd (S [!ocamljs; flag; T tags;
-          atomize_paths deps; flags_of_pathname out; A"-o"; Px out])
+          atomize_paths deps; (* flags_of_pathname out; *) A"-o"; Px out])
 
 let ocamljs_link_lib = ocamljs_link (A"-a")
 let ocamljs_link_prog = ocamljs_link N
@@ -31,7 +31,7 @@ let js_lib_linker_tags tags = tags++"ocaml"++"link"++"js"++"library"
 
 let ocamljs_p tags deps out =
   Cmd (S [!ocamljs; A"-pack"; T tags;
-          atomize_paths deps; flags_of_pathname out; A"-o"; Px out])
+          atomize_paths deps; (* flags_of_pathname out; *) A"-o"; Px out])
 
 let js_compile_ocaml_implem ?tag ml cmjs env build =
   let ml = env ml and cmjs = env cmjs in

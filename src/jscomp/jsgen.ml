@@ -205,6 +205,9 @@ let comp_prim p es =
     | Pisout, [h; e] -> << $e$ < 0 || $e$ > $h$ >> (* XXX bind e to var? *)
     | Pabsfloat, [e] -> << Math.abs($exp:e$) >>
 
+      (* special case for bool matching; if e is number, equiv to e !== 0 *)
+    | Pintcomp Cneq, [ e; << 0 >> ] -> << !!$e$ >>
+
     | (Pintcomp c | Pbintcomp (_, c) | Pfloatcomp c), [e1; e2] ->
         comp_comparison c e1 e2
 
@@ -280,10 +283,13 @@ let inline_string = function
   | Lconst (Const_base (Const_string s)) -> s
   | _ -> raise (Failure "bad inline string")
 
-let inline_bool = function
-  | Lconst (Const_pointer 0) -> false
-  | Lconst (Const_pointer 1) -> true
-  | _ -> raise (Failure "bad inline bool")
+let rec inline_bool = function
+  | Lprim (Pccall { prim_name = "$false" }, _) -> false
+  | Lprim (Pccall { prim_name = "$true" }, _) -> true
+
+  | l ->
+      Format.fprintf Format.str_formatter "bad inline bool: %a@?" Printlambda.lambda l;
+      raise (Failure (Format.flush_str_formatter ()))
 
 let makeblock_of_const = function
   | Lconst (Const_block (tag, cs)) ->
@@ -318,12 +324,7 @@ let rec comp_expr tail expr =
             Lprim (Pccall { prim_name = "$inline_stmt" }, _))->
         exp_of_stmts (comp_expr_st tail expr kreturn)
 
-    | Lvar id ->
-        begin match Ident.name id with
-          | "true" -> << true >>
-          | "false" -> << false >>
-          | _ -> << $id:jsident_of_ident id$ >>
-        end
+    | Lvar id -> << $id:jsident_of_ident id$ >>
 
     | Lfunction (_, args, e) ->
         let e = Jfun (_loc, None, List.map jsident_of_ident args, comp_expr_st true e kreturn) in
@@ -451,19 +452,17 @@ and comp_expr_st tail expr k =
           match d with
             | Upto -> << $jv$ <= $ce2$ >>, << $jv$++ >>
             | Downto -> << $jv$ >= $ce2$ >>, << $jv$-- >> in
-        <:stmt<
-          var $id:i$;
-          $ (* wrap loop body in a function / call so closures over loop var work *)
-            Jfor (_loc,
-                 Some << $id:i$ = $ce1$ >>,
-                 Some te,
-                 Some ie,
-                 Jblock(_loc,
-                       Jexps (_loc,
-                             Jcall(_loc,
+        (* wrap loop body in a function / call so closures over loop var work *)
+        Jfor (_loc,
+              [ i, Some ce1 ],
+              None,
+              Some te,
+              Some ie,
+              Jblock(_loc,
+                     Jexps (_loc,
+                            Jcall(_loc,
                                   Jfun(_loc, None, [i], ce3),
                                   jv))))
-          $ >>
 
     | Lwhile (e1, e2) ->
         Jwhile (_loc, comp_expr false e1, comp_expr_st false e2 keffect)
@@ -679,6 +678,7 @@ and inline_exp = function
   | <:lam_exp< $flo:s$ >> -> <:exp< $flo:inline_string s$ >> (* XXX :num ? *)
   | <:lam_exp< null >> -> <:exp< null >>
   | <:lam_aexp< Jbool ($_$, $b$) >> -> Jbool (_loc, inline_bool b) (* XXX :bool ? *)
+  | <:lam_aexp< Jregexp ($_$, $re$, $flags$) >> -> Jregexp (_loc, inline_string re, inline_string flags)
   | <:lam_aexp< Jfun ($_$, $so$, $sl$, $stl$) >> ->
       Jfun (_loc,
            inline_option inline_string so,
@@ -695,10 +695,12 @@ and inline_exp = function
   | Lprim (Pccall { prim_name = "$inline_antiexp" }, [e]) -> comp_expr false e
   | _ -> raise (Failure "bad inline exp")
 
+and inline_variableDeclarationList seol = inline_list (inline_pair inline_string (inline_option inline_exp)) seol
+
 and inline_stmt = function
   | Lconst (Const_block _) as cb -> inline_stmt (makeblock_of_const cb)
   | <:lam_astmt< Jvars ($_$, $seol$) >> ->
-      Jvars (_loc, inline_list (inline_pair inline_string (inline_option inline_exp)) seol)
+      Jvars (_loc, inline_variableDeclarationList seol)
   | <:lam_astmt< Jfuns ($_$, $s$, $sl$, $stl$) >> ->
       Jfuns (_loc, inline_string s, inline_list inline_string sl, inline_stmt stl)
   | <:lam_astmt< Jreturn ($_$, $eo$) >> -> Jreturn (_loc, inline_option inline_exp eo)
@@ -717,8 +719,9 @@ and inline_stmt = function
                 inline_stmt sl1,
                 inline_option (inline_pair inline_string inline_stmt) sslpo,
                 inline_stmt sl2)
-  | <:lam_astmt< Jfor ($_$, $eo1$, $eo2$, $eo3$, $s$) >> ->
+  | <:lam_astmt< Jfor ($_$, $vars$, $eo1$, $eo2$, $eo3$, $s$) >> ->
       Jfor (_loc,
+           inline_variableDeclarationList vars,
            inline_option inline_exp eo1,
            inline_option inline_exp eo2,
            inline_option inline_exp eo3,

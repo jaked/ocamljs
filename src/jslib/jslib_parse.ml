@@ -53,24 +53,9 @@ let antiquot_flo = antiquot [""; "flo"; "`flo"]
 let antiquot_list = antiquot ["list"]
 let antiquot_stmt = antiquot ["stmt"; ""; "anti"]
 
-let a_IDENT = Gram.Entry.mk "a_IDENT"
-let a_STRING = Gram.Entry.mk "a_STRING"
-let a_NUM = Gram.Entry.mk "a_NUM"
-
-(* A.3 Expressions *)
 let expression = Gram.Entry.mk "expression"
-let comma_expr = Gram.Entry.mk "comma_expr"
-
-(* A.4 Statements *)
-let statement = Gram.Entry.mk "statement"
-let block = Gram.Entry.mk "block"
 let statementList = Gram.Entry.mk "statementList"
-let caseClause = Gram.Entry.mk "caseClause"
-
-(* A.5 Functions and Programs *)
 let program = Gram.Entry.mk "program"
-let sourceElement = Gram.Entry.mk "sourceElement"
-let sourceElements = Gram.Entry.mk "sourceElements"
 
 let maybe_stmt_cons _loc s1 s2 =
   match s2 with
@@ -80,6 +65,7 @@ let maybe_stmt_cons _loc s1 s2 =
 ;;
 
 EXTEND Gram
+  GLOBAL: expression statementList program;
 
 a_IDENT: [[
   (n, s) = antiquot_id -> mk_anti n s (* not ' ? *)
@@ -88,7 +74,7 @@ a_IDENT: [[
 
 a_STRING: [[
   (n, s) = antiquot_str -> mk_anti n s
-| s = STRING1 -> s
+| s = STRING -> s (* XXX ignores double-quote flag *)
 ]];
 
 a_NUM: [[
@@ -224,8 +210,7 @@ expression: [
 | "PrimaryExpression" NONA [
     `ANTIQUOT ("exp"|""|"anti" as n, s) -> Jexp_Ant (_loc, mk_anti ~c:"exp" n s)
   | i = a_NUM -> Jnum (_loc, i)
-  | s = a_STRING -> Jstring (_loc, s, false)
-  | s = STRING2 -> Jstring (_loc, s, true)
+  | s = a_STRING -> Jstring (_loc, s, true)
   | v = a_IDENT -> Jvar (_loc, v)
   | r = REGEXP -> Jregexp (_loc, r, "")
   | "this" -> Jthis (_loc)
@@ -238,23 +223,27 @@ expression: [
   ]
 ];
 
+variableDeclarationList: [[
+  LIST1
+    [ i = a_IDENT; e = OPT [ "="; e = expression LEVEL "AssignmentExpression" -> e ] -> (i, e) ]
+    SEP ","
+]];
+
 (* A.4 Statements *)
 statement: [[
   (n, s) = antiquot_stmt -> Jstmt_Ant (_loc, mk_anti ~c:"stmt" n s)
 | ss = block -> Jblock (_loc, ss)
-| "var"; vars =
-    LIST1 [ i = a_IDENT;
-            e = OPT [ "="; e = expression LEVEL "AssignmentExpression" -> e ] -> (i, e) ]
-      SEP ",";
-  ";" -> Jvars (_loc, vars)
+| "var"; vars = variableDeclarationList; ";" -> Jvars (_loc, vars)
 | ";" -> Jstmt_nil (_loc)
 | test_lookahead_not_brace_function; e = expression; ";" -> Jexps (_loc, e)
 | "if"; "("; e = expression; ")"; s1 = statement; "else"; s2 = statement -> Jites(_loc, e, s1, Some s2)
 | "if"; "("; e = expression; ")"; s1 = statement -> Jites(_loc, e, s1, None)
 | "do"; s = statement; "while"; "("; e = expression; ")"; ";" -> Jdowhile (_loc, s, e)
 | "while"; "("; e = expression; ")"; s = statement -> Jwhile (_loc, e, s)
+| "for"; "("; "var"; vars = variableDeclarationList; ";"; e2 = OPT expression; ";"; e3 = OPT expression; ")"; s = statement ->
+    Jfor (_loc, vars, None, e2, e3, s)
 | "for"; "("; e1 = OPT expression; ";"; e2 = OPT expression; ";"; e3 = OPT expression; ")"; s = statement ->
-    Jfor (_loc, e1, e2, e3, s)
+    Jfor (_loc, [], e1, e2, e3, s)
 | "continue"; i = OPT a_IDENT; ";" -> Jcontinue (_loc, i)
 | "break"; i = OPT a_IDENT; ";" -> Jbreak (_loc, i)
 | "return"; e = OPT expression; ";" -> Jreturn (_loc, e)

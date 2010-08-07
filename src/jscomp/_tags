@@ -3,6 +3,7 @@
 <emitjs.ml>: pkg_jslib
 <jsgen.mli>: pkg_jslib
 <jsgen.ml>: syntax_camlp4o,pkg_jslib.quotations,pkg_jslib.lambda
+<translcore.ml>: syntax_camlp4o,pkg_jslib.lambda
 <jscompile.ml>: pkg_jslib
 <jslink.ml>: pkg_jslib
 
