@@ -1,0 +1,2 @@
+<live_examples.ml> : pkg_ocamljs,pkg_dom,pkg_jquery
+<live_examples.js> : pkg_ocamljs,pkg_dom,pkg_jquery
