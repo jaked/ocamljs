@@ -11,9 +11,6 @@ all: myocamlbuild.ml
 	ocamlbuild oUnit.cmjsa
 
 doc:
-	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
-	OCAMLPATH=`pwd`/../../stage \
-	ocamlbuild -no-links doc.docdir/index.html
 
 install:
 	dir=`ocamlfind -query -format "%d" oUnit`; \
@@ -26,7 +23,7 @@ uninstall:
 
 clean:
 	ocamlbuild -clean
-	rm -f myocamlbuild.ml
+	rm -f myocamlbuild.ml *.ml *.mli META META.orig
 
 myocamlbuild.ml:
 	ln -s ../../tools/myocamlbuild.ml
