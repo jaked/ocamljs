@@ -19,15 +19,16 @@
  *)
 
 let sleep ms =
-  let t, u = Lwt.wait () in
+  let t, u = Lwt.task () in
   let timeout () = Lwt.wakeup u () in
-  ignore (Dom.window#setTimeout timeout ms);
+  let id = Dom.window#setTimeout timeout (ms *. 1000.) in
+  Lwt.on_cancel t (fun () -> Dom.window#clearTimeout id);
   t
 
 let yield () = sleep 0.
 
 let http_request ?(headers=[]) meth url =
-  let t, u = Lwt.wait () in
+  let t, u = Lwt.task () in
   let meth, body =
     match meth with
       | `Get -> "GET", None
@@ -46,4 +47,5 @@ let http_request ?(headers=[]) meth url =
     end in
   r#_set_onreadystatechange onreadystatechange;
   r#send (match body with Some body -> body | _ -> Ocamljs.null ());
+  Lwt.on_cancel t (fun () -> r#abort);
   t
