@@ -41,7 +41,6 @@ get_path () {
 # defaults:
 
 set_defaults () {
-    srcdir="/usr/local/src/ocaml-3.11.2"
     bindir=`dirname $ocamlc`
     libdir=`ocamlc -where`
 }
@@ -80,7 +79,7 @@ usage: ./configure [ options ]
 _EOF_
 	cat <<_EOF_ >&2
 -srcdir dir
-        OCaml source is in this directory (default /usr/local/src/ocaml-3.11.2)
+        OCaml source is in this directory (default ../ocaml-\$VERSION)
 
 -bindir dir
         Install binaries into this directory (default same as ocamlc)
@@ -138,37 +137,39 @@ case "$libdir" in
 esac
 
 ######################################################################
-# Check OCaml source and version
-
-printf "%s" "Checking for OCaml source... "
-if [ -f $srcdir/VERSION ]; then
-    echo "found"
-    src_version=`head -1 $srcdir/VERSION`
-else
-    echo "not found"
-    echo "You need to set -srcdir to an OCaml source tree."
-    echo "Download OCaml from http://caml.inria.fr/download.en.html"
-    exit 1
-fi
+# Check OCaml version and source
 
 printf "%s" "Checking OCaml version... "
 ocamlc_version=`ocamlc -version`
-case $src_version in
+case $ocamlc_version in
     3.11.0 | 3.11.1 | 3.11.2 | 3.12.0)
-        if [ $src_version = $ocamlc_version ]; then
-            echo "ok, $src_version"
-        elif [ "$src_version" != "$ocamlc_version" ]; then
-            echo "source version $src_version != installed version $ocamlc_version"
-            echo "You need OCaml source that's the same version as your installed OCaml."
-            echo "Download OCaml from http://caml.inria.fr/download.en.html"
-            exit 1
-        fi;;
+        echo "ok, $ocamlc_version";;
     *)
-        echo "unsupported version $src_version"
+        echo "unsupported version $ocamlc_version"
         echo "Sorry, ocamljs needs OCaml version 3.11.x or 3.12.0."
         echo "Download OCaml from http://caml.inria.fr/download.en.html"
         exit 1;;
 esac
+
+
+printf "%s" "Checking for OCaml source... "
+x=${srcdir:="../ocaml-$ocamlc_version"}
+if [ -f $srcdir/VERSION ]; then
+    src_version=`head -1 $srcdir/VERSION`
+    if [ "$src_version" != "$ocamlc_version" ]; then
+        echo "source version $src_version != $ocamlc_version"
+        echo "You need to set -srcdir to a version $ocamlc_version OCaml source tree."
+        echo "Download OCaml from http://caml.inria.fr/download.en.html"
+        exit 1
+    else
+        echo "found"
+    fi
+else
+    echo "not found"
+    echo "You need to set -srcdir to a version $ocamlc_version OCaml source tree."
+    echo "Download OCaml from http://caml.inria.fr/download.en.html"
+    exit 1
+fi
 
 ######################################################################
 # Check ocamlfind
