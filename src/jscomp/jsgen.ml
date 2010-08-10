@@ -330,7 +330,7 @@ let rec comp_expr tail expr =
         let e = Jfun (_loc, None, List.map jsident_of_ident args, comp_expr_st true e kreturn) in
         << _f($exp:e$) >>
 
-    | IFDEF OCAML_3_10_2 THEN Lapply(e, es) ELSE Lapply(e, es, _) ENDIF ->
+    | Lapply(e, es, _) ->
         let app = if tail then "__" else "_" in
         let ce = comp_expr false e in
         let ces = List.map (comp_expr false) es in

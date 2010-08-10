@@ -38,11 +38,7 @@ let to_file outchan unit_name (code, reloc) =
       cu_reloc = List.rev reloc;
       cu_imports = Env.imported_units();
       cu_primitives =
- IFDEF OCAML_3_10_2 THEN
-        !Translmod.primitive_declarations;
- ELSE
         List.map Primitive.byte_name !Translmod.primitive_declarations;
- ENDIF;
       cu_force_link = false;
       cu_debug = 0;
       cu_debugsize = 0 } in

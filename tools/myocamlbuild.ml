@@ -213,9 +213,6 @@ dispatch begin function
        flag ["ocaml"; "compile"; "DEBUG"] & S[A"-ppopt"; A"-DDEBUG"];
        flag ["ocaml"; "ocamldep"; "DEBUG"] & S[A"-ppopt"; A"-DDEBUG"];
 
-       flag ["ocaml"; "compile"; "OCAML_3_10_2"] & S[A"-ppopt"; A"-DOCAML_3_10_2"];
-       flag ["ocaml"; "ocamldep"; "OCAML_3_10_2"] & S[A"-ppopt"; A"-DOCAML_3_10_2"];
-
        (* XXX should put these in jslib only *)
        flag ["ocaml"; "compile"; "lambda_meta_generator"] & S[A"-ppopt"; A"lambda_meta_generator.cmo"];
        flag ["ocaml"; "ocamldep"; "lambda_meta_generator"] & S[A"-ppopt"; A"lambda_meta_generator.cmo"];

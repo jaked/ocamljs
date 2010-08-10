@@ -154,7 +154,7 @@ fi
 printf "%s" "Checking OCaml version... "
 ocamlc_version=`ocamlc -version`
 case $src_version in
-    3.10.2 | 3.11.0 | 3.11.1 | 3.11.2 | 3.12.0)
+    3.11.0 | 3.11.1 | 3.11.2 | 3.12.0)
         if [ $src_version = $ocamlc_version ]; then
             echo "ok, $src_version"
         elif [ "$src_version" != "$ocamlc_version" ]; then
@@ -165,7 +165,7 @@ case $src_version in
         fi;;
     *)
         echo "unsupported version $src_version"
-        echo "Sorry, ocamljs needs OCaml version 3.10.2, 3.11.0, 3.11.1, 3.11.2, or 3.12.0."
+        echo "Sorry, ocamljs needs OCaml version 3.11.x or 3.12.0."
         echo "Download OCaml from http://caml.inria.fr/download.en.html"
         exit 1;;
 esac
@@ -215,10 +215,6 @@ rm -f ocaml; ln -s $srcdir ocaml
 (cd ocaml; make clean; ./configure -bindir $bindir -libdir $libdir)  >/dev/null 2>&1
 echo "done"
 
-if [ "$src_version" = "3.10.2" ]; then
-    ocaml_3_10_2=1
-fi
-
 ######################################################################
 # Write Makefile.conf
 
@@ -239,8 +235,6 @@ BINDIR = $bindir
 
 # Where libraries are installed:
 LIBDIR = $libdir
-
-OCAML_3_10_2 = $ocaml_3_10_2
 
 OCAML_VERSION = $ocamlc_version
 _EOF_

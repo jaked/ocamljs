@@ -22,11 +22,7 @@ open Format
 
 module Location =
 struct
-IFDEF OCAML_3_10_2 THEN
-  let print ppf loc = Location.print ppf loc;
-ELSE
   let print ppf loc = Location.print_error ppf loc;
-ENDIF
 end
 
 let report_error ppf exn =
