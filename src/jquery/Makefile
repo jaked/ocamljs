@@ -18,7 +18,7 @@ doc:
 	ocamlbuild -no-links doc.docdir/index.html
 
 install:
-	ocamlfind install jquery META $(BFILES) jquery_init.js
+	ocamlfind install jquery META $(BFILES)
 
 uninstall:
 	ocamlfind remove jquery
