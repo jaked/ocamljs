@@ -3,3 +3,11 @@ version="0.1"
 description="jQuery binding"
 requires = "ocamljs,dom"
 archive(js) = "jquery.cmjsa"
+
+package "syntax" (
+  exists_if = "pa_jquery.cmo"
+  description = "Syntax extension to support method chaining"
+  requires = "camlp4"
+  archive(syntax,preprocessor) = "pa_jquery.cmo"
+  archive(syntax,toploop) = "pa_jquery.cmo"
+)

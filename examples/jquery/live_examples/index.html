@@ -64,9 +64,9 @@
       <p>Get number of paragraphs in column 2 and display that number in an alert box. Including the one in the red box.</p>
       <input type="button" value="# of Paragraphs" class="buttonAsize" />
       <a href="#" class="codeButtonA">Show&nbsp;/&nbsp;Hide jquery code</a>
-      <pre class="codeA">(j "input.buttonAsize")#click
+      <pre class="codeA">~$"input.buttonAsize"#click
   (fun _ ->
-     let size = ((j "div.contentToChange")#find "p")#size in
+     let size = ~$"div.contentToChange"#find "p"#size in
      window#alert (string_of_int size);
      false);</pre>
 
@@ -78,14 +78,14 @@
       <input type="button" value="Slide Out" class="buttonBslideup" />
       <input type="button" value="Slide In" class="buttonBslidedown" />
       <a href="#" class="codeButtonB">Show&nbsp;/&nbsp;Hide jquery code</a>
-      <pre class="codeB">(j "input.buttonBslidedown")#click
+      <pre class="codeB">~$"input.buttonBslidedown"#click
   (fun _ ->
-     ((j "div.contentToChange")#find "p.firstparagraph:hidden")
+     ~$"div.contentToChange"#find "p.firstparagraph:hidden"
        #slideDown_speed_ "slow" ignore;
      false);
-(j "input.buttonBslideup")#click
+~$"input.buttonBslideup"#click
   (fun _ ->
-     ((j "div.contentToChange")#find "p.firstparagraph:visible")
+     ~$"div.contentToChange"#find "p.firstparagraph:visible"
        #slideUp_speed_ "slow" ignore;
      false);</pre>
 
@@ -97,14 +97,14 @@
       <input type="button" value="Add" class="buttonCAdd" />
       <input type="button" value="Remove" class="buttonCRemove" />
       <a href="#" class="codeButtonC">Show&nbsp;/&nbsp;Hide jquery code</a>
-      <pre class="codeC">(j "input.buttonCAdd")#click
+      <pre class="codeC">~$"input.buttonCAdd"#click
   (fun _ ->
-     (((j "div.contentToChange")#find "p")#not ".alert")
-       #append "&lt;strong class=\"addedtext\"&gt;&amp;nbsp;This text was just appended to this paragraph&lt;/strong&gt;";
+     ~$"div.contentToChange"#find "p"#not ".alert"
+       #append "<strong class=\"addedtext\">&nbsp;This text was just appended to this paragraph</strong>";
      false);
-(j "input.buttonCRemove")#click
+~$"input.buttonCRemove"#click
   (fun _ ->
-     (j "strong.addedtext")#remove;
+     ~$"strong.addedtext"#remove;
      false);</pre>
 
       <br/>
@@ -114,9 +114,9 @@
       <p>Remove paragraph with fade and animation.</p>
       <input type="button" value="Remove" class="buttonDhide" />
       <a href="#" class="codeButtonD">Show&nbsp;/&nbsp;Hide jquery code</a>
-      <pre class="codeD">(j "input.buttonDhide")#click
+      <pre class="codeD">~$"input.buttonDhide"#click
   (fun _ ->
-     ((j "div.contentToChange")#find "p.thirdparagraph")
+     ~$"div.contentToChange"#find "p.thirdparagraph"
        #hide_speed_ "slow" ignore;
      false);</pre>
 
@@ -127,9 +127,9 @@
 
       <input type="button" value="Change Italics" class="buttonEitalics" />
       <a href="#" class="codeButtonE">Show&nbsp;/&nbsp;Hide jquery code</a>
-      <pre class="codeE">(j "input.buttonEitalics")#click
+      <pre class="codeE">~$"input.buttonEitalics"#click
   (fun _ ->
-     ((j "div.contentToChange")#find "em")#css_obj_
+     ~$"div.contentToChange"#find "em"#css_obj_
        (object
           method color = "#993300"
           method fontWeight = "bold"
@@ -144,10 +144,10 @@
       <input type="button" value="Add Class" class="buttonFaddclass" />
       <input type="button" value="Remove Class" class="buttonFremoveclass" />
       <a href="#" class="codeButtonF">Show&nbsp;/&nbsp;Hide jquery code</a>
-      <pre class="codeF">(j "input.buttonFaddclass")#click
-  (fun _ -> (j "p.fifthparagraph")#addClass "changeP"; false);
-(j "input.buttonFremoveclass")#click
-  (fun _ -> (j "p.fifthparagraph")#removeClass "changeP"; false);</pre>
+      <pre class="codeF">~$"input.buttonFaddclass"#click
+  (fun _ -> ~$"p.fifthparagraph"#addClass "changeP"; false);
+~$"input.buttonFremoveclass"#click
+  (fun _ -> ~$"p.fifthparagraph"#removeClass "changeP"; false);</pre>
     </div>
 
     <div style="float:right;width:50%;background:#F5F5F5;" class="contentToChange">

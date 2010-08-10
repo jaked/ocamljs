@@ -1,1 +1,2 @@
-<*.ml*> : pkg_dom
+<jQuery.ml*> : pkg_dom
+<pa_jquery.ml> : syntax_camlp4o,pkg_camlp4.quotations,pkg_camlp4.extend

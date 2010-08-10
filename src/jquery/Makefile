@@ -2,14 +2,15 @@
 
 FILES=\
 jquery.cmjsa \
-jQuery.mli jQuery.cmi
+jQuery.mli jQuery.cmi \
+pa_jquery.cmo
 
 BFILES=$(addprefix _build/,$(FILES))
 
 all: myocamlbuild.ml
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
 	OCAMLPATH=`pwd`/../../stage \
-	ocamlbuild jquery.cmjsa
+	ocamlbuild jquery.cmjsa pa_jquery.cmo
 
 doc:
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR)/site-lib \
