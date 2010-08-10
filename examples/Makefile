@@ -1,4 +1,4 @@
-DIRS=dom
+DIRS=dom jquery
 
 all:
 	for dir in $(DIRS); do \
