@@ -61,13 +61,27 @@ check_library () {
     # $1: the name of the library (findlib)
 	ocamlfind query "$1" >/dev/null 2>/dev/null
 	return
-	return 1   # not found
+}
+
+library_version () {
+    # $1: the name of the library (findlib)
+	ocamlfind query -format "%v" "$1" 2>/dev/null
+	return
+}
+
+absolute_dir () {
+    case $1 in
+        /*) echo $1 ;;
+        *) echo `pwd`/$1 ;;
+    esac
 }
 
 print_options () {
-	echo "    -srcdir $srcdir"
 	echo "    -bindir $bindir"
 	echo "    -libdir $libdir"
+	if [ "x$srcdir" != x ]; then echo "    -srcdir $srcdir"; fi
+	if [ "x$srcdir_ounit" != x ]; then echo "    -srcdir-ounit $srcdir_ounit"; fi
+	if [ "x$srcdir_lwt" != x ]; then echo "    -srcdir-lwt $srcdir_lwt"; fi
 }
 
 
@@ -80,6 +94,12 @@ _EOF_
 	cat <<_EOF_ >&2
 -srcdir dir
         OCaml source is in this directory (default ../ocaml-\$VERSION)
+
+-srcdir-lwt dir
+        Lwt source is in this directory (default ../lwt-\$VERSION)
+
+-srcdir-ounit dir
+        OUnit source is in this directory (default ../ounit-\$VERSION)
 
 -bindir dir
         Install binaries into this directory (default same as ocamlc)
@@ -99,11 +119,6 @@ echo "Welcome to ocamljs version $version" >&2
 
 while [ "$#" -gt 0 ]; do
 	case "$1" in
-                -srcdir)
-                        srcdir="$2"
-                        shift
-                        shift
-                        ;;
                 -bindir)
                         bindir="$2"
                         shift
@@ -111,6 +126,21 @@ while [ "$#" -gt 0 ]; do
                         ;;
                 -libdir)
                         libdir="$2"
+                        shift
+                        shift
+                        ;;
+                -srcdir)
+                        srcdir="$2"
+                        shift
+                        shift
+                        ;;
+                -srcdir-ounit)
+                        srcdir_ounit="$2"
+                        shift
+                        shift
+                        ;;
+                -srcdir-lwt)
+                        srcdir_lwt="$2"
                         shift
                         shift
                         ;;
@@ -153,7 +183,7 @@ esac
 
 
 printf "%s" "Checking for OCaml source... "
-x=${srcdir:="../ocaml-$ocamlc_version"}
+x=${srcdir:=`absolute_dir "../ocaml-$ocamlc_version"`}
 if [ -f $srcdir/VERSION ]; then
     src_version=`head -1 $srcdir/VERSION`
     if [ "$src_version" != "$ocamlc_version" ]; then
@@ -179,23 +209,67 @@ if check_library stdlib; then
     echo "found"
 else
     echo "not found"
-    echo "Make sure that ocamlfind is in your PATH, or download findlib"
-    echo "from www.ocaml-programming.de"
+    echo "Download findlib from http://projects.camlcity.org/projects/findlib.html"
     exit 1
 fi
 
 ######################################################################
-# Check that ulex is available:
+# Check ulex
 
 printf "%s" "Checking for ulex... "
 if check_library ulex; then
     echo "found"
 else
     echo "not found"
-    echo "Sorry, installation is not possible without ulex."
-    echo "Get ulex from:"
-    echo "http://www.cduce.org/download.html#side"
+    echo "Download ulex from http://www.cduce.org/download.html#side"
     exit 1
+fi
+
+######################################################################
+# Check Ounit
+
+printf "%s" "Checking for Ounit... "
+has_ounit=0
+if check_library oUnit; then
+    ounit_version=`library_version oUnit`
+
+    printf "%s" "checking for source... "
+    x=${srcdir_ounit:=`absolute_dir "../ounit-$ounit_version"`}
+    if [ -d $srcdir_ounit ]; then
+        # XXX check version
+        has_ounit=1
+        echo "found"
+    else
+        echo "$srcdir_ounit not found, continuing"
+        echo "Download ounit from http://www.xs4all.nl/~mmzeeman/ocaml/"
+    fi
+else
+    echo "not found, continuing"
+    echo "Download ounit from http://www.xs4all.nl/~mmzeeman/ocaml/"
+fi
+
+######################################################################
+# Check Lwt
+
+printf "%s" "Checking for Lwt... "
+has_lwt=0
+if check_library lwt; then
+    lwt_version=`library_version lwt`
+
+    printf "%s" "checking for source... "
+    x=${srcdir_lwt:=`absolute_dir "../lwt-$lwt_version"`}
+    if [ -d $srcdir_lwt ]; then
+        # XXX check version
+        has_lwt=1
+        echo "found"
+    else
+        srcdir_lwt=""
+        echo "not found, continuing"
+        echo "Download lwt from http://ocsigen.org/lwt/install"
+    fi
+else
+    echo "not found, continuing"
+    echo "Download lwt from http://ocsigen.org/lwt/install"
 fi
 
 ######################################################################
@@ -206,7 +280,15 @@ echo "Effective options:"
 print_options
 echo
 
-pkglist="jslib jscomp ocamljs stdlib javascript mozilla dom lwt lwt-dom gears gmaps jquery ounit-js"
+pkglist="jslib jscomp ocamljs stdlib javascript mozilla dom gears gmaps jquery"
+
+if [ $has_ounit -gt 0 ]; then
+  pkglist="$pkglist ounit"
+fi
+
+if [ $has_lwt -gt 0 ]; then
+  pkglist="$pkglist lwt lwt-dom"
+fi
 
 ######################################################################
 # Configure OCaml
@@ -238,6 +320,9 @@ BINDIR = $bindir
 LIBDIR = $libdir
 
 OCAML_VERSION = $ocamlc_version
+
+SRCDIR_OUNIT = $srcdir_ounit
+SRCDIR_LWT = $srcdir_lwt
 _EOF_
 
 ######################################################################

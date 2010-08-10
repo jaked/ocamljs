@@ -1,5 +1,0 @@
-name = "oUnit"
-version = "1.0.2"
-description = "A unittest framework for OCaml"
-requires = "javascript"
-archive(js) = "ounit-js.cmjsa"

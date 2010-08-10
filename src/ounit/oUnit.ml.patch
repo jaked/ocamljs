@@ -1,0 +1,16 @@
+322,323c322,325
+<   let begin_time = Unix.gettimeofday () in
+<     (Unix.gettimeofday () -. begin_time, f x y)
+---
+>   let gettimeofday () = (Javascript.new_Date())#getTime /. 1000. in
+>   let begin_time = gettimeofday() in
+>   let r = f x y in
+>   gettimeofday() -. begin_time, r
+381c383
+<           printf "OK"
+---
+>           printf "OK\n"
+399a402
+> (*
+408a412
+> *)

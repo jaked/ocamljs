@@ -1,2 +1,2 @@
-<*> : pkg_ounit-js
+<*> : pkg_oUnit
 <tail_calls.ml> or <booleans.ml> : syntax_camlp4o,pkg_jslib.inline,pkg_ocamljs

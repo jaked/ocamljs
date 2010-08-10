@@ -1,0 +1,7 @@
+4c4,7
+< requires = "unix"
+---
+> requires(js) = "javascript"
+> requires(byte) = "unix"
+> requires(native) = "unix"
+> archive(js) = "oUnit.cmjsa"
