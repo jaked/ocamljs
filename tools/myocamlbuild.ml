@@ -208,7 +208,6 @@ dispatch begin function
 
        flag ["ocaml"; "js"; "link"; "library"; "support_js"] & S[A"-cclib"; A"support.js"];
        flag ["ocaml"; "js"; "link"; "library"; "primitives_js"] & S[A"-cclib"; A"primitives.js"];
-       flag ["ocaml"; "js"; "link"; "library"; "gears_init_js"] & S[A"-cclib"; A"gears_init.js"];
 
        flag ["ocaml"; "compile"; "DEBUG"] & S[A"-ppopt"; A"-DDEBUG"];
        flag ["ocaml"; "ocamldep"; "DEBUG"] & S[A"-ppopt"; A"-DDEBUG"];
