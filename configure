@@ -280,7 +280,7 @@ echo "Effective options:"
 print_options
 echo
 
-pkglist="jslib jscomp ocamljs stdlib javascript mozilla dom gears gmaps jquery"
+pkglist="jslib jscomp ocamljs stdlib javascript mozilla dom gmaps jquery"
 
 if [ $has_ounit -gt 0 ]; then
   pkglist="$pkglist ounit"

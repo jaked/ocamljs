@@ -1,4 +1,4 @@
-DIRS=dom gears
+DIRS=dom
 
 all:
 	for dir in $(DIRS); do \

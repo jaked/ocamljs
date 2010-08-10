@@ -1,3 +1,0 @@
-<*.ml*> : pkg_ocamljs,pkg_javascript
-
-<gears.cmjsa> : gears_init_js
