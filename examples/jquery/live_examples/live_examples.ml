@@ -7,7 +7,7 @@ let () = jQuery_ready
     (* Code for example A *)
     ~$"input.buttonAsize"#click
       (fun _ ->
-         let size = ~$"div.contentToChange"#find "p"#size in
+         let size = ~$"div.contentToChange" #find "p" #size in
          window#alert (string_of_int size);
          false);
     (* Show code example A *)
@@ -30,7 +30,7 @@ let () = jQuery_ready
     (* Code for example C *)
     ~$"input.buttonCAdd"#click
       (fun _ ->
-         ~$"div.contentToChange"#find "p"#not ".alert"
+         ~$"div.contentToChange" #find "p" #not ".alert"
            #append "<strong class=\"addedtext\">&nbsp;This text was just appended to this paragraph</strong>";
          false);
     ~$"input.buttonCRemove"#click
@@ -52,7 +52,7 @@ let () = jQuery_ready
     (* Code for example E *)
     ~$"input.buttonEitalics"#click
       (fun _ ->
-         ~$"div.contentToChange"#find "em"#css_obj_
+         ~$"div.contentToChange" #find "em" #css_obj_
            (object
               method color = "#993300"
               method fontWeight = "bold"
