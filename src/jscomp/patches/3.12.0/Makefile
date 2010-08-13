@@ -1,2 +1,7 @@
-patches:
-	for ml in $(wildcard *.ml); do diff -Naur $$ml.orig $$ml > $$ml.patch; done || exit 0
+ML=$(wildcard *.ml)
+PATCHES=$(addsuffix .patch,$(ML))
+
+%.ml.patch: %.ml
+	-diff -u $<.orig $< > $@
+
+patches: $(PATCHES)

@@ -41,3 +41,10 @@ ocaml:
 
 stdlib.mllib:
 	ln -s ocaml/stdlib/stdlib.mllib .
+
+patches:
+	for ver in $(VERSIONS); do \
+		$(MAKE) -C patches/$$ver patches || exit; \
+	done
+
+.PHONY: patches

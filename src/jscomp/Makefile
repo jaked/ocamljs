@@ -52,3 +52,10 @@ myocamlbuild.ml: ../../tools/myocamlbuild.ml myocamlbuild.mlp
 
 ocaml:
 	ln -s ../../ocaml .
+
+patches:
+	for ver in $(VERSIONS); do \
+		$(MAKE) -C patches/$$ver patches || exit; \
+	done
+
+.PHONY: patches
