@@ -10,6 +10,7 @@ let tests = "Ocamljs" >::: [
   Oo_immediate.tests;
   Oo_inherit.tests;
   Oo_init.tests;
+  Oo_method_function_bug.tests;
   Oo_private.tests;
   Oo_self.tests;
   Oo_super.tests;

@@ -1,2 +1,2 @@
 <*> : pkg_oUnit
-<tail_calls.ml> or <booleans.ml> : syntax_camlp4o,pkg_jslib.inline,pkg_ocamljs
+<tail_calls.ml> or <booleans.ml> or <oo_method_function_bug.ml> : syntax_camlp4o,pkg_jslib.inline,pkg_ocamljs
