@@ -458,7 +458,18 @@ let lookup_tables root keys =
 
 (**** builtin methods ****)
 
-let get_const x = ret (fun obj -> x)
+let get_const x =
+  (* 
+     hack so if you say
+       let foo x = ...
+       method foo = foo
+     then the result can be called from Javascript with
+       o.foo(x)
+     instead of
+       o.foo()(x)
+  *)
+  << typeof $x$ === "function" ? $x$ : $ret (fun obj -> x)$ >>
+
 let get_var n   = ret (fun obj -> Array.unsafe_get << this >> n)
 let get_env e n =
   ret (fun obj ->
