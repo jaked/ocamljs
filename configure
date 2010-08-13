@@ -240,6 +240,7 @@ if check_library oUnit; then
         has_ounit=1
         echo "found"
     else
+        srcdir_ounit=""
         echo "$srcdir_ounit not found, continuing"
         echo "Download ounit from http://www.xs4all.nl/~mmzeeman/ocaml/"
     fi
