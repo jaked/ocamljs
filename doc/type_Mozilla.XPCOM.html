@@ -1,0 +1,710 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of class types" rel=Appendix href="index_class_types.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Dom" rel="Chapter" href="Dom.html">
+<link title="Gmaps" rel="Chapter" href="Gmaps.html">
+<link title="JQuery" rel="Chapter" href="JQuery.html">
+<link title="Javascript" rel="Chapter" href="Javascript.html">
+<link title="Jslib_ast" rel="Chapter" href="Jslib_ast.html">
+<link title="Jslib_lexer" rel="Chapter" href="Jslib_lexer.html">
+<link title="Jslib_parse" rel="Chapter" href="Jslib_parse.html">
+<link title="Jslib_pp" rel="Chapter" href="Jslib_pp.html">
+<link title="Lwt_dom" rel="Chapter" href="Lwt_dom.html">
+<link title="Mozilla" rel="Chapter" href="Mozilla.html">
+<link title="Ocamljs" rel="Chapter" href="Ocamljs.html"><title>Mozilla.XPCOM</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span><br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;class_<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;interface<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;result<br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;supports&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;supportsWeakReference&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;iDRef&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;equals&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;[<span class="keywordsign">'</span>a]&nbsp;out&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;_get_value&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="keyword">method</span>&nbsp;_set_value&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;inputStream&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;appStartup&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;quit&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;badCertListener&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;bufferedInputStream&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;init&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStream&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;uRI&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_host&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_spec&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_host&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_spec&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;resolve&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;interfaceRequestor&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getInterface&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.iDRef&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>b<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;channel&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_URI&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_notificationCallbacks&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interfaceRequestor&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;consoleService&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;logStringMessage&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;cookie&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_host&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_path&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_value&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;[<span class="keywordsign">'</span>a]&nbsp;simpleEnumerator&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;getNext&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="keyword">method</span>&nbsp;hasMoreElements&nbsp;:&nbsp;bool&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;cookieManager&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_enumerator&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.simpleEnumerator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;remove&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMNode&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_childNodes&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode&nbsp;array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_firstChild&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_lastChild&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nextSibling&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeName&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeType&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeValue&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_parentNode&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_previousSibling&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMElement&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_childNodes&nbsp;:&nbsp;dOMNode&nbsp;array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_firstChild&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_lastChild&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nextSibling&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeName&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeType&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeValue&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_parentNode&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_previousSibling&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getAttribute&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setAttribute&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMEvent&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_bubbles&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_cancelable&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_eventPhase&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_timeStamp&nbsp;:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_type&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;initEvent&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;preventDefault&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;stopPropagation&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMEventListener&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;handleEvent&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMEvent&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMEventTarget&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addEventListener&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMEventListener&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addEventListener_fun_&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMEvent&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;dispatchEvent&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMEvent&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;removeEventListener&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMEventListener&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;removeEventListener_fun_&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMEvent&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMAbstractView&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMDocumentView&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_defaultView&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMAbstractView<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMUIEvent&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_bubbles&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_cancelable&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_eventPhase&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_timeStamp&nbsp;:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_type&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;initEvent&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;initUIEvent&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMAbstractView&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;preventDefault&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;stopPropagation&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMKeyEvent&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_bubbles&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_cancelable&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_eventPhase&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_timeStamp&nbsp;:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_type&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;initEvent&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;initKeyEvent&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMAbstractView&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;initUIEvent&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span>dOMAbstractView&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;preventDefault&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;stopPropagation&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMMouseEvent&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_altKey&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_bubbles&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_button&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_cancelable&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_clientX&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_clientY&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_ctrlKey&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_eventPhase&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_metaKey&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_relatedTarget&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMEventTarget<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_screenX&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_screenY&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_shiftKey&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_timeStamp&nbsp;:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_type&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;initEvent&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;initMouseEvent&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMAbstractView&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMEventTarget&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;initUIEvent&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span>dOMAbstractView&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;preventDefault&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;stopPropagation&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMDocument&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_childNodes&nbsp;:&nbsp;dOMNode&nbsp;array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_firstChild&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_lastChild&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nextSibling&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeName&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeType&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeValue&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_parentNode&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_previousSibling&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getElementById&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMElement<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMXMLDocument&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_childNodes&nbsp;:&nbsp;dOMNode&nbsp;array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_firstChild&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_lastChild&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nextSibling&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeName&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeType&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_nodeValue&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_parentNode&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_previousSibling&nbsp;:&nbsp;dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getElementById&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span>dOMElement<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMLocation&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_href&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_href&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMNSDocument&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_location&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMLocation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMSerializer&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;serializeToString&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMDocumentEvent&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;createEvent&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMEvent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMWindow&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_document&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMDocument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMWindow2&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_document&nbsp;:&nbsp;dOMDocument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMWindowInternal&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_document&nbsp;:&nbsp;dOMDocument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_location&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_location&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;alert&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;back&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;close&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMJSWindow&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;clearInterval&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;clearTimeout&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;openDialog&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setInterval&nbsp;:&nbsp;(unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setTimeout&nbsp;:&nbsp;(unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMXPathNSResolver&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;lookupNamespaceURI&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMXPathEvaluator&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;evaluate&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMXPathNSResolver&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;dOMXPathResult&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_ANY_TYPE&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_FIRST_ORDERED_NODE_TYPE&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_ORDERED_NODE_ITERATOR_TYPE&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_singleNodeValue&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;iterateNext&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMNode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;externalProtocolService&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;externalProtocolHandlerExists&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getApplicationDescription&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;isExposedProtocol&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;loadURI&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRI&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;loadUrl&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRI&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;file&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;append&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">method</span>&nbsp;remove&nbsp;:&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;fileInputStream&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;init&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.file&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;outputStream&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;close&nbsp;:&nbsp;unit&nbsp;<span class="keyword">method</span>&nbsp;write&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;fileOutputStream&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;close&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;init&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.file&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;write&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;httpChannel&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_URI&nbsp;:&nbsp;uRI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_notificationCallbacks&nbsp;:&nbsp;<span class="keywordsign">#</span>interfaceRequestor&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setRequestHeader&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;request&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_status&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;cancel&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;isPending&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;resume&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;suspend&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;requestObserver&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;onStartRequest&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.request&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;onStopRequest&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.request&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;streamListener&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;onDataAvailable&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.request&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStream&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;onStartRequest&nbsp;:&nbsp;<span class="keywordsign">#</span>request&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span>supports&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;onStopRequest&nbsp;:&nbsp;<span class="keywordsign">#</span>request&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span>supports&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;inputStreamPump&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_status&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;asyncRead&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.streamListener&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;cancel&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;init&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStream&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;isPending&nbsp;:&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;resume&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;suspend&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;iOService&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;newURI&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRI&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRI<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;localFile&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;append&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;remove&nbsp;:&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setRelativeDescriptor&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.localFile&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;mIMEInputStream&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_addContentLength&nbsp;:&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addHeader&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setData&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStream&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;multiplexInputStream&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;appendStream&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStream&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;observer&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;observe&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;observerService&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addObserver&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.observer&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;removeObserver&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.observer&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;commandLine&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;findFlag&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getArgument&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;handleFlag&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;handleFlagWithParam&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;removeAruguments&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;passwordManager&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addReject&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addUser&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;removeReject&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;removeUser&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;passwordManagerInternal&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addUserFull&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;findPasswordEntry&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.out&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.out&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.out&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;loginInfo&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_formSubmitURL&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_hostname&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_httpRealm&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_password&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_passwordField&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_username&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_usernameField&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;equals&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginInfo&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;equalsIngnorePassword&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginInfo&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;init&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;loginManager&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addLogin&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginInfo&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;findLogins&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.out&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginInfo&nbsp;array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getLoginSavingEnabled&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;modifyLogin&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginInfo&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginInfo&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;removeLogin&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginInfo&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setLoginSavingEnabled&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;permissionManager&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;add&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRI&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;remove&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;prefBranch&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_PREF_BOOL&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_PREF_INT&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_PREF_STRING&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getBoolPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getCharPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getIntPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getPrefType&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setBoolPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setCharPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setIntPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;prefBranch2&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_PREF_BOOL&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_PREF_INT&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_PREF_STRING&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addObserver&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.observer&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getBoolPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getCharPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getIntPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getPrefType&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;removeObserver&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.observer&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setBoolPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setCharPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setIntPref&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;prefService&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getBranch&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.prefBranch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getDefaultBranch&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.prefBranch<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;readUserPrefs&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.file&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;resetPrefs&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;resetUserPrefs&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;savePrefFile&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.file&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;properties&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;get&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;scriptableInputStream&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;available&nbsp;:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;close&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;init&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStream&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;read&nbsp;:&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;transport&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;close&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;openInputStream&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStream<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;openOutputStream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.outputStream<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;serverSocket&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;asyncListen&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.serverSocketListener&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;close&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;init&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">and</span>&nbsp;serverSocketListener&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;onSocketAccepted&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.serverSocket&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.transport&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;onStopListening&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.serverSocket&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;stringInputStream&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;setData&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;uRIContentListener&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;canHandleContent&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.out<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;doContent&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.request&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.streamListener&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.out&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;isPreferred&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.out&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;onStartURIOpen&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRI&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;uRILoader&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;registerContentListener&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRIContentListener&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;unRegisterContentListener&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRIContentListener&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;windowMediator&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getEnumerator&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMWindow&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.simpleEnumerator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getMostRecentWindow&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMWindow<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;xMLHttpRequest&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_QueryInterface&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_channel&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.channel<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_readyState&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_responseText&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_responseXML&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMXMLDocument<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_get_status&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_open&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_onload&nbsp;:&nbsp;(unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_onreadystatechange&nbsp;:&nbsp;(unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;abort&nbsp;:&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;getResponseHeader&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;overrideMimeType&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;send&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStream&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setRequestHeader&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;createInstance&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;<span class="string">"#createInstance"</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;getService&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;=&nbsp;<span class="string">"#getService"</span><br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;_set_returnCode&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.result&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;appStartup&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.appStartup&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;badCertListener&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.badCertListener&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;bufferedInputStream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.bufferedInputStream&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;channel&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.channel&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;consoleService&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.consoleService&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;cookie&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.cookie&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;cookieManager&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.cookieManager&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;dOMSerializer&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMSerializer&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;externalProtocolService&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.externalProtocolService&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;file&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.file&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;fileInputStream&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.fileInputStream&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;fileOutputStream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.fileOutputStream&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;httpChannel&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.httpChannel&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;inputStreamPump&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStreamPump&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;iOService&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.iOService&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;localFile&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.localFile&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;loginInfo&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginInfo&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;loginManager&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginManager&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;mIMEInputStream&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.mIMEInputStream&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;multiplexInputStream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.multiplexInputStream&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;observer&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.observer&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;observerService&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.observerService&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;commandLine&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.commandLine&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;passwordManager&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.passwordManager&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;passwordManagerInternal&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.passwordManagerInternal&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;permissionManager&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.permissionManager&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;prefService&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.prefService&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;prefBranch2&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.prefBranch2&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;properties&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.properties&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;requestObserver&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.requestObserver&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;scriptableInputStream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.scriptableInputStream&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;serverSocket&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.serverSocket&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;streamListener&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.streamListener&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;stringInputStream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.stringInputStream&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;supports&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supports&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;supportsWeakReference&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.supportsWeakReference&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;uRI&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRI&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;uRIContentListener&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRIContentListener&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;uRILoader&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRILoader&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;windowMediator&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.windowMediator&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;xMLHttpRequest&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.xMLHttpRequest&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.interface<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;appshell_window_mediator&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;consoleservice&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;cookiemanager&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;file_directory_service&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;file_local&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;io_multiplex_input_stream&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;io_string_input_stream&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;loginmanager&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;network_buffered_input_stream&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;network_file_input_stream&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;network_file_output_stream&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;network_input_stream_pump&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;network_io_service&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;network_mime_input_stream&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;network_server_socket&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;network_simple_uri&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;observer_service&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;passwordmanager&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;permissionmanager&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;preferences_service&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;scriptableinputstream&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;toolkit_app_startup&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;uriloader&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;uriloader_external_protocol_service&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;xmlextras_xmlhttprequest&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;xmlextras_xmlserializer&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.class_<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;nOINTERFACE&nbsp;:&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.result<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_appshell_window_mediator&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.windowMediator<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_consoleservice&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.consoleService<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_cookiemanager&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.cookieManager<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_uriloader_external_protocol_service&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.externalProtocolService<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_file_directory_service&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.properties<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_loginManager&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginManager<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_network_io_service&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.iOService<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_observer_service&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.observerService<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_passwordmanager_passwordManager&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.passwordManager<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_passwordmanager_passwordManagerInternal&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.passwordManagerInternal<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_permissionmanager&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.permissionManager<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_preferences_service&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.prefService<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_preferences_branch&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.prefBranch2<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_toolkit_app_startup&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.appStartup<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;getService_uriloader&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRILoader<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_file_local&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.localFile<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_loginInfo&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.loginInfo<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_network_buffered_input_stream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.bufferedInputStream<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_network_file_input_stream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.fileInputStream<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_network_file_output_stream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.fileOutputStream<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_network_mime_input_stream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.mIMEInputStream<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_io_multiplex_input_stream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.multiplexInputStream<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_io_string_input_stream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.stringInputStream<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_scriptableinputstream&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.scriptableInputStream<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_network_input_stream_pump&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.inputStreamPump<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_network_server_socket&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.serverSocket<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_network_simple_uri&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.uRI<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_xmlextras_xmlhttprequest&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.xMLHttpRequest<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;createInstance_xmlextras_xmlserializer&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.dOMSerializer<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;make_out&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="constructor">Mozilla</span>.<span class="constructor">XPCOM</span>.out<br>
+<span class="keyword">end</span></code></body></html>

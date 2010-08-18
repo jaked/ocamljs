@@ -1,0 +1,144 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of class types" rel=Appendix href="index_class_types.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Dom" rel="Chapter" href="Dom.html">
+<link title="Gmaps" rel="Chapter" href="Gmaps.html">
+<link title="JQuery" rel="Chapter" href="JQuery.html">
+<link title="Javascript" rel="Chapter" href="Javascript.html">
+<link title="Jslib_ast" rel="Chapter" href="Jslib_ast.html">
+<link title="Jslib_lexer" rel="Chapter" href="Jslib_lexer.html">
+<link title="Jslib_parse" rel="Chapter" href="Jslib_parse.html">
+<link title="Jslib_pp" rel="Chapter" href="Jslib_pp.html">
+<link title="Lwt_dom" rel="Chapter" href="Lwt_dom.html">
+<link title="Mozilla" rel="Chapter" href="Mozilla.html">
+<link title="Ocamljs" rel="Chapter" href="Ocamljs.html"><title>Ocamljs.Inline.Jslib_ast</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span><br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;loc&nbsp;=&nbsp;unit<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;unop&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Jdelete</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jvoid</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jtypeof</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jadd2_pre</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jsub2_pre</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jadd_pre</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jsub_pre</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jtilde</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jnot</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jadd2_post</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jsub2_post</span><br>
+&nbsp;&nbsp;<span class="keyword">and</span>&nbsp;binop&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Jhashref</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jmul</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jdiv</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jmod</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jadd</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jsub</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jlt</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jgt</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jleq</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jgeq</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jlsr</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jlsl</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jasr</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jeq</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jneq</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jinstanceof</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jseq</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jsneq</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jland</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jlor</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jand</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jxor</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jor</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jcomma</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jassign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jmul_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jdiv_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jmod_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jadd_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jsub_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jlsl_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jlsr_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jasr_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jand_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jxor_assign</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jor_assign</span><br>
+&nbsp;&nbsp;<span class="keyword">and</span>&nbsp;exp&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Jthis</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jvar</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jarray</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jobject</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp)&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jstring</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string&nbsp;*&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jnum</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jnull</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jbool</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;bool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jregexp</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string&nbsp;*&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jfun</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string&nbsp;option&nbsp;*&nbsp;string&nbsp;list&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jfieldref</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Junop</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.unop&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jbinop</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.binop&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jite</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jcall</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jnew</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;option<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jexp_nil</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jexp_cons</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jexp_Ant</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string<br>
+&nbsp;&nbsp;<span class="keyword">and</span>&nbsp;stmt&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Jvars</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(string&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;option)&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jfuns</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string&nbsp;*&nbsp;string&nbsp;list&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jreturn</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;option<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jcontinue</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string&nbsp;option<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jbreak</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string&nbsp;option<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jswitch</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt)&nbsp;list&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jites</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt&nbsp;option<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jthrow</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jexps</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jtrycatch</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(string&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt)&nbsp;option&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jfor</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(string&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;option)&nbsp;list&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;option&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;option&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;option&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jdowhile</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jwhile</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jblock</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jwith</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.exp&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jlabel</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jstmt_nil</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jstmt_cons</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt&nbsp;*&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Jstmt_Ant</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Ocamljs</span>.<span class="constructor">Inline</span>.<span class="constructor">Jslib_ast</span>.loc&nbsp;*&nbsp;string<br>
+<span class="keyword">end</span></code></body></html>

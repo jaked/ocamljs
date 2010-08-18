@@ -1,0 +1,48 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of class types" rel=Appendix href="index_class_types.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Dom" rel="Chapter" href="Dom.html">
+<link title="Gmaps" rel="Chapter" href="Gmaps.html">
+<link title="JQuery" rel="Chapter" href="JQuery.html">
+<link title="Javascript" rel="Chapter" href="Javascript.html">
+<link title="Jslib_ast" rel="Chapter" href="Jslib_ast.html">
+<link title="Jslib_lexer" rel="Chapter" href="Jslib_lexer.html">
+<link title="Jslib_parse" rel="Chapter" href="Jslib_parse.html">
+<link title="Jslib_pp" rel="Chapter" href="Jslib_pp.html">
+<link title="Lwt_dom" rel="Chapter" href="Lwt_dom.html">
+<link title="Mozilla" rel="Chapter" href="Mozilla.html">
+<link title="Ocamljs" rel="Chapter" href="Ocamljs.html"><title>Jslib_ast.Meta.MakeLambda.Patt</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span><br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_loc&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Loc</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Loc</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_option&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt)&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;option&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_string&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_int&nbsp;:&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_float&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_char&nbsp;:&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_bool&nbsp;:&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_list&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt)&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_binop&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Jslib_ast</span>.binop&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_exp&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Jslib_ast</span>.exp&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_stmt&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Jslib_ast</span>.stmt&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;meta_unop&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.loc&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Jslib_ast</span>.unop&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Camlp4</span>.<span class="constructor">PreCast</span>.<span class="constructor">Ast</span>.patt<br>
+<span class="keyword">end</span></code></body></html>

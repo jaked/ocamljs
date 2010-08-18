@@ -3,25 +3,31 @@ layout: page
 title: Ocamljs
 ---
 
-`Ocamljs` is a Javascript backend for `ocamlc`.
+#Ocamljs#
 
-Included are several libraries for Web programming, as well as a
-library for working with Javascript via Camlp4. It works with
-[orpc](http://jaked.github.com/orpc) for RPC over HTTP, and with
+`Ocamljs` is a system for compiling OCaml to Javascript. It includes a
+Javascript back-end for the OCaml compiler, as well as several support
+libraries, such as bindings to the browser DOM. `Ocamljs` also works
+with [orpc](http://jaked.github.com/orpc) for RPC over HTTP, and
 [froc](http://jaked.github.com/froc) for functional reactive browser
-programming.
+programming. The full OCaml language and much of the OCaml standard
+library is supported. There is special support for the object system
+so Javascript objects may be called from OCaml and vice-versa.
 
-The current version of `ocamljs` can be downloaded from
+You can download `ocamljs` at [http://github.com/jaked/ocamljs/downloads](http://github.com/jaked/ocamljs/downloads).
 
- * [http://code.google.com/p/ocamljs](http://code.google.com/p/ocamljs)
+See [Introduction] (Introduction.html) and [Installation] (Installation.html).
 
-and new development is at
+For a quick start:
 
- * [http://github.com/jaked/ocamljs](http://github.com/jaked/ocamljs)
+ 1. `./configure`
+ 2. `make`
+ 3. `make install`
+ 4. `make examples`
 
 `Ocamljs` is written by Jake Donham, with contributions from
 
- * Dave Benjamin (jQuery binding)
+ * Dave Benjamin (jQuery binding and examples)
  * Haoyang Wang
  * Mike Wells
  * Stepan Zastupov

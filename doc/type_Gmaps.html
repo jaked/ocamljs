@@ -1,0 +1,80 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of class types" rel=Appendix href="index_class_types.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Dom" rel="Chapter" href="Dom.html">
+<link title="Gmaps" rel="Chapter" href="Gmaps.html">
+<link title="JQuery" rel="Chapter" href="JQuery.html">
+<link title="Javascript" rel="Chapter" href="Javascript.html">
+<link title="Jslib_ast" rel="Chapter" href="Jslib_ast.html">
+<link title="Jslib_lexer" rel="Chapter" href="Jslib_lexer.html">
+<link title="Jslib_parse" rel="Chapter" href="Jslib_parse.html">
+<link title="Jslib_pp" rel="Chapter" href="Jslib_pp.html">
+<link title="Lwt_dom" rel="Chapter" href="Lwt_dom.html">
+<link title="Mozilla" rel="Chapter" href="Mozilla.html">
+<link title="Ocamljs" rel="Chapter" href="Ocamljs.html"><title>Gmaps</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gLatLng&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GLatLng&nbsp;:&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gLatLng&nbsp;=&nbsp;<span class="string">"$new"</span>&nbsp;<span class="string">"GLatLng"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gLatLngBounds&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GLatLngBounds&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Gmaps</span>.gLatLng&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gLatLng&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gLatLngBounds&nbsp;=&nbsp;<span class="string">"$new"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"GLatLngBounds"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gCopyright&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GCopyright&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gLatLngBounds&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gCopyright<br>
+&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;<span class="string">"$new"</span>&nbsp;<span class="string">"GCopyright"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gCopyrightCollection&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;addCopyright&nbsp;:&nbsp;<span class="constructor">Gmaps</span>.gCopyright&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GCopyrightCollection&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gCopyrightCollection<br>
+&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;<span class="string">"$new"</span>&nbsp;<span class="string">"GCopyrightCollection"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gPoint&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;<span class="keyword">method</span>&nbsp;_get_x&nbsp;:&nbsp;int&nbsp;<span class="keyword">method</span>&nbsp;_get_y&nbsp;:&nbsp;int&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GPoint&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gPoint&nbsp;=&nbsp;<span class="string">"$new"</span>&nbsp;<span class="string">"GPoint"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gSize&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GSize&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gSize&nbsp;=&nbsp;<span class="string">"$new"</span>&nbsp;<span class="string">"GSize"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gIcon&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_iconAnchor&nbsp;:&nbsp;<span class="constructor">Gmaps</span>.gPoint&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_iconSize&nbsp;:&nbsp;<span class="constructor">Gmaps</span>.gSize&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_image&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_infoWindowAnchor&nbsp;:&nbsp;<span class="constructor">Gmaps</span>.gPoint&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_shadow&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_shadowSize&nbsp;:&nbsp;<span class="constructor">Gmaps</span>.gSize&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GIcon&nbsp;:&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gIcon&nbsp;=&nbsp;<span class="string">"$new"</span>&nbsp;<span class="string">"GIcon"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gOverlay&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gMap2&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;addOverlay&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Gmaps</span>.gOverlay&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;panTo&nbsp;:&nbsp;<span class="constructor">Gmaps</span>.gLatLng&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;setCenter_zoom_&nbsp;:&nbsp;<span class="constructor">Gmaps</span>.gLatLng&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GMap2&nbsp;:&nbsp;<span class="constructor">Dom</span>.element&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gMap2&nbsp;=&nbsp;<span class="string">"$new"</span>&nbsp;<span class="string">"GMap2"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gTileLayer&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_getOpacity&nbsp;:&nbsp;(unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_getTileUrl&nbsp;:&nbsp;(<span class="constructor">Gmaps</span>.gPoint&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;_set_isPng&nbsp;:&nbsp;(unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GTileLayer&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Gmaps</span>.gCopyrightCollection&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gTileLayer&nbsp;=&nbsp;<span class="string">"$new"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"GTileLayer"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gTileLayerOverlay&nbsp;=&nbsp;<span class="keyword">object</span>&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GTileLayerOverlay&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Gmaps</span>.gTileLayer&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gTileLayerOverlay&nbsp;=&nbsp;<span class="string">"$new"</span>&nbsp;<span class="string">"GTileLayerOverlay"</span><br>
+&nbsp;&nbsp;<span class="keyword">class</span>&nbsp;<span class="keyword">type</span>&nbsp;gMarker&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;openInfoWindow&nbsp;:&nbsp;<span class="keywordsign">#</span><span class="constructor">Dom</span>.node&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">method</span>&nbsp;openInfoWindow_string_&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">external</span>&nbsp;new_GMarker&nbsp;:&nbsp;<span class="constructor">Gmaps</span>.gLatLng&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gIcon&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gmaps</span>.gMarker<br>
+&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;<span class="string">"$new"</span>&nbsp;<span class="string">"GMarker"</span><br>
+<span class="keyword">end</span></code></body></html>

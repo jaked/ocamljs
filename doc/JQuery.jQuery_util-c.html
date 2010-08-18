@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="JQuery.jQuery_fx-c.html">
+<link rel="Up" href="JQuery.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of class types" rel=Appendix href="index_class_types.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Dom" rel="Chapter" href="Dom.html">
+<link title="Gmaps" rel="Chapter" href="Gmaps.html">
+<link title="JQuery" rel="Chapter" href="JQuery.html">
+<link title="Javascript" rel="Chapter" href="Javascript.html">
+<link title="Jslib_ast" rel="Chapter" href="Jslib_ast.html">
+<link title="Jslib_lexer" rel="Chapter" href="Jslib_lexer.html">
+<link title="Jslib_parse" rel="Chapter" href="Jslib_parse.html">
+<link title="Jslib_pp" rel="Chapter" href="Jslib_pp.html">
+<link title="Lwt_dom" rel="Chapter" href="Lwt_dom.html">
+<link title="Mozilla" rel="Chapter" href="Mozilla.html">
+<link title="Ocamljs" rel="Chapter" href="Ocamljs.html"><title>JQuery.jQuery_util</title>
+</head>
+<body>
+<div class="navbar"><a href="JQuery.jQuery_fx-c.html">Previous</a>
+&nbsp;<a href="JQuery.html">Up</a>
+&nbsp;</div>
+<center><h1>Class type <a href="type_JQuery.jQuery_util.html">JQuery.jQuery_util</a></h1></center>
+<br>
+<pre><span id="TYPEjQuery_util"><span class="keyword">class type</span> jQuery_util</span> = <code class="code">object</code> <a href="JQuery.jQuery_util-c.html">..</a> <code class="code">end</code></pre><hr width="100%">
+<pre><span id="METHODextend"><span class="keyword">method</span> extend</span> : <code class="type">'a. 'a -> unit</code></pre><pre><span id="METHODnoConflict"><span class="keyword">method</span> noConflict</span> : <code class="type">unit</code></pre><pre><span id="METHODnoConflict_extreme_"><span class="keyword">method</span> noConflict_extreme_</span> : <code class="type">bool -> unit</code></pre><pre><span id="METHODajax"><span class="keyword">method</span> ajax</span> : <code class="type">'b. 'b -> <a href="Dom.xMLHttpRequest-c.html">Dom.xMLHttpRequest</a></code></pre><pre><span id="METHODget"><span class="keyword">method</span> get</span> : <code class="type">'c 'd. string -> 'c -> ('d -> string -> unit) -> <a href="Dom.xMLHttpRequest-c.html">Dom.xMLHttpRequest</a></code></pre><pre><span id="METHODget_typed_"><span class="keyword">method</span> get_typed_</span> : <code class="type">'e 'f. string -> 'e -> ('f -> string -> unit) -> string -> <a href="Dom.xMLHttpRequest-c.html">Dom.xMLHttpRequest</a></code></pre><pre><span id="METHODgetJSON"><span class="keyword">method</span> getJSON</span> : <code class="type">'g 'h. string -> 'g -> ('h -> string -> unit) -> <a href="Dom.xMLHttpRequest-c.html">Dom.xMLHttpRequest</a></code></pre><pre><span id="METHODgetScript"><span class="keyword">method</span> getScript</span> : <code class="type">'i. string -> ('i -> string -> unit) -> <a href="Dom.xMLHttpRequest-c.html">Dom.xMLHttpRequest</a></code></pre><pre><span id="METHODpost"><span class="keyword">method</span> post</span> : <code class="type">'j 'k. string -> 'j -> ('k -> string -> unit) -> <a href="Dom.xMLHttpRequest-c.html">Dom.xMLHttpRequest</a></code></pre><pre><span id="METHODpost_typed_"><span class="keyword">method</span> post_typed_</span> : <code class="type">'l 'm. string -> 'l -> ('m -> string -> unit) -> string -> <a href="Dom.xMLHttpRequest-c.html">Dom.xMLHttpRequest</a></code></pre><pre><span id="METHODajaxSetup"><span class="keyword">method</span> ajaxSetup</span> : <code class="type">'n. 'n -> unit</code></pre><pre><span id="METHOD_get_support"><span class="keyword">method</span> _get_support</span> : <code class="type">'o. 'o</code></pre><pre><span id="METHOD_get_browser"><span class="keyword">method</span> _get_browser</span> : <code class="type">'p. 'p</code></pre><pre><span id="METHOD_get_boxModel"><span class="keyword">method</span> _get_boxModel</span> : <code class="type">bool</code></pre><pre><span id="METHODeach"><span class="keyword">method</span> each</span> : <code class="type">'q 'r. 'q -> (int -> 'r -> bool) -> unit</code></pre><pre><span id="METHODextend_obj_"><span class="keyword">method</span> extend_obj_</span> : <code class="type">'s 't. bool -> 's -> 't -> unit</code></pre><pre><span id="METHODgrep"><span class="keyword">method</span> grep</span> : <code class="type">'u. 'u array -> (int -> 'u -> bool) -> 'u array</code></pre><pre><span id="METHODgrep_invert_"><span class="keyword">method</span> grep_invert_</span> : <code class="type">'v. 'v array -> (int -> 'v -> bool) -> bool -> 'v array</code></pre><pre><span id="METHODmakeArray"><span class="keyword">method</span> makeArray</span> : <code class="type">'w 'x. 'w -> 'x array</code></pre><pre><span id="METHODmap"><span class="keyword">method</span> map</span> : <code class="type">'y 'z. 'y array -> ('y -> 'z) -> 'z array</code></pre><pre><span id="METHODmap_index_"><span class="keyword">method</span> map_index_</span> : <code class="type">'a1 'b1. 'a1 array -> ('a1 -> int -> 'b1) -> 'b1 array</code></pre><pre><span id="METHODinArray"><span class="keyword">method</span> inArray</span> : <code class="type">'c1. 'c1 -> 'c1 array -> int</code></pre><pre><span id="METHODmerge"><span class="keyword">method</span> merge</span> : <code class="type">'d1. 'd1 array -> 'd1 array -> 'd1 array</code></pre><pre><span id="METHODunique"><span class="keyword">method</span> unique</span> : <code class="type">'e1. 'e1 array -> 'e1 array</code></pre><pre><span id="METHODisArray"><span class="keyword">method</span> isArray</span> : <code class="type">'f1. 'f1 -> bool</code></pre><pre><span id="METHODisFunction"><span class="keyword">method</span> isFunction</span> : <code class="type">'g1. 'g1 -> bool</code></pre><pre><span id="METHODtrim"><span class="keyword">method</span> trim</span> : <code class="type">string -> string</code></pre><pre><span id="METHODparam"><span class="keyword">method</span> param</span> : <code class="type"><a href="Dom.element-c.html">Dom.element</a> array -> string</code></pre><pre><span id="METHODparam_jQuery_"><span class="keyword">method</span> param_jQuery_</span> : <code class="type"><a href="JQuery.jQuery-c.html">jQuery</a> -> string</code></pre><pre><span id="METHODparam_obj_"><span class="keyword">method</span> param_obj_</span> : <code class="type">'h1. 'h1 -> string</code></pre></body></html>

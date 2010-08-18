@@ -1,0 +1,645 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Javascript.html">
+<link rel="next" href="Jslib_lexer.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of class types" rel=Appendix href="index_class_types.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Dom" rel="Chapter" href="Dom.html">
+<link title="Gmaps" rel="Chapter" href="Gmaps.html">
+<link title="JQuery" rel="Chapter" href="JQuery.html">
+<link title="Javascript" rel="Chapter" href="Javascript.html">
+<link title="Jslib_ast" rel="Chapter" href="Jslib_ast.html">
+<link title="Jslib_lexer" rel="Chapter" href="Jslib_lexer.html">
+<link title="Jslib_parse" rel="Chapter" href="Jslib_parse.html">
+<link title="Jslib_pp" rel="Chapter" href="Jslib_pp.html">
+<link title="Lwt_dom" rel="Chapter" href="Lwt_dom.html">
+<link title="Mozilla" rel="Chapter" href="Mozilla.html">
+<link title="Ocamljs" rel="Chapter" href="Ocamljs.html"><title>Jslib_ast</title>
+</head>
+<body>
+<div class="navbar"><a href="Javascript.html">Previous</a>
+&nbsp;<a href="index.html">Up</a>
+&nbsp;<a href="Jslib_lexer.html">Next</a>
+</div>
+<center><h1>Module <a href="type_Jslib_ast.html">Jslib_ast</a></h1></center>
+<br>
+<pre><span class="keyword">module</span> Jslib_ast: <code class="code">sig</code> <a href="Jslib_ast.html">..</a> <code class="code">end</code></pre><hr width="100%">
+<pre><span id="TYPEloc"><span class="keyword">type</span> <code class="type"></code>loc</span> = <code class="type">Camlp4.PreCast.Loc.t</code> </pre>
+
+<br><code><span id="TYPEunop"><span class="keyword">type</span> <code class="type"></code>unop</span> = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jdelete</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jvoid</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jtypeof</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jadd2_pre</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jsub2_pre</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jadd_pre</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jsub_pre</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jtilde</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jnot</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jadd2_post</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jsub2_post</span></code></td>
+
+</tr></table>
+
+
+<br><code><span id="TYPEbinop"><span class="keyword">type</span> <code class="type"></code>binop</span> = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jhashref</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jmul</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jdiv</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jmod</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jadd</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jsub</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jlt</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jgt</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jleq</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jgeq</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jlsr</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jlsl</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jasr</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jeq</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jneq</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jinstanceof</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jseq</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jsneq</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jland</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jlor</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jand</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jxor</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jor</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jcomma</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jassign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jmul_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jdiv_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jmod_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jadd_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jsub_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jlsl_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jlsr_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jasr_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jand_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jxor_assign</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jor_assign</span></code></td>
+
+</tr></table>
+
+
+<br><code><span id="TYPEexp"><span class="keyword">type</span> <code class="type"></code>exp</span> = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jthis</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jvar</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jarray</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jobject</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * (<a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEexp">exp</a>) list</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jstring</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string * bool</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jnum</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jnull</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jbool</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * bool</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jregexp</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string * string</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jfun</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string option * string list * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jfieldref</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * string</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Junop</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEunop">unop</a> * <a href="Jslib_ast.html#TYPEexp">exp</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jbinop</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEbinop">binop</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEexp">exp</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jite</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEexp">exp</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jcall</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEexp">exp</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jnew</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> option</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jexp_nil</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jexp_cons</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEexp">exp</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jexp_Ant</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string</code></code></td>
+
+</tr></table>
+
+
+<br><code><span id="TYPEstmt"><span class="keyword">type</span> <code class="type"></code>stmt</span> = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jvars</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * (string * <a href="Jslib_ast.html#TYPEexp">exp</a> option) list</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jfuns</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string * string list * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jreturn</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> option</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jcontinue</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string option</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jbreak</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string option</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jswitch</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * (<a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a>) list<br>        * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jites</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a> option</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jthrow</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jexps</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jtrycatch</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a> * (string * <a href="Jslib_ast.html#TYPEstmt">stmt</a>) option<br>        * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jfor</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * (string * <a href="Jslib_ast.html#TYPEexp">exp</a> option) list * <a href="Jslib_ast.html#TYPEexp">exp</a> option<br>        * <a href="Jslib_ast.html#TYPEexp">exp</a> option * <a href="Jslib_ast.html#TYPEexp">exp</a> option * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jdowhile</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a> * <a href="Jslib_ast.html#TYPEexp">exp</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jwhile</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jblock</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jwith</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEexp">exp</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jlabel</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jstmt_nil</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jstmt_cons</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a> * <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jstmt_Ant</span> <span class="keyword">of</span> <code class="type"><a href="Jslib_ast.html#TYPEloc">loc</a> * string</code></code></td>
+
+</tr></table>
+
+
+<pre><span id="VALloc_of_exp"><span class="keyword">val</span> loc_of_exp</span> : <code class="type"><a href="Jslib_ast.html#TYPEexp">exp</a> -> Camlp4.PreCast.Loc.t</code></pre><pre><span id="VALexp_of_list"><span class="keyword">val</span> exp_of_list</span> : <code class="type"><a href="Jslib_ast.html#TYPEexp">exp</a> list -> <a href="Jslib_ast.html#TYPEexp">exp</a></code></pre><pre><span id="VALlist_of_exp"><span class="keyword">val</span> list_of_exp</span> : <code class="type"><a href="Jslib_ast.html#TYPEexp">exp</a> -> <a href="Jslib_ast.html#TYPEexp">exp</a> list -> <a href="Jslib_ast.html#TYPEexp">exp</a> list</code></pre><pre><span id="VALloc_of_stmt"><span class="keyword">val</span> loc_of_stmt</span> : <code class="type"><a href="Jslib_ast.html#TYPEstmt">stmt</a> -> Camlp4.PreCast.Loc.t</code></pre><pre><span id="VALstmt_of_list"><span class="keyword">val</span> stmt_of_list</span> : <code class="type"><a href="Jslib_ast.html#TYPEstmt">stmt</a> list -> <a href="Jslib_ast.html#TYPEstmt">stmt</a></code></pre><pre><span id="VALlist_of_stmt"><span class="keyword">val</span> list_of_stmt</span> : <code class="type"><a href="Jslib_ast.html#TYPEstmt">stmt</a> -> <a href="Jslib_ast.html#TYPEstmt">stmt</a> list -> <a href="Jslib_ast.html#TYPEstmt">stmt</a> list</code></pre><pre><span class="keyword">module</span> <a href="Jslib_ast.Meta.html">Meta</a>: <code class="code">sig</code> <a href="Jslib_ast.Meta.html">..</a> <code class="code">end</code></pre></body></html>
