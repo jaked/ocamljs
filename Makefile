@@ -45,6 +45,6 @@ examples:
 
 .PHONY: test examples doc
 
-gcode:
-	rsync -a --delete --exclude '.svn/' doc/ ../doc/
-	rsync -a --delete --exclude '.svn/' --include '*/' --include '*.html' --include '*.ml' --include '*.js' --include '*.css' --include '*.png' --exclude '*' examples/ ../examples/
+github:
+	rsync -a --delete --exclude './' doc/ ../ocamljs.gh-pages/doc/
+	rsync -a -L --delete --delete-excluded --exclude _build/ --include '*/' --exclude myocamlbuild.ml --include '*.ml' --include '*.js' --include '*.html' --include '*.css' --include '*.png' --include '*.jpg' --exclude '*' examples/ ../ocamljs.gh-pages/examples/
