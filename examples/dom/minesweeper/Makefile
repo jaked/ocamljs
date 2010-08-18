@@ -1,5 +1,7 @@
+JS=main.js
+
 all: myocamlbuild.ml
-	ocamlbuild main.js
+	ocamlbuild $(JS); ln -s _build/$(JS) .
 
 clean:
 	ocamlbuild -clean

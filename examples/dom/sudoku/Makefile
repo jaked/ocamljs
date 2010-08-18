@@ -1,5 +1,7 @@
+JS=sudoku.js
+
 all: myocamlbuild.ml
-	ocamlbuild sudoku.js
+	ocamlbuild $(JS); ln -s _build/$(JS) .
 
 clean:
 	ocamlbuild -clean
