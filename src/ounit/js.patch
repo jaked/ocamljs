@@ -1,0 +1,33 @@
+--- js-1.7.0/src/js.c   2007-04-20 14:45:18.000000000 -0400
++++ js-1.7.0.patched/src/js.c   2010-01-13 21:33:25.000000000 -0500
+@@ -694,1 +694,1 @@
+ }
+
+ static JSBool
++Print_verbatim(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
++{
++    uintN i, n;
++    JSString *str;
++
++    for (i = n = 0; i < argc; i++) {
++        str = JS_ValueToString(cx, argv[i]);
++        if (!str)
++            return JS_FALSE;
++        fprintf(gOutFile, "%s", JS_GetStringBytes(str));
++    }
++    fflush(gOutFile);
++    return JS_TRUE;
++}
++
++static JSBool
+ Help(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
+
+ static JSBool
+@@ -2129,6 +2145,7 @@
+     {"load",            Load,           1,0,0},
+     {"readline",        ReadLine,       0,0,0},
+     {"print",           Print,          0,0,0},
++    {"print_verbatim",  Print_verbatim, 0,0,0},
+     {"help",            Help,           0,0,0},
+     {"quit",            Quit,           0,0,0},
+     {"gc",              GC,             0,0,0},

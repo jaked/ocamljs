@@ -1,0 +1,3 @@
+For OUnit to work, you need to run linked `.js` files through a
+SpiderMonkey patched with js.patch in this directory (or make the
+equivalent change to some other Javascript interpreter).
