@@ -31,7 +31,7 @@ Libraries:
 Third-party libraries
 
  * [Lwt](Lwt.html) library for cooperative threading
- * [Ounit](Ounit.html) unit test library
+ * [OUnit](Ounit.html) unit test library
 
 See the [Ocamldoc](doc/index.html) and some [examples](examples/index.html).
 
@@ -43,3 +43,10 @@ examples). Other contributions are very welcome as well. The best way
 to submit a bug is to add a
 [Github issue](http://github.com/jaked/ocamljs/issues). The best way
 to submit a patch is to send a Github pull request.
+
+###See also###
+
+ * [O'Browser](http://ocsigen.org/obrowser/)
+ * [Js\_of\_ocaml](http://ocsigen.org/js_of_ocaml/)
+ * [Smltojs](http://www.itu.dk/people/mael/smltojs/)
+ * [Ycr2js](http://www.haskell.org/haskellwiki/Yhc/Javascript)

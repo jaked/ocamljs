@@ -2,7 +2,6 @@
 layout: page
 title: Ocamljs
 ---
-
 #Ocamljs#
 
 `Ocamljs` is a system for compiling OCaml to Javascript. It includes a
@@ -16,10 +15,11 @@ so Javascript objects may be called from OCaml and vice-versa.
 
 You can download `ocamljs` at [http://github.com/jaked/ocamljs/downloads](http://github.com/jaked/ocamljs/downloads).
 
-See [Introduction] (Introduction.html) and [Installation] (Installation.html).
+See [Introduction](Introduction.html) and [Installation](Installation.html).
 
 For a quick start:
 
+ 0. Unpack OCaml source adjacent to the `ocamljs` tree
  1. `./configure`
  2. `make`
  3. `make install`
