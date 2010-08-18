@@ -2,7 +2,7 @@
 
 all: myocamlbuild.ml
 	cp $(SRCDIR_LWT)/src/core/* .
-	cp $(SRCDIR_LWT)/_build/META .
+	(cd $(SRCDIR_LWT); ocamlbuild META); cp $(SRCDIR_LWT)/_build/META .
 	patch -b META < META.patch
 	ocamlbuild lwt.cmjsa
 
