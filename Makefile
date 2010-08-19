@@ -29,8 +29,8 @@ clean:
 	for pkg in $(PKGLIST); do \
 		$(MAKE) -C src/$$pkg clean || exit; \
 	done
-	make -C test clean
-	make -C examples clean
+	$(MAKE) -C test clean
+	$(MAKE) -C examples clean
 	rm -rf doc
 	rm -rf stage
 
@@ -38,10 +38,10 @@ distclean: clean
 	rm -rf Makefile.conf
 
 test:
-	make -C test
+	$(MAKE) -C test
 
 examples:
-	make -C examples
+	$(MAKE) -C examples
 
 .PHONY: test examples doc
 
