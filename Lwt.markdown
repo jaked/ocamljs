@@ -17,5 +17,5 @@ directory adjacent to the `ocamljs` source, then configure, build, and
 install as usual. You can then use the Findlib `lwt` package as usual
 with `ocamljs`.
 
-In addition there are a few functions in `Lwt_dom` for timers etc. See
-the [Ocamldoc](doc/Lwt_dom.html).
+In addition there are a few functions in `Lwt_dom` (Findlib package
+`lwt-dom`) for timers etc. See the [Ocamldoc](doc/Lwt_dom.html).
