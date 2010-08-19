@@ -10,7 +10,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE.
  *)
 
-let jsversion = "0.2"
+let jsversion = "0.3"
 
 let cmjs_magic_number = "Caml1999J006"
 let cmjsa_magic_number = "Caml1999H007"

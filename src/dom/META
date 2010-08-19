@@ -1,5 +1,5 @@
 name="DOM"
-version="0.2"
+version="0.3"
 description="Generic DOM bindings"
 requires = "ocamljs"
 archive(js) = "dom.cmjsa"

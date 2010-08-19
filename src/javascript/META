@@ -1,5 +1,5 @@
 name="Javascript"
 description="Javascript API bindings"
-version="0.2"
+version="0.3"
 requires = "ocamljs"
 archive(js) = "javascript.cmjs"

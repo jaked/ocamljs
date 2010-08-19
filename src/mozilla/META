@@ -1,4 +1,4 @@
 name="Mozilla"
 description="Mozilla API bindings"
-version="0.2"
+version="0.3"
 archive(js) = "mozilla.cmjs"
