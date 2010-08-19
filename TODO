@@ -1,53 +1,45 @@
-gears
-  deprecate, move stuff to dom matching HTML5 spec
+* dom
+- fill in more of API (HTML5 stuff)
+- more examples
 
-dom
-  fill in more of API
-  more examples
+* lwt
+- examples
 
-lwt-js
-  examples
-  Lwt 2.x
+* jslib
+- fill in more of parser
+- bug with locations
+- check pattern quotations
+- redo pretty-printing
+- examples
 
-jslib
-  fill in more of parser
-  bug with locations
-  check pattern quotations
-  redo pretty-printing
-  examples
+* javascript
+- go through JS spec and wrap all the standard objects
 
-javascript
-  go through JS spec and wrap all the standard objects
-
-jscomp
-  cleanup
-
-  cleaner heap rep (arrays, tag in last elem)
-
-  can we do better interoperating with exceptions? would be nice to be
-  able to declare, catch, and match exceptions from JS libs.
-
-  better checking in inline Javascript? easy to refer to unbound
+* jscomp
+- cleanup
+- cleaner heap rep (arrays, tag in last elem)
+- can we do better interoperating with exceptions? would be nice to be
+   wfeoiuwef able to declare, catch, and match exceptions from JS libs.
+- better checking in inline Javascript? easy to refer to unbound
    vars. but sometimes useful or necessary.
-
-  can we avoid wrapping a function around for-loops when there are no
+- can we avoid wrapping a function around for-loops when there are no
    closures in the body? any other places to avoid extra wrapping?
 
-stdlib
-  implement String.concat natively
-  other things to implement natively?
-  check float format (e.g. float_of_string) JS vs. OCaml
+* stdlib
+- implement String.concat natively
+- other things to implement natively?
+- check float format (e.g. float_of_string) JS vs. OCaml
+- steal heavily from js_of_ocaml
 
-all
-  docs, wiki
+* all
+- docs, wiki
 
-bad ideas:
-  can we identify options to generate js val or null instead of
+* bad ideas:
+- can we identify options to generate js val or null instead of
    boxing? need to be careful about "if (val)" tests, where val could
    be unboxed Javascript false value (0, "", etc.); must special case
-   tests to "if (val != null)".
-
-   turns out no. we can do the above (see null-options branch) but it
-   breaks for nested options, since we can't distinguish e.g. None and
-   Some None. a scheme to use different reps for different types must
-   work with polymorphic functions.
+   tests to "if (val != null)". turns out no. we can do the above (see
+   null-options branch) but it breaks for nested options, since we
+   can't distinguish e.g. None and Some None. a scheme to use
+   different reps for different types must work with polymorphic
+   functions.
