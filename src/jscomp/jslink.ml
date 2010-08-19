@@ -1,6 +1,7 @@
 (*
  * This file is part of ocamljs, OCaml to Javascript compiler
  * Copyright (C) 2007-9 Skydeck, Inc
+ * Copyright (C) 2010 Jake Donham
  * Original file (bytecomp/bytelink.ml in the Objective Caml source
  * distribution) is Copyright (C) INRIA.
  *

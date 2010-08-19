@@ -1,9 +1,10 @@
---- camlinternalOO.ml.orig	2010-07-13 10:23:53.000000000 -0400
-+++ camlinternalOO.ml	2010-08-13 00:54:19.000000000 -0400
-@@ -1,3 +1,25 @@
+--- camlinternalOO.ml.orig	2010-08-18 14:53:57.000000000 -0400
++++ camlinternalOO.ml	2010-08-19 15:43:41.000000000 -0400
+@@ -1,3 +1,26 @@
 +(*
 + * This file is part of ocamljs, OCaml to Javascript compiler
 + * Copyright (C) 2007-9 Skydeck, Inc
++ * Copyright (C) 2010 Jake Donham
 + *
 + * This library is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU Library General Public
@@ -26,7 +27,7 @@
  (***********************************************************************)
  (*                                                                     *)
  (*                           Objective Caml                            *)
-@@ -29,9 +51,15 @@
+@@ -29,9 +52,15 @@
  (**** Object copy ****)
  
  let copy o =
@@ -45,7 +46,7 @@
  
  (**** Compression options ****)
  (* Parameters *)
-@@ -69,21 +97,11 @@
+@@ -69,21 +98,11 @@
  type closure = item
  type t = DummyA | DummyB | DummyC of int
  type obj = t array
@@ -69,7 +70,7 @@
  
  (**** Sparse array ****)
  
-@@ -106,7 +124,8 @@
+@@ -106,7 +125,8 @@
        label list * string list) list;
     mutable hidden_meths: (label * item) list;
     mutable vars: vars;
@@ -79,7 +80,7 @@
  
  let dummy_table =
    { methods = [| dummy_item |];
-@@ -116,7 +135,8 @@
+@@ -116,7 +136,8 @@
      hidden_meths = [];
      vars = Vars.empty;
      initializers = [];
@@ -89,7 +90,7 @@
  
  let table_count = ref 0
  
-@@ -129,21 +149,17 @@
+@@ -129,21 +150,17 @@
    if n <= 2 then n else
    fit_size ((n+1)/2) * 2
  
@@ -115,7 +116,7 @@
  
  let resize array new_size =
    let old_size = Array.length array.methods in
-@@ -300,13 +316,12 @@
+@@ -300,13 +317,12 @@
  *)
  
  let create_table public_methods =
@@ -132,7 +133,7 @@
        table.methods_by_name  <- Meths.add met lab table.methods_by_name;
        table.methods_by_label <- Labs.add lab true table.methods_by_label)
      public_methods;
-@@ -315,7 +330,15 @@
+@@ -315,7 +331,15 @@
  let init_class table =
    inst_var_count := !inst_var_count + table.size - 1;
    table.initializers <- List.rev table.initializers;
@@ -149,7 +150,7 @@
  
  let inherits cla vals virt_meths concr_meths (_, super, _, env) top =
    narrow cla vals virt_meths concr_meths;
-@@ -352,18 +375,14 @@
+@@ -352,18 +376,14 @@
  
  let create_object table =
    (* XXX Appel de [obj_block] *)
@@ -170,7 +171,7 @@
      set_id obj last_id;
      (Obj.obj obj)
    end
-@@ -371,7 +390,7 @@
+@@ -371,7 +391,7 @@
  let rec iter_f obj =
    function
      []   -> ()
@@ -179,7 +180,7 @@
  
  let run_initializers obj table =
    let inits = table.initializers in
-@@ -439,61 +458,63 @@
+@@ -439,61 +459,63 @@
  
  (**** builtin methods ****)
  
@@ -281,7 +282,7 @@
  
  type impl =
      GetConst
-@@ -560,14 +581,14 @@
+@@ -560,14 +582,14 @@
    | MethAppMeth ->
        let n = next() and m = next() in meth_app_meth n m
    | SendConst ->

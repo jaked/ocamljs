@@ -1,6 +1,7 @@
 (*
  * This file is part of ocamljs, OCaml to Javascript compiler
  * Copyright (C) 2007-9 Skydeck, Inc
+ * Copyright (C) 2010 Jake Donham
  * Original file (camlp4/Camlp4Filters/Camlp4MetaGenerator.ml in
  * the Objective Caml source distribution) is Copyright (C) INRIA.
  *

@@ -1,3 +1,15 @@
+(*
+ * This file is part of ocamljs, OCaml to Javascript compiler
+ * Copyright (C) 2010 Jake Donham
+ *
+ * This program is free software released under the QPL.
+ * See LICENSE for more details.
+ *
+ * The Software is provided AS IS with NO WARRANTY OF ANY KIND,
+ * INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND 
+ * FITNESS FOR A PARTICULAR PURPOSE.
+ *)
+
 (***********************************************************************)
 (*                                                                     *)
 (*                           Objective Caml                            *)
