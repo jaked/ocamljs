@@ -20,7 +20,7 @@ doc:
 
 prereqs:
 	./ocaml/build/mkmyocamlbuild_config.sh
-	make -C ocaml/byterun primitives # how does this get built for regular OCaml?
+	$(MAKE) -C ocaml/byterun primitives # how does this get built for regular OCaml?
 
 ocamljs:
 	OCAMLFIND_IGNORE_DUPS_IN=$(LIBDIR) \
