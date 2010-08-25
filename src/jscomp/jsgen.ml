@@ -148,6 +148,7 @@ let comp_ccall c es =
     | "caml_ceil_float", _ -> << Math.ceil($list:es$) >>
     | "caml_floor_float", _ -> << Math.floor($list:es$) >>
     | "caml_abs_float", _ -> << Math.abs($list:es$) >>
+    | "caml_fmod_float", [e1; e2] -> << $e1$ % $e2$ >>
 
     | "$assign", [e1; e2] -> << $e1$ = $e2$ >>
     | "$call", e::es -> << $e$($list:es$) >>
