@@ -55,19 +55,22 @@ struct
 
   let escaped s =
     let buf = Buffer.create 0 in
-    let escaped = function
-      | '\'' -> Buffer.add_string buf "\\'"
-      | '"' -> Buffer.add_string buf "\\\""
-      | '\\' -> Buffer.add_string buf "\\\\"
-      | '\n' -> Buffer.add_string buf "\\n"
-      | '\t' -> Buffer.add_string buf "\\t"
-      | '\r' -> Buffer.add_string buf "\\r"
-      | '\b' -> Buffer.add_string buf "\\b"
-      | c ->
-          if is_printable c
-          then Buffer.add_char buf c
-          else Printf.bprintf buf "\\x%02X" (Char.code c) in
-    String.iter escaped s;
+    let escaped c =
+      if c > 0xFF then Printf.bprintf buf "\\u%04X" c
+      else
+        match Char.chr c with
+          | '\'' -> Buffer.add_string buf "\\'"
+          | '"' -> Buffer.add_string buf "\\\""
+          | '\\' -> Buffer.add_string buf "\\\\"
+          | '\n' -> Buffer.add_string buf "\\n"
+          | '\t' -> Buffer.add_string buf "\\t"
+          | '\r' -> Buffer.add_string buf "\\r"
+          | '\b' -> Buffer.add_string buf "\\b"
+          | c ->
+              if is_printable c
+              then Buffer.add_char buf c
+              else Printf.bprintf buf "\\x%02X" (Char.code c) in
+    Array.iter escaped (Utf8.to_int_array s 0 (String.length s));
     Buffer.contents buf
 end
 

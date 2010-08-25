@@ -90,12 +90,16 @@ let rec stmt_rev_append l1 l2 =
     | Jstmt_cons (_loc, a, l) -> stmt_rev_append l (Jstmt_cons (loc_of_stmt a, a, l2))
     | s -> Jstmt_cons (loc_of_stmt s, s, l2)
 
+let utf8_encode s =
+  let len = String.length s in
+  Utf8.from_int_array (Array.init len (fun i -> Char.code s.[i])) 0 len
+
 let comp_const c =
   match c with
     | Const_int i -> << $`int:i$ >>
     | Const_char c -> << $`int:Char.code c$ >>
-    | Const_string s -> Jstring (_loc, s, false)
-    | Const_float s -> Jnum (_loc, s) (* XXX different float syntax *)
+    | Const_string s -> Jstring (_loc, utf8_encode s, false)
+    | Const_float s -> Jnum (_loc, s)
     | Const_int32 i32 -> Jnum (_loc, Int32.to_string i32)
     | Const_int64 i64 -> Jstring (_loc, Int64.to_string i64, false)
     | Const_nativeint ni -> Jnum (_loc, Nativeint.to_string ni)
@@ -107,8 +111,8 @@ let rec comp_sconst c =
     | Const_block (tag, cs) ->
         makeblock tag (List.map comp_sconst cs)
     | Const_float_array ss ->
-        makeblock 0 (List.map (fun s -> Jnum (_loc, s)) ss) (* XXX different float syntax *)
-    | Const_immstring s -> Jstring (_loc, s, false) (* XXX when does this happen? *)
+        makeblock 0 (List.map (fun s -> Jnum (_loc, s)) ss)
+    | Const_immstring s -> Jstring (_loc, utf8_encode s, false) (* XXX when does this happen? *)
 
 let kreturn e = <:stmt< return $e$; >>
 
