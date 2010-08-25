@@ -19,7 +19,7 @@
 - cleanup
 - cleaner heap rep (arrays, tag in last elem)
 - can we do better interoperating with exceptions? would be nice to be
-   wfeoiuwef able to declare, catch, and match exceptions from JS libs.
+   able to declare, catch, and match exceptions from JS libs.
 - better checking in inline Javascript? easy to refer to unbound
    vars. but sometimes useful or necessary.
 - can we avoid wrapping a function around for-loops when there are no
@@ -28,7 +28,6 @@
 * stdlib
 - implement String.concat natively
 - other things to implement natively?
-- check float format (e.g. float_of_string) JS vs. OCaml
 - steal heavily from js_of_ocaml
 
 * all
