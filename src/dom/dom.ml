@@ -407,6 +407,7 @@ object
   inherit node
 
   method _get_data : string
+  method _set_data : string -> unit
 end
 
 class type text =
@@ -597,8 +598,15 @@ class type image =
 object
   inherit element
 
+  method _get_width : int
+  method _set_width : int -> unit
+  method _get_height : int
+  method _set_height : int -> unit
+
   method _get_src : string
   method _set_src : string -> unit
+
+  method _set_onload : (unit -> unit) -> unit
 end
 
 class type canvas =
