@@ -711,8 +711,8 @@ object
   method drawImage_5_ : image -> float -> float -> float -> float -> unit
   method drawImage_9_ : image -> float -> float -> float -> float -> float -> float -> float -> float -> unit
   method drawImage_canvas_ : canvas -> float -> float -> unit
-  method drawImage_canvas_5_ : canvas -> float -> float -> float -> float -> unit
-  method drawImage_canvas_9_ : canvas -> float -> float -> float -> float -> float -> float -> float -> float -> unit
+  method drawImage_canvas5_ : canvas -> float -> float -> float -> float -> unit
+  method drawImage_canvas9_ : canvas -> float -> float -> float -> float -> float -> float -> float -> float -> unit
 
   method createImageData : float -> float -> imageData
   method getImageData : float -> float -> float -> float -> imageData
