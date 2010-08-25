@@ -121,7 +121,6 @@ let keffect = function
 let comp_ccall c es =
   match c, es with
     | ("caml_int32_format", _ | "caml_nativeint_format", _ | "caml_int64_format", _) -> << caml_format_int($list:es$) >>
-    | "caml_format_float", _ -> << oc$$sprintf($list:es$) >>
     | "caml_string_equal", _ -> << oc$$seq($list:es$) >>
     | "caml_string_notequal", _ -> << oc$$sneq($list:es$) >>
     | "caml_string_lessthan", _ -> << oc$$slt($list:es$) >>

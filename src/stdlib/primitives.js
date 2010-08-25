@@ -176,12 +176,6 @@ var caml_classify_float = function (f) {
   else return 0; // FP_normal
 }
 
-var caml_format_int = function(f, a) {
-  function parse_format(f) { return f; } // XXX see ints.c
-  var f2 = parse_format(f);
-  return oc$$sprintf(f2, a);
-}
-
 var caml_greaterthan = function (v1, v2) { return compare_val(v1, v2, 0) > 0; }
 var caml_greaterequal = function (v1, v2) { return compare_val(v1, v2, 0) >= 0; }
 var caml_hash_univ_param = function (count, limit, obj) {
@@ -697,4 +691,153 @@ var caml_set_parser_trace = function (flag)
   var oldflag = caml_parser_trace;
   caml_parser_trace = flag;
   return oldflag;
+}
+
+/*
+  stuff below taken from js_of_ocaml/lib
+  Copyright (C) 2010 Jérôme Vouillon
+*/
+
+///////////// Format
+//Provides: caml_parse_format
+//Requires: caml_invalid_argument
+function caml_parse_format (fmt) {
+  fmt = fmt.toString ();
+  var len = fmt.length;
+  if (len > 31) caml_invalid_argument("format_int: format too long");
+  var f =
+    { justify:'+', signstyle:'-', filler:' ', alternate:false,
+      base:0, signedconv:false, width:0, uppercase:false,
+      sign:1, prec:6, conv:'f' };
+  for (var i = 0; i < len; i++) {
+    var c = fmt.charAt(i);
+    switch (c) {
+    case '-':
+      f.justify = '-'; break;
+    case '+': case ' ':
+      f.signstyle = c; break;
+    case '0':
+      f.filler = '0'; break;
+    case '#':
+      f.alternate = true; break;
+    case '1': case '2': case '3': case '4': case '5':
+    case '6': case '7': case '8': case '9':
+      f.width = 0;
+      while (c=fmt.charCodeAt(i) - 48, c >= 0 && c <= 9) {
+        f.width = f.width * 10 + c; i++
+      }
+      i--;
+     break;
+    case '.':
+      f.prec = 0;
+      i++;
+      while (c=fmt.charCodeAt(i) - 48, c >= 0 && c <= 9) {
+        f.prec = f.prec * 10 + c; i++
+      }
+      i--;
+    case 'd': case 'i': case 'l': case 'n': case 'L': case 'N':
+      f.signedconv = true; /* fallthrough */
+    case 'u':
+      f.base = 10; break;
+    case 'x':
+      f.base = 16; break;
+    case 'X':
+      f.base = 16; f.uppercase = true; break;
+    case 'o':
+      f.base = 8; break;
+    case 'e': case 'f': case 'g':
+      f.signedconv = true; f.conv = c; break;
+    case 'E': case 'F': case 'G':
+      f.signedconv = true; f.uppercase = true;
+      f.conv = c.toLowerCase (); break;
+    }
+  }
+  return f;
+}
+
+//Provides: caml_finish_formatting
+//Requires: MlString
+function caml_finish_formatting(f, rawbuffer) {
+  if (f.uppercase) rawbuffer = rawbuffer.toUpperCase();
+  var len = rawbuffer.length;
+  /* Adjust len to reflect additional chars (sign, etc) */
+  if (f.signedconv && (f.sign < 0 || f.signstyle != '-')) len++;
+  if (f.alternate) {
+    if (f.base == 8) len += 1;
+    if (f.base == 16) len += 2;
+  }
+  /* Do the formatting */
+  var buffer = "";
+  if (f.justify == '+' && f.filler == ' ')
+    for (i = len; i < f.width; i++) buffer += ' ';
+  if (f.signedconv) {
+    if (f.sign < 0) buffer += '-';
+    else if (f.signstyle != '-') buffer += f.signstyle;
+  }
+  if (f.alternate && f.base == 8) buffer += '0';
+  if (f.alternate && f.base == 16) buffer += "0x";
+  if (f.justify == '+' && f.filler == '0')
+    for (i = len; i < f.width; i++) buffer += '0';
+  buffer += rawbuffer;
+  if (f.justify == '-')
+    for (i = len; i < f.width; i++) buffer += ' ';
+  return buffer;
+}
+
+//Provides: caml_format_int const
+//Requires: caml_parse_format, caml_finish_formatting
+function caml_format_int(fmt, i) {
+  if (fmt.toString() == "%d") return (""+i);
+  var f = caml_parse_format(fmt);
+  if (i < 0) { if (f.signedconv) { f.sign = -1; i = -i; } else i >>>= 0; }
+  var s = i.toString(f.base);
+  return caml_finish_formatting(f, s);
+}
+
+//Provides: caml_format_float const
+//Requires: caml_parse_format, caml_finish_formatting
+function caml_format_float (fmt, x) {
+  var s, f = caml_parse_format(fmt);
+  if (x < 0) { f.sign = -1; x = -x; }
+  if (isNaN(x)) { s = "nan"; f.filler = ' '; }
+  else if (!isFinite(x)) { s = "inf"; f.filler = ' '; }
+  else
+    switch (f.conv) {
+    case 'e':
+      var s = x.toExponential(f.prec);
+      // exponent should be at least two digits
+      var i = s.length;
+      if (s.charAt(i - 3) == 'e')
+        s = s.slice (0, i - 1) + '0' + s.slice (i - 1);
+      break;
+    case 'f':
+      s = x.toFixed(f.prec); break;
+    case 'g':
+      var prec = f.prec?f.prec:1;
+      s = x.toExponential(prec - 1);
+      var j = s.indexOf('e');
+      var exp = +s.slice(j + 1);
+      if (exp < -4 || x.toFixed(0).length > prec) {
+        // remove trailing zeroes
+        var i = j - 1; while (s.charAt(i) == '0') i--;
+        if (s.charAt(i) == '.') i--;
+        s = s.slice(0, i + 1) + s.slice(j);
+        i = s.length;
+        if (s.charAt(i - 3) == 'e')
+          s = s.slice (0, i - 1) + '0' + s.slice (i - 1);
+        break;
+      } else {
+        var p = prec;
+        if (exp < 0) { p -= exp + 1; s = x.toFixed(p); }
+        else while (s = x.toFixed(p), s.length > prec + 1) p--;
+        if (p) {
+          // remove trailing zeroes
+          i = s.length - 1; while (s.charAt(i) == '0') i--;
+          if (s.charAt(i) == '.') i--;
+          s = s.slice(0, i + 1);
+        }
+      }
+      break;
+    }
+  return caml_finish_formatting(f, s);
 }

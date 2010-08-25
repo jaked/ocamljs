@@ -705,7 +705,7 @@ let start _ =
     fps :=
       (let hz = 1000. /. (t' -. !ti) in
        if !fps = 0. then hz else 0.9 *. !fps +. 0.1 *. hz);
-    rateText#_set_data (string_of_int (int_of_float !fps)); (* (Printf.sprintf "% 2.f" !fps); *)
+    rateText#_set_data (Printf.sprintf "% 2.f" !fps);
     ti := t';
     Lwt_dom.sleep 0.01 >>= fun () ->
     let t' = (Javascript.new_Date ())#getTime in
