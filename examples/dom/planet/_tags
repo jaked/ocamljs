@@ -1,0 +1,3 @@
+<*.ml> : pkg_javascript, pkg_dom, pkg_lwt-dom
+<*.js> : pkg_javascript, pkg_dom, pkg_lwt-dom
+
