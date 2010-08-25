@@ -730,15 +730,7 @@ and imageData =
 object
   method _get_width : int
   method _get_height : int
-  method _get_data : canvasPixelArray
-end
-
-and canvasPixelArray =
-object
-  method _get_length : int
-  (* XXX I think these are just draft names *)
-  (* method XXX5 : int -> int *)
-  (* method XXX6 : int -> int -> void *)
+  method _get_data : int array
 end
 
 class type xMLHttpRequest =
