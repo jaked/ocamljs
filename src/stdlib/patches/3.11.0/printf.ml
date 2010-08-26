@@ -168,15 +168,6 @@ let extract_format fmt start stop widths =
   Buffer.contents b
 ;;
 
-let extract_format_int conv fmt start stop widths =
-   let sfmt = extract_format fmt start stop widths in
-   match conv with
-   | 'n' | 'N' ->
-     sfmt.[String.length sfmt - 1] <- 'u';
-     sfmt
-   | _ -> sfmt
-;;
-
 (* Returns the position of the next character following the meta format
    string, starting from position [i], inside a given format [fmt].
    According to the character [conv], the meta format string is

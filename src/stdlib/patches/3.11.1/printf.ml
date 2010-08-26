@@ -169,24 +169,6 @@ let extract_format fmt start stop widths =
   Buffer.contents b
 ;;
 
-let extract_format_int conv fmt start stop widths =
-   let sfmt = extract_format fmt start stop widths in
-   match conv with
-   | 'n' | 'N' ->
-     sfmt.[String.length sfmt - 1] <- 'u';
-     sfmt
-   | _ -> sfmt
-;;
-
-let extract_format_float conv fmt start stop widths =
-   let sfmt = extract_format fmt start stop widths in
-   match conv with
-   | 'F' ->
-     sfmt.[String.length sfmt - 1] <- 'f';
-     sfmt
-   | _ -> sfmt
-;;
-
 (* Returns the position of the next character following the meta format
    string, starting from position [i], inside a given format [fmt].
    According to the character [conv], the meta format string is
@@ -541,10 +523,10 @@ let scan_format fmt args n pos cont_s cont_a cont_t cont_f cont_m =
       let (x : float) = get_arg spec n in
       let s = format_float (extract_format fmt pos i widths) x in
       cont_s (next_index spec n) s (succ i)
-    | 'F' as conv ->
+    | 'F' ->
       let (x : float) = get_arg spec n in
       let s =
-        format_float_lexem (extract_format_float conv fmt pos i widths) x in
+        format_float_lexem (extract_format fmt pos i widths) x in
       cont_s (next_index spec n) s (succ i)
     | 'B' | 'b' ->
       let (x : bool) = get_arg spec n in
