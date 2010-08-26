@@ -1,4 +1,4 @@
-DIRS=canvas minesweeper sudoku
+DIRS=canvas minesweeper sudoku planet
 
 all:
 	for dir in $(DIRS); do \
