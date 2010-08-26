@@ -1,0 +1,5 @@
+ocamljs-0.3/.exclude
+ocamljs-0.3/.git
+ocamljs-0.3/.gitignore
+ocamljs-0.3/*/patches/*/*.ml
+ocamljs-0.3/*/patches/*/*.ml.orig

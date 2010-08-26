@@ -36,6 +36,7 @@ clean:
 
 distclean: clean
 	rm -rf Makefile.conf
+	rm -f ocaml
 
 test:
 	$(MAKE) -C test
@@ -48,3 +49,11 @@ examples:
 github:
 	rsync -a --delete --exclude './' doc/ ../ocamljs.gh-pages/doc/
 	rsync -a -L --delete --delete-excluded --exclude _build/ --include '*/' --exclude myocamlbuild.ml --include '*.ml' --include '*.js' --include '*.html' --include '*.css' --include '*.png' --include '*.jpg' --exclude '*' examples/ ../ocamljs.gh-pages/examples/
+
+dist:
+	$(MAKE) distclean
+	cd ..; \
+        mv ocamljs ocamljs-0.3; \
+        tar cvfz ocamljs-0.3.tar.gz --exclude-from ocamljs-0.3/.exclude ocamljs-0.3; \
+	mv ocamljs-0.3 ocamljs
+
