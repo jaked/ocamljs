@@ -1,4 +1,4 @@
-// compiled by ocamlc 3.12.0, ocamljs 0.2
+// compiled by ocamlc 3.12.0, ocamljs 0.3
 var ocamljs$caml_named_value = (function (){
 var Match_failure$16g = "Match_failure";
 var Out_of_memory$17g = "Out_of_memory";
@@ -15,6 +15,7 @@ var Undefined_recursive_module$27g = "Undefined_recursive_module";
 /*
  * This file is part of ocamljs, OCaml to Javascript compiler
  * Copyright (C) 2007-9 Skydeck, Inc
+ * Copyright (C) 2010 Jake Donham
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -187,12 +188,6 @@ var caml_classify_float = function (f) {
   else if (f === 0) return 2; // FP_zero
   // can't determine subnormal from js afaik
   else return 0; // FP_normal
-}
-
-var caml_format_int = function(f, a) {
-  function parse_format(f) { return f; } // XXX see ints.c
-  var f2 = parse_format(f);
-  return oc$$sprintf(f2, a);
 }
 
 var caml_greaterthan = function (v1, v2) { return compare_val(v1, v2, 0) > 0; }
@@ -711,9 +706,159 @@ var caml_set_parser_trace = function (flag)
   caml_parser_trace = flag;
   return oldflag;
 }
+
+/*
+  stuff below taken from js_of_ocaml/lib
+  Copyright (C) 2010 Jérôme Vouillon
+*/
+
+///////////// Format
+//Provides: caml_parse_format
+//Requires: caml_invalid_argument
+function caml_parse_format (fmt) {
+  fmt = fmt.toString ();
+  var len = fmt.length;
+  if (len > 31) caml_invalid_argument("format_int: format too long");
+  var f =
+    { justify:'+', signstyle:'-', filler:' ', alternate:false,
+      base:0, signedconv:false, width:0, uppercase:false,
+      sign:1, prec:6, conv:'f' };
+  for (var i = 0; i < len; i++) {
+    var c = fmt.charAt(i);
+    switch (c) {
+    case '-':
+      f.justify = '-'; break;
+    case '+': case ' ':
+      f.signstyle = c; break;
+    case '0':
+      f.filler = '0'; break;
+    case '#':
+      f.alternate = true; break;
+    case '1': case '2': case '3': case '4': case '5':
+    case '6': case '7': case '8': case '9':
+      f.width = 0;
+      while (c=fmt.charCodeAt(i) - 48, c >= 0 && c <= 9) {
+        f.width = f.width * 10 + c; i++
+      }
+      i--;
+     break;
+    case '.':
+      f.prec = 0;
+      i++;
+      while (c=fmt.charCodeAt(i) - 48, c >= 0 && c <= 9) {
+        f.prec = f.prec * 10 + c; i++
+      }
+      i--;
+    case 'd': case 'i': case 'l': case 'n': case 'L': case 'N':
+      f.signedconv = true; /* fallthrough */
+    case 'u':
+      f.base = 10; break;
+    case 'x':
+      f.base = 16; break;
+    case 'X':
+      f.base = 16; f.uppercase = true; break;
+    case 'o':
+      f.base = 8; break;
+    case 'e': case 'f': case 'g':
+      f.signedconv = true; f.conv = c; break;
+    case 'E': case 'F': case 'G':
+      f.signedconv = true; f.uppercase = true;
+      f.conv = c.toLowerCase (); break;
+    }
+  }
+  return f;
+}
+
+//Provides: caml_finish_formatting
+//Requires: MlString
+function caml_finish_formatting(f, rawbuffer) {
+  if (f.uppercase) rawbuffer = rawbuffer.toUpperCase();
+  var len = rawbuffer.length;
+  /* Adjust len to reflect additional chars (sign, etc) */
+  if (f.signedconv && (f.sign < 0 || f.signstyle != '-')) len++;
+  if (f.alternate) {
+    if (f.base == 8) len += 1;
+    if (f.base == 16) len += 2;
+  }
+  /* Do the formatting */
+  var buffer = "";
+  if (f.justify == '+' && f.filler == ' ')
+    for (i = len; i < f.width; i++) buffer += ' ';
+  if (f.signedconv) {
+    if (f.sign < 0) buffer += '-';
+    else if (f.signstyle != '-') buffer += f.signstyle;
+  }
+  if (f.alternate && f.base == 8) buffer += '0';
+  if (f.alternate && f.base == 16) buffer += "0x";
+  if (f.justify == '+' && f.filler == '0')
+    for (i = len; i < f.width; i++) buffer += '0';
+  buffer += rawbuffer;
+  if (f.justify == '-')
+    for (i = len; i < f.width; i++) buffer += ' ';
+  return buffer;
+}
+
+//Provides: caml_format_int const
+//Requires: caml_parse_format, caml_finish_formatting
+function caml_format_int(fmt, i) {
+  if (fmt.toString() == "%d") return (""+i);
+  var f = caml_parse_format(fmt);
+  if (i < 0) { if (f.signedconv) { f.sign = -1; i = -i; } else i >>>= 0; }
+  var s = i.toString(f.base);
+  return caml_finish_formatting(f, s);
+}
+
+//Provides: caml_format_float const
+//Requires: caml_parse_format, caml_finish_formatting
+function caml_format_float (fmt, x) {
+  var s, f = caml_parse_format(fmt);
+  if (x < 0) { f.sign = -1; x = -x; }
+  if (isNaN(x)) { s = "nan"; f.filler = ' '; }
+  else if (!isFinite(x)) { s = "inf"; f.filler = ' '; }
+  else
+    switch (f.conv) {
+    case 'e':
+      var s = x.toExponential(f.prec);
+      // exponent should be at least two digits
+      var i = s.length;
+      if (s.charAt(i - 3) == 'e')
+        s = s.slice (0, i - 1) + '0' + s.slice (i - 1);
+      break;
+    case 'f':
+      s = x.toFixed(f.prec); break;
+    case 'g':
+      var prec = f.prec?f.prec:1;
+      s = x.toExponential(prec - 1);
+      var j = s.indexOf('e');
+      var exp = +s.slice(j + 1);
+      if (exp < -4 || x.toFixed(0).length > prec) {
+        // remove trailing zeroes
+        var i = j - 1; while (s.charAt(i) == '0') i--;
+        if (s.charAt(i) == '.') i--;
+        s = s.slice(0, i + 1) + s.slice(j);
+        i = s.length;
+        if (s.charAt(i - 3) == 'e')
+          s = s.slice (0, i - 1) + '0' + s.slice (i - 1);
+        break;
+      } else {
+        var p = prec;
+        if (exp < 0) { p -= exp + 1; s = x.toFixed(p); }
+        else while (s = x.toFixed(p), s.length > prec + 1) p--;
+        if (p) {
+          // remove trailing zeroes
+          i = s.length - 1; while (s.charAt(i) == '0') i--;
+          if (s.charAt(i) == '.') i--;
+          s = s.slice(0, i + 1);
+        }
+      }
+      break;
+    }
+  return caml_finish_formatting(f, s);
+}
 /*
  * This file is part of ocamljs, OCaml to Javascript compiler
  * Copyright (C) 2007-9 Skydeck, Inc
+ * Copyright (C) 2010 Jake Donham
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -922,232 +1067,6 @@ function oc$$sgt(s1, s2) { return s1.toString() > s2.toString(); }
 function oc$$slte(s1, s2) { return s1.toString() <= s2.toString(); }
 function oc$$sgte(s1, s2) { return s1.toString() >= s2.toString(); }
 
-/*
-**  sprintf.js -- POSIX sprintf(3) style formatting function for JavaScript
-**  Copyright (c) 2006-2007 Ralf S. Engelschall <rse@engelschall.com>
-**  Partly based on Public Domain code by Jan Moesen <http://jan.moesen.nu/>
-**  Licensed under GPL <http://www.gnu.org/licenses/gpl.txt>
-**
-**  modified for ocamljs to more closely match Linux
-**
-**  $LastChangedDate$
-**  $LastChangedRevision$
-*/
-
-/*  make sure the ECMAScript 3.0 Number.toFixed() method is available  */
-if (typeof Number.prototype.toFixed != "undefined") {
-    (function(){
-        /*  see http://www.jibbering.com/faq/#FAQ4_6 for details  */
-        function Stretch(Q, L, c) {
-            var S = Q
-            if (c.length > 0)
-                while (S.length < L)
-                    S = c+S;
-            return S;
-        }
-        function StrU(X, M, N) { /* X >= 0.0 */
-            var T, S;
-            S = new String(Math.round(X * Number("1e"+N)));
-            if (S.search && S.search(/\D/) != -1)
-                return ''+X;
-            with (new String(Stretch(S, M+N, '0')))
-                return substring(0, T=(length-N)) + '.' + substring(T);
-        }
-        function Sign(X) {
-            return X < 0 ? '-' : '';
-        }
-        function StrS(X, M, N) {
-            return Sign(X)+StrU(Math.abs(X), M, N);
-        }
-        Number.prototype.toFixed = function (n) { return StrS(this, 1, n) };
-    })();
-}
-
-/*  the sprintf() function  */
-var oc$$sprintf = function () {
-    /*  argument sanity checking  */
-    if (!arguments || arguments.length < 1)
-        alert("sprintf:ERROR: not enough arguments 1");
-
-    /*  initialize processing queue  */
-    var argumentnum = 0;
-    var done = "", todo = arguments[argumentnum++];
-
-    /*  parse still to be done format string  */
-    var m;
-    while ((m = /^([^%]*)%(\d+$)?([#0 +'-]+)?(\*|\d+)?(\.\*|\.\d+)?([%dioulLnNxXfFgGcs])(.*)$/.exec(todo))) {
-        var pProlog    = m[1],
-            pAccess    = m[2],
-            pFlags     = m[3],
-            pMinLength = m[4],
-            pPrecision = m[5],
-            pType      = m[6],
-            pEpilog    = m[7];
-
-        /*  determine substitution  */
-        var subst;
-        if (pType == '%')
-            /*  special case: escaped percent character  */
-            subst = '%';
-        else {
-            /*  parse padding and justify aspects of flags  */
-            var padWith = ' ';
-            var justifyRight = true;
-            if (pFlags) {
-                if (pFlags.indexOf('0') >= 0)
-                    padWith = '0';
-                if (pFlags.indexOf('-') >= 0) {
-                    padWith = ' ';
-                    justifyRight = false;
-                }
-            }
-            else
-                pFlags = "";
-
-            /*  determine minimum length  */
-            var minLength = -1;
-            if (pMinLength) {
-                if (pMinLength == "*") {
-                    var access = argumentnum++;
-                    if (access >= arguments.length)
-                        alert("sprintf:ERROR: not enough arguments 2");
-                    minLength = arguments[access];
-                }
-                else
-                    minLength = parseInt(pMinLength, 10);
-            }
-
-            /*  determine precision  */
-            var precision = -1;
-            if (pPrecision) {
-                if (pPrecision == ".*") {
-                    var access = argumentnum++;
-                    if (access >= arguments.length)
-                        alert("sprintf:ERROR: not enough arguments 3");
-                    precision = arguments[access];
-                }
-                else
-                    precision = parseInt(pPrecision.substring(1), 10);
-            }
-
-            /*  determine how to fetch argument  */
-            var access = argumentnum++;
-            if (pAccess)
-                access = parseInt(pAccess.substring(0, pAccess.length - 1), 10);
-            if (access >= arguments.length)
-                alert("sprintf:ERROR: not enough arguments 4");
-
-            /*  dispatch into expansions according to type  */
-            var prefix = "";
-            switch (pType) {
-                case 'd':
-                case 'i':
-                    subst = arguments[access];
-                    if (typeof subst != "number")
-                        subst = 0;
-                    subst = subst.toString(10);
-                    if (pFlags.indexOf('#') >= 0 && subst >= 0)
-                        subst = "+" + subst;
-                    if (pFlags.indexOf(' ') >= 0 && subst >= 0)
-                        subst = " " + subst;
-                    break;
-                case 'o':
-                    subst = arguments[access];
-                    if (typeof subst != "number")
-                        subst = 0;
-                    subst = subst.toString(8);
-                    break;
-                case 'u':
-                case 'l':
-                case 'L':
-                case 'n':
-                case 'N':
-                    subst = arguments[access];
-                    if (typeof subst != "number")
-                        subst = 0;
-                    subst = Math.abs(subst);
-                    subst = subst.toString(10);
-                    break;
-                case 'x':
-                    subst = arguments[access];
-                    if (typeof subst != "number")
-                        subst = 0;
-                    subst = subst.toString(16).toLowerCase();
-                    if (pFlags.indexOf('#') >= 0)
-                        prefix = "0x";
-                    break;
-                case 'X':
-                    subst = arguments[access];
-                    if (typeof subst != "number")
-                        subst = 0;
-                    subst = subst.toString(16).toUpperCase();
-                    if (pFlags.indexOf('#') >= 0)
-                        prefix = "0X";
-                    break;
-                case 'f':
-                case 'F':
-                case 'g':
-                case 'G':
-                    subst = arguments[access];
-                    if (typeof subst != "number")
-                        subst = 0.0;
-                    subst = 0.0 + subst;
-                    if (precision > -1) {
-                        if (subst.toFixed)
-                            subst = subst.toFixed(precision);
-                        else {
-                            subst = (Math.round(subst * Math.pow(10, precision)) / Math.pow(10, precision));
-                            subst += "0000000000";
-                            subst = subst.substr(0, subst.indexOf(".")+precision+1);
-                        }
-                    }
-                    subst = '' + subst;
-                    if (pFlags.indexOf("'") >= 0) {
-                        var k = 0;
-                        for (var i = (subst.length - 1) - 3; i >= 0; i -= 3) {
-                            subst = subst.substring(0, i) + (k == 0 ? "." : ",") + subst.substring(i);
-                            k = (k + 1) % 2;
-                        }
-                    }
-                    subst = subst.replace('Infinity', 'inf');
-                    subst = subst.replace('NaN', 'nan');
-                    break;
-                case 'c':
-                    subst = arguments[access];
-                    if (typeof subst != "number")
-                        subst = 0;
-                    subst = String.fromCharCode(subst);
-                    break;
-                case 's':
-                    subst = arguments[access];
-                    if (precision > -1)
-                        subst = subst.substr(0, precision);
-                    if (typeof subst != "string")
-                        subst = "";
-                    break;
-            }
-
-            /*  apply optional padding  */
-            var padding = minLength - subst.toString().length - prefix.toString().length;
-            if (padding > 0) {
-                var arrTmp = new Array(padding + 1);
-                if (justifyRight)
-                    subst = arrTmp.join(padWith) + subst;
-                else
-                    subst = subst + arrTmp.join(padWith);
-            }
-
-            /*  add optional prefix  */
-            subst = prefix + subst;
-        }
-
-        /*  update the processing queue  */
-        done = done + pProlog + subst;
-        todo = pEpilog;
-    }
-    return (done + todo);
-};
-
 /*@cc_on @if (@_win32 && @_jscript_version >= 5) if (!window.XMLHttpRequest)
 window.XMLHttpRequest = function() { return new ActiveXObject('Microsoft.XMLHTTP') };
 @end @*/
@@ -1199,7 +1118,7 @@ var oc$Pervasives$ =
                 });
            return __(loop$1151, [ 0 ]);
          });
-    var string_of_float$1153 = _f(function (f$1154) { return __(valid_float_lexem$1148, [ oc$$sprintf("%.12g", f$1154) ]); });
+    var string_of_float$1153 = _f(function (f$1154) { return __(valid_float_lexem$1148, [ caml_format_float("%.12g", f$1154) ]); });
     var $40$1156 =
       _f(function (l1$1157, l2$1158) { if (l1$1157) return $(l1$1157[0], _($40$1156, [ l1$1157[1], l2$1158 ])); return l2$1158; });
     var stdin$1165 = caml_ml_open_descriptor_in(0);
@@ -1755,15 +1674,15 @@ var oc$Ocamljs$ =
     var Inline$1240 = function () { var Jslib_ast$1234 = $(); var _loc$1239 = 0; return $(Jslib_ast$1234, _loc$1239); }();
     return $(option_of_nullable$1046, nullable_of_option$1048, is_null$1051, Inline$1240);
   }();
-var oc$Dom$ = function () { var window$1703 = window; var document$1704 = document; return $(window$1703, document$1704); }();
+var oc$Dom$ = function () { var window$1704 = window; var document$1705 = document; return $(window$1704, document$1705); }();
 var oc$Sudoku$ =
   function () {
     var D$1030 = oc$Dom$;
     var d$1031 = D$1030[1];
     var make_board$1032 =
-      _f(function (param$1214) {
+      _f(function (param$1211) {
            var make_input$1033 =
-             _f(function (param$1218) {
+             _f(function (param$1215) {
                   var input$1034 = _m(d$1031.createElement, d$1031, [ "input" ]);
                   _m(input$1034.setAttribute, input$1034, [ "type", "text" ]);
                   input$1034.size = 1;
@@ -1772,20 +1691,20 @@ var oc$Sudoku$ =
                   style$1035.border = "none";
                   style$1035.padding = "0px";
                   var enforce_digit$1036 =
-                    _f(function (param$1219) {
-                         var match$1220 = input$1034.value;
+                    _f(function (param$1216) {
+                         var match$1217 = input$1034.value;
                          var $r30 = false;
                          r$30: {
                            {
-                             if (!oc$$sneq(match$1220, "1")) { { $r30 = true; break r$30; } }
-                             if (!oc$$sneq(match$1220, "2")) { { $r30 = true; break r$30; } }
-                             if (!oc$$sneq(match$1220, "3")) { { $r30 = true; break r$30; } }
-                             if (!oc$$sneq(match$1220, "4")) { { $r30 = true; break r$30; } }
-                             if (!oc$$sneq(match$1220, "5")) { { $r30 = true; break r$30; } }
-                             if (!oc$$sneq(match$1220, "6")) { { $r30 = true; break r$30; } }
-                             if (!oc$$sneq(match$1220, "7")) { { $r30 = true; break r$30; } }
-                             if (!oc$$sneq(match$1220, "8")) { { $r30 = true; break r$30; } }
-                             if (!oc$$sneq(match$1220, "9")) { { $r30 = true; break r$30; } }
+                             if (!oc$$sneq(match$1217, "1")) { { $r30 = true; break r$30; } }
+                             if (!oc$$sneq(match$1217, "2")) { { $r30 = true; break r$30; } }
+                             if (!oc$$sneq(match$1217, "3")) { { $r30 = true; break r$30; } }
+                             if (!oc$$sneq(match$1217, "4")) { { $r30 = true; break r$30; } }
+                             if (!oc$$sneq(match$1217, "5")) { { $r30 = true; break r$30; } }
+                             if (!oc$$sneq(match$1217, "6")) { { $r30 = true; break r$30; } }
+                             if (!oc$$sneq(match$1217, "7")) { { $r30 = true; break r$30; } }
+                             if (!oc$$sneq(match$1217, "8")) { { $r30 = true; break r$30; } }
+                             if (!oc$$sneq(match$1217, "9")) { { $r30 = true; break r$30; } }
                              return input$1034.value = "";
                            }
                          }
@@ -1801,12 +1720,12 @@ var oc$Sudoku$ =
                   style$1042.borderStyle = "solid";
                   style$1042.borderColor = "#000000";
                   var widths$1043 =
-                    _f(function (param$1217) {
+                    _f(function (param$1214) {
                          var $r25 = false;
                          r$25: {
                            {
-                             if (param$1217 < 0 || param$1217 > 8) { { $r25 = true; break r$25; } }
-                             switch (param$1217)
+                             if (param$1214 < 0 || param$1214 > 8) { { $r25 = true; break r$25; } }
+                             switch (param$1214)
                              {
                              case 0: return $(2, 0);
                              case 1: $r25 = true; break r$25;
@@ -1823,14 +1742,14 @@ var oc$Sudoku$ =
                          }
                          if ($r25) return $(1, 0);
                        });
-                  var match$1216 = _(widths$1043, [ i$1038 ]);
-                  var match$1215 = _(widths$1043, [ j$1039 ]);
+                  var match$1213 = _(widths$1043, [ i$1038 ]);
+                  var match$1212 = _(widths$1043, [ j$1039 ]);
                   var px$1048 =
                     _f(function (k$1049) { return __(oc$Pervasives$[15], [ _(oc$Pervasives$[19], [ k$1049 ]), "px" ]); });
-                  style$1042.borderTopWidth = _(px$1048, [ match$1216[0] ]);
-                  style$1042.borderBottomWidth = _(px$1048, [ match$1216[1] ]);
-                  style$1042.borderLeftWidth = _(px$1048, [ match$1215[0] ]);
-                  style$1042.borderRightWidth = _(px$1048, [ match$1215[1] ]);
+                  style$1042.borderTopWidth = _(px$1048, [ match$1213[0] ]);
+                  style$1042.borderBottomWidth = _(px$1048, [ match$1213[1] ]);
+                  style$1042.borderLeftWidth = _(px$1048, [ match$1212[0] ]);
+                  style$1042.borderRightWidth = _(px$1048, [ match$1212[1] ]);
                   _m(td$1041.appendChild, td$1041, [ input$1040 ]);
                   return td$1041;
                 });
@@ -1868,7 +1787,7 @@ var oc$Sudoku$ =
            return $(rows$1050, table$1053);
          });
     var check_board$1061 =
-      _f(function (rows$1062, param$1210) {
+      _f(function (rows$1062, param$1207) {
            var error$1063 =
              _f(function (i$1064, j$1065) {
                   var cell$1066 = oc$$arefs(oc$$arefs(rows$1062, i$1064), j$1065);
@@ -1879,20 +1798,20 @@ var oc$Sudoku$ =
                   var seen$1069 = caml_make_vect(9, 0);
                   return __(oc$ArrayLabels$[11],
                             [
-                              _f(function (param$1211) {
-                                   var j$1071 = param$1211[1];
-                                   var i$1070 = param$1211[0];
+                              _f(function (param$1208) {
+                                   var j$1071 = param$1208[1];
+                                   var i$1070 = param$1208[0];
                                    var cell$1072 = oc$$arefs(oc$$arefs(rows$1062, i$1070), j$1071);
                                    var v$1073 = cell$1072.value;
                                    if (oc$$sneq(v$1073, "")) {
                                      {
                                        var n$1074 = caml_int_of_string(v$1073);
-                                       var match$1212 = oc$$arefs(seen$1069, n$1074 - 1);
-                                       if (match$1212) {
+                                       var match$1209 = oc$$arefs(seen$1069, n$1074 - 1);
+                                       if (match$1209) {
                                          {
-                                           var match$1213 = match$1212[0];
+                                           var match$1210 = match$1209[0];
                                            _(error$1063, [ i$1070, j$1071 ]);
-                                           return __(error$1063, [ match$1213[0], match$1213[1] ]);
+                                           return __(error$1063, [ match$1210[0], match$1210[1] ]);
                                          }
                                        }
                                        return oc$$asets(seen$1069, n$1074 - 1, $($(i$1070, j$1071)));
@@ -1938,12 +1857,12 @@ var oc$Sudoku$ =
            return false;
          });
     var onload$1094 =
-      _f(function (param$1208) {
-           var match$1209 = _(make_board$1032, [ 0 ]);
+      _f(function (param$1205) {
+           var match$1206 = _(make_board$1032, [ 0 ]);
            var check$1097 = _m(d$1031.getElementById, d$1031, [ "check" ]);
-           check$1097.onclick = _(check_board$1061, [ match$1209[0] ]);
+           check$1097.onclick = _(check_board$1061, [ match$1206[0] ]);
            var board$1098 = _m(d$1031.getElementById, d$1031, [ "board" ]);
-           _m(board$1098.appendChild, board$1098, [ match$1209[1] ]);
+           _m(board$1098.appendChild, board$1098, [ match$1206[1] ]);
            return 0;
          });
     (D$1030[0]).onload = onload$1094;
