@@ -183,7 +183,7 @@ var caml_float_of_string = function (s) {
   return isNaN(f) ? caml_failwith("float_of_string") : f;
 }
 var caml_classify_float = function (f) {
-  if (isNan(f)) return 4; // FP_nan
+  if (isNaN(f)) return 4; // FP_nan
   else if (!isFinite(f)) return 3; // FP_infinite
   else if (f === 0) return 2; // FP_zero
   // can't determine subnormal from js afaik
@@ -707,7 +707,10 @@ var caml_set_parser_trace = function (flag)
   return oldflag;
 }
 
-/* stuff below taken from js_of_ocaml/lib */
+/*
+  stuff below taken from js_of_ocaml/lib
+  Copyright (C) 2010 Jérôme Vouillon
+*/
 
 ///////////// Format
 //Provides: caml_parse_format
@@ -3046,26 +3049,26 @@ var oc$Printf$ =
            var parse$1069 =
              _f(function (neg$1070, i$1071) {
                   if (i$1071 >= sfmt$1068.length) return $(0, neg$1070);
-                  var match$1474 = oc$$srefu(sfmt$1068, i$1071);
-                  var $r162 = false;
-                  r$162: {
+                  var match$1459 = oc$$srefu(sfmt$1068, i$1071);
+                  var $r155 = false;
+                  r$155: {
                     {
-                      if (!(match$1474 >= 49)) {
-                        { if (match$1474 !== 45) { { $r162 = true; break r$162; } } return __(parse$1069, [ true, 1 + i$1071 ]); }
+                      if (!(match$1459 >= 49)) {
+                        { if (match$1459 !== 45) { { $r155 = true; break r$155; } } return __(parse$1069, [ true, 1 + i$1071 ]); }
                       }
-                      if (match$1474 >= 58) { { $r162 = true; break r$162; } }
+                      if (match$1459 >= 58) { { $r155 = true; break r$155; } }
                       return $(caml_int_of_string(_(oc$String$[2], [ sfmt$1068, i$1071, sfmt$1068.length - i$1071 - 1 ])),
                                neg$1070);
                     }
                   }
-                  if ($r162) return __(parse$1069, [ neg$1070, 1 + i$1071 ]);
+                  if ($r155) return __(parse$1069, [ neg$1070, 1 + i$1071 ]);
                 });
            try {
              return _(parse$1069, [ false, 1 ]);
            }
-           catch (exn$1472) {
-             if (exn$1472[0] === Failure$19g) return __(bad_conversion$1057, [ sfmt$1068, 0, 115 ]);
-             throw exn$1472;
+           catch (exn$1457) {
+             if (exn$1457[0] === Failure$19g) return __(bad_conversion$1057, [ sfmt$1068, 0, 115 ]);
+             throw exn$1457;
            }
          });
     var pad_string$1072 =
@@ -3081,20 +3084,20 @@ var oc$Printf$ =
          });
     var format_string$1080 =
       _f(function (sfmt$1081, s$1082) {
-           var match$1471 = _(parse_string_conversion$1067, [ sfmt$1081 ]);
-           return __(pad_string$1072, [ 32, match$1471[0], match$1471[1], s$1082, 0, s$1082.length ]);
+           var match$1456 = _(parse_string_conversion$1067, [ sfmt$1081 ]);
+           return __(pad_string$1072, [ 32, match$1456[0], match$1456[1], s$1082, 0, s$1082.length ]);
          });
     var extract_format$1085 =
       _f(function (fmt$1086, start$1087, stop$1088, widths$1089) {
            var skip_positional_spec$1090 =
              _f(function (start$1091) {
-                  var match$1469 = oc$$srefu(fmt$1086, start$1091);
-                  if (-48 + match$1469 < 0 || -48 + match$1469 > 9) return start$1091;
+                  var match$1454 = oc$$srefu(fmt$1086, start$1091);
+                  if (-48 + match$1454 < 0 || -48 + match$1454 > 9) return start$1091;
                   var skip_int_literal$1092 =
                     _f(function (i$1093) {
-                         var match$1468 = oc$$srefu(fmt$1086, i$1093);
-                         if (!(match$1468 >= 48)) { { if (match$1468 !== 36) return start$1091; return 1 + i$1093; } }
-                         if (match$1468 >= 58) return start$1091;
+                         var match$1453 = oc$$srefu(fmt$1086, i$1093);
+                         if (!(match$1453 >= 48)) { { if (match$1453 !== 36) return start$1091; return 1 + i$1093; } }
+                         if (match$1453 >= 58) return start$1091;
                          return __(skip_int_literal$1092, [ 1 + i$1093 ]);
                        });
                   return __(skip_int_literal$1092, [ 1 + start$1091 ]);
@@ -3106,9 +3109,9 @@ var oc$Printf$ =
              _f(function (i$1097, widths$1098) {
                   if (i$1097 <= stop$1088) {
                     {
-                      var match$1465 = oc$$srefu(fmt$1086, i$1097);
-                      if (match$1465 !== 42) {
-                        { _(oc$Buffer$[8], [ b$1095, match$1465 ]); return __(fill_format$1096, [ 1 + i$1097, widths$1098 ]); }
+                      var match$1450 = oc$$srefu(fmt$1086, i$1097);
+                      if (match$1450 !== 42) {
+                        { _(oc$Buffer$[8], [ b$1095, match$1450 ]); return __(fill_format$1096, [ 1 + i$1097, widths$1098 ]); }
                       }
                       if (widths$1098) {
                         {
@@ -3125,43 +3128,23 @@ var oc$Printf$ =
            _(fill_format$1096, [ start$1094, _(oc$List$[4], [ widths$1089 ]) ]);
            return __(oc$Buffer$[1], [ b$1095 ]);
          });
-    var extract_format_int$1103 =
-      _f(function (conv$1104, fmt$1105, start$1106, stop$1107, widths$1108) {
-           var sfmt$1109 = _(extract_format$1085, [ fmt$1105, start$1106, stop$1107, widths$1108 ]);
-           var $r142 = false;
-           r$142: {
-             {
-               if (!(conv$1104 !== 78)) { { $r142 = true; break r$142; } }
-               if (!(conv$1104 !== 110)) { { $r142 = true; break r$142; } }
-               return sfmt$1109;
-             }
-           }
-           if ($r142) { { oc$$ssets(sfmt$1109, sfmt$1109.length - 1, 117); return sfmt$1109; } }
-         });
-    var extract_format_float$1110 =
-      _f(function (conv$1111, fmt$1112, start$1113, stop$1114, widths$1115) {
-           var sfmt$1116 = _(extract_format$1085, [ fmt$1112, start$1113, stop$1114, widths$1115 ]);
-           if (conv$1111 !== 70) return sfmt$1116;
-           oc$$ssets(sfmt$1116, sfmt$1116.length - 1, 103);
-           return sfmt$1116;
-         });
-    var sub_format$1117 =
-      _f(function (incomplete_format$1118, bad_conversion_format$1119, conv$1120, fmt$1121, i$1122) {
-           var len$1123 = fmt$1121.length;
-           var sub_fmt$1124 =
-             _f(function (c$1125, i$1126) {
-                  var close$1127 = c$1125 === 40 ? 41 : 125;
-                  var sub$1128 =
-                    _f(function (j$1130) {
-                         if (j$1130 >= len$1123) return __(incomplete_format$1118, [ fmt$1121 ]);
-                         var match$1462 = oc$$srefs(fmt$1121, j$1130);
-                         if (match$1462 !== 37) return __(sub$1128, [ 1 + j$1130 ]);
-                         return __(sub_sub$1129, [ 1 + j$1130 ]);
+    var sub_format$1103 =
+      _f(function (incomplete_format$1104, bad_conversion_format$1105, conv$1106, fmt$1107, i$1108) {
+           var len$1109 = fmt$1107.length;
+           var sub_fmt$1110 =
+             _f(function (c$1111, i$1112) {
+                  var close$1113 = c$1111 === 40 ? 41 : 125;
+                  var sub$1114 =
+                    _f(function (j$1116) {
+                         if (j$1116 >= len$1109) return __(incomplete_format$1104, [ fmt$1107 ]);
+                         var match$1447 = oc$$srefs(fmt$1107, j$1116);
+                         if (match$1447 !== 37) return __(sub$1114, [ 1 + j$1116 ]);
+                         return __(sub_sub$1115, [ 1 + j$1116 ]);
                        });
-                  var sub_sub$1129 =
-                    _f(function (j$1131) {
-                         if (j$1131 >= len$1123) return __(incomplete_format$1118, [ fmt$1121 ]);
-                         var c$1132 = oc$$srefs(fmt$1121, j$1131);
+                  var sub_sub$1115 =
+                    _f(function (j$1117) {
+                         if (j$1117 >= len$1109) return __(incomplete_format$1104, [ fmt$1107 ]);
+                         var c$1118 = oc$$srefs(fmt$1107, j$1117);
                          var $r134 = false;
                          r$134: {
                            {
@@ -3171,12 +3154,12 @@ var oc$Printf$ =
                                  var $r135 = false;
                                  r$135: {
                                    {
-                                     var switcher$1463 = -40 + c$1132;
-                                     if (switcher$1463 < 0 || switcher$1463 > 1) {
+                                     var switcher$1448 = -40 + c$1118;
+                                     if (switcher$1448 < 0 || switcher$1448 > 1) {
                                        {
-                                         var switcher$1464 = -83 + switcher$1463;
-                                         if (switcher$1464 < 0 || switcher$1464 > 2) { { $r135 = true; break r$135; } }
-                                         switch (switcher$1464)
+                                         var switcher$1449 = -83 + switcher$1448;
+                                         if (switcher$1449 < 0 || switcher$1449 > 2) { { $r135 = true; break r$135; } }
+                                         switch (switcher$1449)
                                          {
                                          case 0: $r133 = true; break r$133;
                                          case 1: $r135 = true; break r$135;
@@ -3185,39 +3168,39 @@ var oc$Printf$ =
                                          }
                                        }
                                      }
-                                     if (!!!switcher$1463) { { $r133 = true; break r$133; } }
+                                     if (!!!switcher$1448) { { $r133 = true; break r$133; } }
                                      $r134 = true;
                                      break r$134;
                                    }
                                  }
-                                 if ($r135) return __(sub$1128, [ 1 + j$1131 ]);
+                                 if ($r135) return __(sub$1114, [ 1 + j$1117 ]);
                                }
                              }
                              if ($r133) {
-                               { var j$1134 = _(sub_fmt$1124, [ c$1132, 1 + j$1131 ]); return __(sub$1128, [ 1 + j$1134 ]); }
+                               { var j$1120 = _(sub_fmt$1110, [ c$1118, 1 + j$1117 ]); return __(sub$1114, [ 1 + j$1120 ]); }
                              }
                            }
                          }
                          if ($r134) {
                            {
-                             if (c$1132 === close$1127) return 1 + j$1131;
-                             return __(bad_conversion_format$1119, [ fmt$1121, i$1126, c$1132 ]);
+                             if (c$1118 === close$1113) return 1 + j$1117;
+                             return __(bad_conversion_format$1105, [ fmt$1107, i$1112, c$1118 ]);
                            }
                          }
                        });
-                  return __(sub$1128, [ i$1126 ]);
+                  return __(sub$1114, [ i$1112 ]);
                 });
-           return __(sub_fmt$1124, [ conv$1120, i$1122 ]);
+           return __(sub_fmt$1110, [ conv$1106, i$1108 ]);
          });
-    var sub_format_for_printf$1135 =
-      _f(function (conv$1136) { return __(sub_format$1117, [ incomplete_format$1065, bad_conversion_format$1061, conv$1136 ]); });
-    var iter_on_format_args$1137 =
-      _f(function (fmt$1138, add_conv$1139, add_char$1140) {
-           var lim$1141 = fmt$1138.length - 1;
-           var scan_flags$1142 =
-             _f(function (skip$1145, i$1146) {
-                  if (i$1146 > lim$1141) return __(incomplete_format$1065, [ fmt$1138 ]);
-                  var match$1459 = oc$$srefu(fmt$1138, i$1146);
+    var sub_format_for_printf$1121 =
+      _f(function (conv$1122) { return __(sub_format$1103, [ incomplete_format$1065, bad_conversion_format$1061, conv$1122 ]); });
+    var iter_on_format_args$1123 =
+      _f(function (fmt$1124, add_conv$1125, add_char$1126) {
+           var lim$1127 = fmt$1124.length - 1;
+           var scan_flags$1128 =
+             _f(function (skip$1131, i$1132) {
+                  if (i$1132 > lim$1127) return __(incomplete_format$1065, [ fmt$1124 ]);
+                  var match$1444 = oc$$srefu(fmt$1124, i$1132);
                   var $r111 = false;
                   r$111: {
                     {
@@ -3227,11 +3210,11 @@ var oc$Printf$ =
                           var $r112 = false;
                           r$112: {
                             {
-                              if (!(match$1459 >= 58)) {
+                              if (!(match$1444 >= 58)) {
                                 {
-                                  if (!(match$1459 >= 32)) { { $r112 = true; break r$112; } }
-                                  var s$1475 = -32 + match$1459;
-                                  switch (s$1475)
+                                  if (!(match$1444 >= 32)) { { $r112 = true; break r$112; } }
+                                  var s$1460 = -32 + match$1444;
+                                  switch (s$1460)
                                   {
                                   case 0: $r110 = true; break r$110;
                                   case 1: $r112 = true; break r$112;
@@ -3243,7 +3226,7 @@ var oc$Printf$ =
                                   case 7: $r112 = true; break r$112;
                                   case 8: $r112 = true; break r$112;
                                   case 9: $r112 = true; break r$112;
-                                  case 10: return __(scan_flags$1142, [ skip$1145, _(add_conv$1139, [ skip$1145, i$1146, 105 ]) ]);
+                                  case 10: return __(scan_flags$1128, [ skip$1131, _(add_conv$1125, [ skip$1131, i$1132, 105 ]) ]);
                                   case 11: $r110 = true; break r$110;
                                   case 12: $r112 = true; break r$112;
                                   case 13: $r110 = true; break r$110;
@@ -3263,22 +3246,22 @@ var oc$Printf$ =
                                   }
                                 }
                               }
-                              if (match$1459 !== 95) { { $r112 = true; break r$112; } }
-                              return __(scan_flags$1142, [ true, 1 + i$1146 ]);
+                              if (match$1444 !== 95) { { $r112 = true; break r$112; } }
+                              return __(scan_flags$1128, [ true, 1 + i$1132 ]);
                             }
                           }
-                          if ($r112) return __(scan_conv$1143, [ skip$1145, i$1146 ]);
+                          if ($r112) return __(scan_conv$1129, [ skip$1131, i$1132 ]);
                         }
                       }
-                      if ($r110) return __(scan_flags$1142, [ skip$1145, 1 + i$1146 ]);
+                      if ($r110) return __(scan_flags$1128, [ skip$1131, 1 + i$1132 ]);
                     }
                   }
-                  if ($r111) return __(scan_flags$1142, [ skip$1145, 1 + i$1146 ]);
+                  if ($r111) return __(scan_flags$1128, [ skip$1131, 1 + i$1132 ]);
                 });
-           var scan_conv$1143 =
-             _f(function (skip$1147, i$1148) {
-                  if (i$1148 > lim$1141) return __(incomplete_format$1065, [ fmt$1138 ]);
-                  var conv$1149 = oc$$srefu(fmt$1138, i$1148);
+           var scan_conv$1129 =
+             _f(function (skip$1133, i$1134) {
+                  if (i$1134 > lim$1127) return __(incomplete_format$1065, [ fmt$1124 ]);
+                  var conv$1135 = oc$$srefu(fmt$1124, i$1134);
                   var $r126 = false;
                   r$126: {
                     {
@@ -3309,8 +3292,8 @@ var oc$Printf$ =
                                                       var $r127 = false;
                                                       r$127: {
                                                         {
-                                                          if (conv$1149 >= 126) { { $r127 = true; break r$127; } }
-                                                          switch (conv$1149)
+                                                          if (conv$1135 >= 126) { { $r127 = true; break r$127; } }
+                                                          switch (conv$1135)
                                                           {
                                                           case 0: $r127 = true; break r$127;
                                                           case 1: $r127 = true; break r$127;
@@ -3354,8 +3337,8 @@ var oc$Printf$ =
                                                           case 39: $r127 = true; break r$127;
                                                           case 40:
                                                             return __
-                                                                   (scan_fmt$1144,
-                                                                    [ _(add_conv$1139, [ skip$1147, i$1148, conv$1149 ]) ]);
+                                                                   (scan_fmt$1130,
+                                                                    [ _(add_conv$1125, [ skip$1133, i$1134, conv$1135 ]) ]);
                                                           case 41: $r126 = true; break r$126;
                                                           case 42: $r127 = true; break r$127;
                                                           case 43: $r127 = true; break r$127;
@@ -3439,21 +3422,21 @@ var oc$Printf$ =
                                                           case 121: $r127 = true; break r$127;
                                                           case 122: $r127 = true; break r$127;
                                                           case 123:
-                                                            var i$1157 = _(add_conv$1139, [ skip$1147, i$1148, conv$1149 ]);
-                                                            var j$1158 =
-                                                              _(sub_format_for_printf$1135, [ conv$1149, fmt$1138, i$1157 ]);
-                                                            var loop$1159 =
+                                                            var i$1143 = _(add_conv$1125, [ skip$1133, i$1134, conv$1135 ]);
+                                                            var j$1144 =
+                                                              _(sub_format_for_printf$1121, [ conv$1135, fmt$1124, i$1143 ]);
+                                                            var loop$1145 =
                                                               _f(function 
-                                                                 (i$1160) {
+                                                                 (i$1146) {
                                                                    if (
-                                                                   i$1160 < j$1158 - 2)
+                                                                   i$1146 < j$1144 - 2)
                                                                     return __
-                                                                    (loop$1159,
-                                                                    [ _(add_char$1140, [ i$1160, oc$$srefs(fmt$1138, i$1160) ]) ]);
+                                                                    (loop$1145,
+                                                                    [ _(add_char$1126, [ i$1146, oc$$srefs(fmt$1124, i$1146) ]) ]);
                                                                    return 0;
                                                                  });
-                                                            _(loop$1159, [ i$1157 ]);
-                                                            return __(scan_conv$1143, [ skip$1147, j$1158 - 1 ]);
+                                                            _(loop$1145, [ i$1143 ]);
+                                                            return __(scan_conv$1129, [ skip$1133, j$1144 - 1 ]);
                                                           case 124: $r127 = true; break r$127;
                                                           case 125: $r126 = true; break r$126;
                                                           default: return null;
@@ -3461,44 +3444,44 @@ var oc$Printf$ =
                                                         }
                                                       }
                                                       if ($r127)
-                                                        return __(bad_conversion_format$1061, [ fmt$1138, i$1148, conv$1149 ]);
+                                                        return __(bad_conversion_format$1061, [ fmt$1124, i$1134, conv$1135 ]);
                                                     }
                                                   }
-                                                  if ($r118) return 1 + i$1148;
+                                                  if ($r118) return 1 + i$1134;
                                                 }
                                               }
-                                              if ($r119) return __(add_conv$1139, [ skip$1147, i$1148, 115 ]);
+                                              if ($r119) return __(add_conv$1125, [ skip$1133, i$1134, 115 ]);
                                             }
                                           }
-                                          if ($r120) return __(add_conv$1139, [ skip$1147, i$1148, 99 ]);
+                                          if ($r120) return __(add_conv$1125, [ skip$1133, i$1134, 99 ]);
                                         }
                                       }
-                                      if ($r121) return __(add_conv$1139, [ skip$1147, i$1148, 105 ]);
+                                      if ($r121) return __(add_conv$1125, [ skip$1133, i$1134, 105 ]);
                                     }
                                   }
-                                  if ($r122) return __(add_conv$1139, [ skip$1147, i$1148, 102 ]);
+                                  if ($r122) return __(add_conv$1125, [ skip$1133, i$1134, 102 ]);
                                 }
                               }
-                              if ($r123) return __(add_conv$1139, [ skip$1147, i$1148, 66 ]);
+                              if ($r123) return __(add_conv$1125, [ skip$1133, i$1134, 66 ]);
                             }
                           }
-                          if ($r124) return __(add_conv$1139, [ skip$1147, i$1148, conv$1149 ]);
+                          if ($r124) return __(add_conv$1125, [ skip$1133, i$1134, conv$1135 ]);
                         }
                       }
                       if ($r125) {
                         {
-                          var j$1155 = 1 + i$1148;
-                          if (j$1155 > lim$1141) return __(add_conv$1139, [ skip$1147, i$1148, 105 ]);
-                          var c$1156 = oc$$srefs(fmt$1138, j$1155);
+                          var j$1141 = 1 + i$1134;
+                          if (j$1141 > lim$1127) return __(add_conv$1125, [ skip$1133, i$1134, 105 ]);
+                          var c$1142 = oc$$srefs(fmt$1124, j$1141);
                           var $r113 = false;
                           r$113: {
                             {
                               var $r114 = false;
                               r$114: {
                                 {
-                                  var switcher$1461 = -88 + c$1156;
-                                  if (switcher$1461 < 0 || switcher$1461 > 32) { { $r114 = true; break r$114; } }
-                                  switch (switcher$1461)
+                                  var switcher$1446 = -88 + c$1142;
+                                  if (switcher$1446 < 0 || switcher$1446 > 32) { { $r114 = true; break r$114; } }
+                                  switch (switcher$1446)
                                   {
                                   case 0: $r113 = true; break r$113;
                                   case 1: $r114 = true; break r$114;
@@ -3537,237 +3520,237 @@ var oc$Printf$ =
                                   }
                                 }
                               }
-                              if ($r114) return __(add_conv$1139, [ skip$1147, i$1148, 105 ]);
+                              if ($r114) return __(add_conv$1125, [ skip$1133, i$1134, 105 ]);
                             }
                           }
-                          if ($r113) return __(add_char$1140, [ _(add_conv$1139, [ skip$1147, i$1148, conv$1149 ]), 105 ]);
+                          if ($r113) return __(add_char$1126, [ _(add_conv$1125, [ skip$1133, i$1134, conv$1135 ]), 105 ]);
                         }
                       }
                     }
                   }
-                  if ($r126) return __(add_conv$1139, [ skip$1147, i$1148, conv$1149 ]);
+                  if ($r126) return __(add_conv$1125, [ skip$1133, i$1134, conv$1135 ]);
                 });
-           var scan_fmt$1144 =
-             _f(function (i$1161) {
-                  if (!(i$1161 < lim$1141)) return i$1161;
-                  if (oc$$srefs(fmt$1138, i$1161) === 37) return __(scan_fmt$1144, [ _(scan_flags$1142, [ false, 1 + i$1161 ]) ]);
-                  return __(scan_fmt$1144, [ 1 + i$1161 ]);
+           var scan_fmt$1130 =
+             _f(function (i$1147) {
+                  if (!(i$1147 < lim$1127)) return i$1147;
+                  if (oc$$srefs(fmt$1124, i$1147) === 37) return __(scan_fmt$1130, [ _(scan_flags$1128, [ false, 1 + i$1147 ]) ]);
+                  return __(scan_fmt$1130, [ 1 + i$1147 ]);
                 });
-           _(scan_fmt$1144, [ 0 ]);
+           _(scan_fmt$1130, [ 0 ]);
            return 0;
          });
-    var summarize_format_type$1162 =
-      _f(function (fmt$1163) {
-           var len$1164 = fmt$1163.length;
-           var b$1165 = _(oc$Buffer$[0], [ len$1164 ]);
-           var add_char$1166 = _f(function (i$1167, c$1168) { _(oc$Buffer$[8], [ b$1165, c$1168 ]); return 1 + i$1167; });
-           var add_conv$1169 =
-             _f(function (skip$1170, i$1171, c$1172) {
-                  if (skip$1170) _(oc$Buffer$[9], [ b$1165, "%_" ]); else _(oc$Buffer$[8], [ b$1165, 37 ]);
-                  return __(add_char$1166, [ i$1171, c$1172 ]);
+    var summarize_format_type$1148 =
+      _f(function (fmt$1149) {
+           var len$1150 = fmt$1149.length;
+           var b$1151 = _(oc$Buffer$[0], [ len$1150 ]);
+           var add_char$1152 = _f(function (i$1153, c$1154) { _(oc$Buffer$[8], [ b$1151, c$1154 ]); return 1 + i$1153; });
+           var add_conv$1155 =
+             _f(function (skip$1156, i$1157, c$1158) {
+                  if (skip$1156) _(oc$Buffer$[9], [ b$1151, "%_" ]); else _(oc$Buffer$[8], [ b$1151, 37 ]);
+                  return __(add_char$1152, [ i$1157, c$1158 ]);
                 });
-           _(iter_on_format_args$1137, [ fmt$1163, add_conv$1169, add_char$1166 ]);
-           return __(oc$Buffer$[1], [ b$1165 ]);
+           _(iter_on_format_args$1123, [ fmt$1149, add_conv$1155, add_char$1152 ]);
+           return __(oc$Buffer$[1], [ b$1151 ]);
          });
-    var Ac$1180 = $();
-    var ac_of_format$1184 =
-      _f(function (fmt$1185) {
-           var ac$1186 = $(0, 0, 0);
-           var incr_ac$1187 =
-             _f(function (skip$1188, c$1189) {
-                  var inc$1190 = c$1189 === 97 ? 2 : 1;
-                  if (c$1189 === 114) ac$1186[2] = ac$1186[2] + 1; else;
-                  if (skip$1188) return ac$1186[1] = ac$1186[1] + inc$1190;
-                  return ac$1186[0] = ac$1186[0] + inc$1190;
+    var Ac$1166 = $();
+    var ac_of_format$1170 =
+      _f(function (fmt$1171) {
+           var ac$1172 = $(0, 0, 0);
+           var incr_ac$1173 =
+             _f(function (skip$1174, c$1175) {
+                  var inc$1176 = c$1175 === 97 ? 2 : 1;
+                  if (c$1175 === 114) ac$1172[2] = ac$1172[2] + 1; else;
+                  if (skip$1174) return ac$1172[1] = ac$1172[1] + inc$1176;
+                  return ac$1172[0] = ac$1172[0] + inc$1176;
                 });
-           var add_conv$1191 =
-             _f(function (skip$1193, i$1194, c$1195) {
-                  if (c$1195 !== 41 && c$1195 !== 125) _(incr_ac$1187, [ skip$1193, c$1195 ]); else;
-                  return 1 + i$1194;
+           var add_conv$1177 =
+             _f(function (skip$1179, i$1180, c$1181) {
+                  if (c$1181 !== 41 && c$1181 !== 125) _(incr_ac$1173, [ skip$1179, c$1181 ]); else;
+                  return 1 + i$1180;
                 });
-           var add_char$1192 = _f(function (i$1196, c$1197) { return 1 + i$1196; });
-           _(iter_on_format_args$1137, [ fmt$1185, add_conv$1191, add_char$1192 ]);
-           return ac$1186;
+           var add_char$1178 = _f(function (i$1182, c$1183) { return 1 + i$1182; });
+           _(iter_on_format_args$1123, [ fmt$1171, add_conv$1177, add_char$1178 ]);
+           return ac$1172;
          });
-    var count_arguments_of_format$1198 =
-      _f(function (fmt$1199) { var ac$1200 = _(ac_of_format$1184, [ fmt$1199 ]); return ac$1200[0]; });
-    var list_iter_i$1201 =
-      _f(function (f$1202, l$1203) {
-           var loop$1204 =
-             _f(function (i$1205, param$1457) {
-                  if (param$1457) {
+    var count_arguments_of_format$1184 =
+      _f(function (fmt$1185) { var ac$1186 = _(ac_of_format$1170, [ fmt$1185 ]); return ac$1186[0]; });
+    var list_iter_i$1187 =
+      _f(function (f$1188, l$1189) {
+           var loop$1190 =
+             _f(function (i$1191, param$1442) {
+                  if (param$1442) {
                     {
-                      var xs$1208 = param$1457[1];
-                      var x$1206 = param$1457[0];
-                      if (xs$1208) { { _(f$1202, [ i$1205, x$1206 ]); return __(loop$1204, [ 1 + i$1205, xs$1208 ]); } }
-                      return __(f$1202, [ i$1205, x$1206 ]);
+                      var xs$1194 = param$1442[1];
+                      var x$1192 = param$1442[0];
+                      if (xs$1194) { { _(f$1188, [ i$1191, x$1192 ]); return __(loop$1190, [ 1 + i$1191, xs$1194 ]); } }
+                      return __(f$1188, [ i$1191, x$1192 ]);
                     }
                   }
                   return 0;
                 });
-           return __(loop$1204, [ 0, l$1203 ]);
+           return __(loop$1190, [ 0, l$1189 ]);
          });
-    var kapr$1209 =
-      _f(function (kpr$1210, fmt$1211) {
-           var nargs$1212 = _(count_arguments_of_format$1198, [ fmt$1211 ]);
-           if (nargs$1212 < 0 || nargs$1212 > 6) {
+    var kapr$1195 =
+      _f(function (kpr$1196, fmt$1197) {
+           var nargs$1198 = _(count_arguments_of_format$1184, [ fmt$1197 ]);
+           if (nargs$1198 < 0 || nargs$1198 > 6) {
              {
-               var loop$1240 =
-                 _f(function (i$1241, args$1242) {
-                      if (i$1241 >= nargs$1212) {
+               var loop$1226 =
+                 _f(function (i$1227, args$1228) {
+                      if (i$1227 >= nargs$1198) {
                         {
-                          var a$1243 = caml_make_vect(nargs$1212, 0);
-                          _(list_iter_i$1201,
+                          var a$1229 = caml_make_vect(nargs$1198, 0);
+                          _(list_iter_i$1187,
                             [
-                              _f(function (i$1244, arg$1245) { return oc$$asets(a$1243, nargs$1212 - i$1244 - 1, arg$1245); }),
-                              args$1242
+                              _f(function (i$1230, arg$1231) { return oc$$asets(a$1229, nargs$1198 - i$1230 - 1, arg$1231); }),
+                              args$1228
                             ]);
-                          return __(kpr$1210, [ fmt$1211, a$1243 ]);
+                          return __(kpr$1196, [ fmt$1197, a$1229 ]);
                         }
                       }
-                      return _f(function (x$1246) { return __(loop$1240, [ 1 + i$1241, $(x$1246, args$1242) ]); });
+                      return _f(function (x$1232) { return __(loop$1226, [ 1 + i$1227, $(x$1232, args$1228) ]); });
                     });
-               return __(loop$1240, [ 0, 0 ]);
+               return __(loop$1226, [ 0, 0 ]);
              }
            }
-           switch (nargs$1212)
+           switch (nargs$1198)
            {
-           case 0: return __(kpr$1210, [ fmt$1211, $() ]);
+           case 0: return __(kpr$1196, [ fmt$1197, $() ]);
            case 1:
-             return _f(function (x$1213) {
-                         var a$1214 = caml_make_vect(1, 0);
-                         oc$$asets(a$1214, 0, x$1213);
-                         return __(kpr$1210, [ fmt$1211, a$1214 ]);
+             return _f(function (x$1199) {
+                         var a$1200 = caml_make_vect(1, 0);
+                         oc$$asets(a$1200, 0, x$1199);
+                         return __(kpr$1196, [ fmt$1197, a$1200 ]);
                        });
            case 2:
-             return _f(function (x$1215, y$1216) {
-                         var a$1217 = caml_make_vect(2, 0);
-                         oc$$asets(a$1217, 0, x$1215);
-                         oc$$asets(a$1217, 1, y$1216);
-                         return __(kpr$1210, [ fmt$1211, a$1217 ]);
+             return _f(function (x$1201, y$1202) {
+                         var a$1203 = caml_make_vect(2, 0);
+                         oc$$asets(a$1203, 0, x$1201);
+                         oc$$asets(a$1203, 1, y$1202);
+                         return __(kpr$1196, [ fmt$1197, a$1203 ]);
                        });
            case 3:
-             return _f(function (x$1218, y$1219, z$1220) {
-                         var a$1221 = caml_make_vect(3, 0);
-                         oc$$asets(a$1221, 0, x$1218);
-                         oc$$asets(a$1221, 1, y$1219);
-                         oc$$asets(a$1221, 2, z$1220);
-                         return __(kpr$1210, [ fmt$1211, a$1221 ]);
+             return _f(function (x$1204, y$1205, z$1206) {
+                         var a$1207 = caml_make_vect(3, 0);
+                         oc$$asets(a$1207, 0, x$1204);
+                         oc$$asets(a$1207, 1, y$1205);
+                         oc$$asets(a$1207, 2, z$1206);
+                         return __(kpr$1196, [ fmt$1197, a$1207 ]);
                        });
            case 4:
-             return _f(function (x$1222, y$1223, z$1224, t$1225) {
-                         var a$1226 = caml_make_vect(4, 0);
-                         oc$$asets(a$1226, 0, x$1222);
-                         oc$$asets(a$1226, 1, y$1223);
-                         oc$$asets(a$1226, 2, z$1224);
-                         oc$$asets(a$1226, 3, t$1225);
-                         return __(kpr$1210, [ fmt$1211, a$1226 ]);
+             return _f(function (x$1208, y$1209, z$1210, t$1211) {
+                         var a$1212 = caml_make_vect(4, 0);
+                         oc$$asets(a$1212, 0, x$1208);
+                         oc$$asets(a$1212, 1, y$1209);
+                         oc$$asets(a$1212, 2, z$1210);
+                         oc$$asets(a$1212, 3, t$1211);
+                         return __(kpr$1196, [ fmt$1197, a$1212 ]);
                        });
            case 5:
-             return _f(function (x$1227, y$1228, z$1229, t$1230, u$1231) {
-                         var a$1232 = caml_make_vect(5, 0);
-                         oc$$asets(a$1232, 0, x$1227);
-                         oc$$asets(a$1232, 1, y$1228);
-                         oc$$asets(a$1232, 2, z$1229);
-                         oc$$asets(a$1232, 3, t$1230);
-                         oc$$asets(a$1232, 4, u$1231);
-                         return __(kpr$1210, [ fmt$1211, a$1232 ]);
+             return _f(function (x$1213, y$1214, z$1215, t$1216, u$1217) {
+                         var a$1218 = caml_make_vect(5, 0);
+                         oc$$asets(a$1218, 0, x$1213);
+                         oc$$asets(a$1218, 1, y$1214);
+                         oc$$asets(a$1218, 2, z$1215);
+                         oc$$asets(a$1218, 3, t$1216);
+                         oc$$asets(a$1218, 4, u$1217);
+                         return __(kpr$1196, [ fmt$1197, a$1218 ]);
                        });
            case 6:
-             return _f(function (x$1233, y$1234, z$1235, t$1236, u$1237, v$1238) {
-                         var a$1239 = caml_make_vect(6, 0);
-                         oc$$asets(a$1239, 0, x$1233);
-                         oc$$asets(a$1239, 1, y$1234);
-                         oc$$asets(a$1239, 2, z$1235);
-                         oc$$asets(a$1239, 3, t$1236);
-                         oc$$asets(a$1239, 4, u$1237);
-                         oc$$asets(a$1239, 5, v$1238);
-                         return __(kpr$1210, [ fmt$1211, a$1239 ]);
+             return _f(function (x$1219, y$1220, z$1221, t$1222, u$1223, v$1224) {
+                         var a$1225 = caml_make_vect(6, 0);
+                         oc$$asets(a$1225, 0, x$1219);
+                         oc$$asets(a$1225, 1, y$1220);
+                         oc$$asets(a$1225, 2, z$1221);
+                         oc$$asets(a$1225, 3, t$1222);
+                         oc$$asets(a$1225, 4, u$1223);
+                         oc$$asets(a$1225, 5, v$1224);
+                         return __(kpr$1196, [ fmt$1197, a$1225 ]);
                        });
            default: return null;
            }
          });
-    var scan_positional_spec$1252 =
-      _f(function (fmt$1253, got_spec$1254, n$1255, i$1256) {
-           var d$1257 = oc$$srefu(fmt$1253, i$1256);
-           if (-48 + d$1257 < 0 || -48 + d$1257 > 9) return __(got_spec$1254, [ 0, i$1256 ]);
-           var get_int_literal$1258 =
-             _f(function (accu$1259, j$1260) {
-                  var d$1261 = oc$$srefu(fmt$1253, j$1260);
+    var scan_positional_spec$1238 =
+      _f(function (fmt$1239, got_spec$1240, n$1241, i$1242) {
+           var d$1243 = oc$$srefu(fmt$1239, i$1242);
+           if (-48 + d$1243 < 0 || -48 + d$1243 > 9) return __(got_spec$1240, [ 0, i$1242 ]);
+           var get_int_literal$1244 =
+             _f(function (accu$1245, j$1246) {
+                  var d$1247 = oc$$srefu(fmt$1239, j$1246);
                   var $r82 = false;
                   r$82: {
                     {
-                      if (!(d$1261 >= 48)) {
+                      if (!(d$1247 >= 48)) {
                         {
-                          if (d$1261 !== 36) { { $r82 = true; break r$82; } }
-                          if (accu$1259 === 0) return __(oc$Pervasives$[1], [ "printf: bad positional specification (0)." ]);
-                          return __(got_spec$1254, [ $(_(Sformat$1056[3], [ accu$1259 ])), 1 + j$1260 ]);
+                          if (d$1247 !== 36) { { $r82 = true; break r$82; } }
+                          if (accu$1245 === 0) return __(oc$Pervasives$[1], [ "printf: bad positional specification (0)." ]);
+                          return __(got_spec$1240, [ $(_(Sformat$1056[3], [ accu$1245 ])), 1 + j$1246 ]);
                         }
                       }
-                      if (d$1261 >= 58) { { $r82 = true; break r$82; } }
-                      return __(get_int_literal$1258, [ 10 * accu$1259 + (d$1261 - 48), 1 + j$1260 ]);
+                      if (d$1247 >= 58) { { $r82 = true; break r$82; } }
+                      return __(get_int_literal$1244, [ 10 * accu$1245 + (d$1247 - 48), 1 + j$1246 ]);
                     }
                   }
-                  if ($r82) return __(got_spec$1254, [ 0, i$1256 ]);
+                  if ($r82) return __(got_spec$1240, [ 0, i$1242 ]);
                 });
-           return __(get_int_literal$1258, [ d$1257 - 48, 1 + i$1256 ]);
+           return __(get_int_literal$1244, [ d$1243 - 48, 1 + i$1242 ]);
          });
-    var next_index$1262 =
-      _f(function (spec$1263, n$1264) { if (spec$1263) return n$1264; return __(Sformat$1056[2], [ n$1264 ]); });
-    var get_index$1265 = _f(function (spec$1266, n$1267) { if (spec$1266) return spec$1266[0]; return n$1267; });
-    var format_float_lexeme$1269 =
+    var next_index$1248 =
+      _f(function (spec$1249, n$1250) { if (spec$1249) return n$1250; return __(Sformat$1056[2], [ n$1250 ]); });
+    var get_index$1251 = _f(function (spec$1252, n$1253) { if (spec$1252) return spec$1252[0]; return n$1253; });
+    var format_float_lexeme$1255 =
       function () {
-        var make_valid_float_lexeme$1270 =
-          _f(function (s$1271) {
-               var l$1272 = s$1271.length;
-               var valid_float_loop$1273 =
-                 _f(function (i$1274) {
-                      if (i$1274 >= l$1272) return __(oc$Pervasives$[15], [ s$1271, "." ]);
-                      var match$1452 = oc$$srefs(s$1271, i$1274);
+        var make_valid_float_lexeme$1256 =
+          _f(function (s$1257) {
+               var l$1258 = s$1257.length;
+               var valid_float_loop$1259 =
+                 _f(function (i$1260) {
+                      if (i$1260 >= l$1258) return __(oc$Pervasives$[15], [ s$1257, "." ]);
+                      var match$1437 = oc$$srefs(s$1257, i$1260);
                       var $r75 = false;
                       r$75: {
                         {
-                          var switcher$1453 = -46 + match$1452;
-                          if (!!(switcher$1453 < 0 || switcher$1453 > 23)) {
-                            { if (switcher$1453 !== 55) { { $r75 = true; break r$75; } } return s$1271; }
+                          var switcher$1438 = -46 + match$1437;
+                          if (!!(switcher$1438 < 0 || switcher$1438 > 23)) {
+                            { if (switcher$1438 !== 55) { { $r75 = true; break r$75; } } return s$1257; }
                           }
-                          if (!(-1 + switcher$1453 < 0 || -1 + switcher$1453 > 21)) { { $r75 = true; break r$75; } }
-                          return s$1271;
+                          if (!(-1 + switcher$1438 < 0 || -1 + switcher$1438 > 21)) { { $r75 = true; break r$75; } }
+                          return s$1257;
                         }
                       }
-                      if ($r75) return __(valid_float_loop$1273, [ i$1274 + 1 ]);
+                      if ($r75) return __(valid_float_loop$1259, [ i$1260 + 1 ]);
                     });
-               return __(valid_float_loop$1273, [ 0 ]);
+               return __(valid_float_loop$1259, [ 0 ]);
              });
-        return _f(function (sfmt$1275, x$1276) {
-                    var s$1277 = caml_format_float(sfmt$1275, x$1276);
-                    var match$1451 = caml_classify_float(x$1276);
-                    if (match$1451 >= 3) return s$1277;
-                    return __(make_valid_float_lexeme$1270, [ s$1277 ]);
+        return _f(function (sfmt$1261, x$1262) {
+                    var s$1263 = caml_format_float(sfmt$1261, x$1262);
+                    var match$1436 = caml_classify_float(x$1262);
+                    if (match$1436 >= 3) return s$1263;
+                    return __(make_valid_float_lexeme$1256, [ s$1263 ]);
                   });
       }();
-    var scan_format$1278 =
-      _f(function (fmt$1279, args$1280, n$1281, pos$1282, cont_s$1283, cont_a$1284, cont_t$1285, cont_f$1286, cont_m$1287) {
-           var get_arg$1288 =
-             _f(function (spec$1289, n$1290) { return oc$$arefs(args$1280, _(get_index$1265, [ spec$1289, n$1290 ])); });
-           var scan_positional$1291 =
-             _f(function (n$1294, widths$1295, i$1296) {
-                  var got_spec$1297 =
-                    _f(function (spec$1298, i$1299) { return __(scan_flags$1292, [ spec$1298, n$1294, widths$1295, i$1299 ]); });
-                  return __(scan_positional_spec$1252, [ fmt$1279, got_spec$1297, n$1294, i$1296 ]);
+    var scan_format$1264 =
+      _f(function (fmt$1265, args$1266, n$1267, pos$1268, cont_s$1269, cont_a$1270, cont_t$1271, cont_f$1272, cont_m$1273) {
+           var get_arg$1274 =
+             _f(function (spec$1275, n$1276) { return oc$$arefs(args$1266, _(get_index$1251, [ spec$1275, n$1276 ])); });
+           var scan_positional$1277 =
+             _f(function (n$1280, widths$1281, i$1282) {
+                  var got_spec$1283 =
+                    _f(function (spec$1284, i$1285) { return __(scan_flags$1278, [ spec$1284, n$1280, widths$1281, i$1285 ]); });
+                  return __(scan_positional_spec$1238, [ fmt$1265, got_spec$1283, n$1280, i$1282 ]);
                 });
-           var scan_flags$1292 =
-             _f(function (spec$1300, n$1301, widths$1302, i$1303) {
-                  var match$1446 = oc$$srefu(fmt$1279, i$1303);
+           var scan_flags$1278 =
+             _f(function (spec$1286, n$1287, widths$1288, i$1289) {
+                  var match$1431 = oc$$srefu(fmt$1265, i$1289);
                   var $r30 = false;
                   r$30: {
                     {
                       var $r31 = false;
                       r$31: {
                         {
-                          var switcher$1447 = -32 + match$1446;
-                          if (switcher$1447 < 0 || switcher$1447 > 25) { { $r31 = true; break r$31; } }
-                          switch (switcher$1447)
+                          var switcher$1432 = -32 + match$1431;
+                          if (switcher$1432 < 0 || switcher$1432 > 25) { { $r31 = true; break r$31; } }
+                          switch (switcher$1432)
                           {
                           case 0: $r30 = true; break r$30;
                           case 1: $r31 = true; break r$31;
@@ -3780,18 +3763,18 @@ var oc$Printf$ =
                           case 8: $r31 = true; break r$31;
                           case 9: $r31 = true; break r$31;
                           case 10:
-                            var got_spec$1304 =
-                              _f(function (wspec$1305, i$1306) {
-                                   var width$1307 = _(get_arg$1288, [ wspec$1305, n$1301 ]);
-                                   return __(scan_flags$1292,
+                            var got_spec$1290 =
+                              _f(function (wspec$1291, i$1292) {
+                                   var width$1293 = _(get_arg$1274, [ wspec$1291, n$1287 ]);
+                                   return __(scan_flags$1278,
                                              [
-                                               spec$1300,
-                                               _(next_index$1262, [ wspec$1305, n$1301 ]),
-                                               $(width$1307, widths$1302),
-                                               i$1306
+                                               spec$1286,
+                                               _(next_index$1248, [ wspec$1291, n$1287 ]),
+                                               $(width$1293, widths$1288),
+                                               i$1292
                                              ]);
                                  });
-                            return __(scan_positional_spec$1252, [ fmt$1279, got_spec$1304, n$1301, 1 + i$1303 ]);
+                            return __(scan_positional_spec$1238, [ fmt$1265, got_spec$1290, n$1287, 1 + i$1289 ]);
                           case 11: $r30 = true; break r$30;
                           case 12: $r31 = true; break r$31;
                           case 13: $r30 = true; break r$30;
@@ -3811,14 +3794,14 @@ var oc$Printf$ =
                           }
                         }
                       }
-                      if ($r31) return __(scan_conv$1293, [ spec$1300, n$1301, widths$1302, i$1303 ]);
+                      if ($r31) return __(scan_conv$1279, [ spec$1286, n$1287, widths$1288, i$1289 ]);
                     }
                   }
-                  if ($r30) return __(scan_flags$1292, [ spec$1300, n$1301, widths$1302, 1 + i$1303 ]);
+                  if ($r30) return __(scan_flags$1278, [ spec$1286, n$1287, widths$1288, 1 + i$1289 ]);
                 });
-           var scan_conv$1293 =
-             _f(function (spec$1308, n$1309, widths$1310, i$1311) {
-                  var conv$1312 = oc$$srefu(fmt$1279, i$1311);
+           var scan_conv$1279 =
+             _f(function (spec$1294, n$1295, widths$1296, i$1297) {
+                  var conv$1298 = oc$$srefu(fmt$1265, i$1297);
                   var $r67 = false;
                   r$67: {
                     {
@@ -3843,8 +3826,8 @@ var oc$Printf$ =
                                               var $r68 = false;
                                               r$68: {
                                                 {
-                                                  if (conv$1312 >= 124) { { $r68 = true; break r$68; } }
-                                                  switch (conv$1312)
+                                                  if (conv$1298 >= 124) { { $r68 = true; break r$68; } }
+                                                  switch (conv$1298)
                                                   {
                                                   case 0: $r68 = true; break r$68;
                                                   case 1: $r68 = true; break r$68;
@@ -3879,18 +3862,18 @@ var oc$Printf$ =
                                                   case 30: $r68 = true; break r$68;
                                                   case 31: $r68 = true; break r$68;
                                                   case 32: $r68 = true; break r$68;
-                                                  case 33: return __(cont_f$1286, [ n$1309, 1 + i$1311 ]);
+                                                  case 33: return __(cont_f$1272, [ n$1295, 1 + i$1297 ]);
                                                   case 34: $r68 = true; break r$68;
                                                   case 35: $r68 = true; break r$68;
                                                   case 36: $r68 = true; break r$68;
-                                                  case 37: return __(cont_s$1283, [ n$1309, "%", 1 + i$1311 ]);
+                                                  case 37: return __(cont_s$1269, [ n$1295, "%", 1 + i$1297 ]);
                                                   case 38: $r68 = true; break r$68;
                                                   case 39: $r68 = true; break r$68;
                                                   case 40: $r67 = true; break r$67;
-                                                  case 41: return __(cont_s$1283, [ n$1309, "", 1 + i$1311 ]);
+                                                  case 41: return __(cont_s$1269, [ n$1295, "", 1 + i$1297 ]);
                                                   case 42: $r68 = true; break r$68;
                                                   case 43: $r68 = true; break r$68;
-                                                  case 44: return __(cont_s$1283, [ n$1309, "", 1 + i$1311 ]);
+                                                  case 44: return __(cont_s$1269, [ n$1295, "", 1 + i$1297 ]);
                                                   case 45: $r68 = true; break r$68;
                                                   case 46: $r68 = true; break r$68;
                                                   case 47: $r68 = true; break r$68;
@@ -3917,18 +3900,17 @@ var oc$Printf$ =
                                                   case 68: $r68 = true; break r$68;
                                                   case 69: $r64 = true; break r$64;
                                                   case 70:
-                                                    var x$1327 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                                    var s$1328 =
-                                                      widths$1310 === 0 ?
-                                                        _(oc$Pervasives$[20], [ x$1327 ]) :
-                                                        _(format_float_lexeme$1269,
+                                                    var x$1312 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                                    var s$1313 =
+                                                      widths$1296 === 0 ?
+                                                        _(oc$Pervasives$[20], [ x$1312 ]) :
+                                                        _(format_float_lexeme$1255,
                                                           [
-                                                            _(extract_format_float$1110,
-                                                              [ conv$1312, fmt$1279, pos$1282, i$1311, widths$1310 ]),
-                                                            x$1327
+                                                            _(extract_format$1085, [ fmt$1265, pos$1268, i$1297, widths$1296 ]),
+                                                            x$1312
                                                           ]);
-                                                    return __(cont_s$1283,
-                                                              [ _(next_index$1262, [ spec$1308, n$1309 ]), s$1328, 1 + i$1311 ]);
+                                                    return __(cont_s$1269,
+                                                              [ _(next_index$1248, [ spec$1294, n$1295 ]), s$1313, 1 + i$1297 ]);
                                                   case 71: $r64 = true; break r$64;
                                                   case 72: $r68 = true; break r$68;
                                                   case 73: $r68 = true; break r$68;
@@ -3956,15 +3938,15 @@ var oc$Printf$ =
                                                   case 95: $r68 = true; break r$68;
                                                   case 96: $r68 = true; break r$68;
                                                   case 97:
-                                                    var printer$1330 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                                    var n$1331 = _(Sformat$1056[2], [ _(get_index$1265, [ spec$1308, n$1309 ]) ]);
-                                                    var arg$1332 = _(get_arg$1288, [ 0, n$1331 ]);
-                                                    return __(cont_a$1284,
+                                                    var printer$1315 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                                    var n$1316 = _(Sformat$1056[2], [ _(get_index$1251, [ spec$1294, n$1295 ]) ]);
+                                                    var arg$1317 = _(get_arg$1274, [ 0, n$1316 ]);
+                                                    return __(cont_a$1270,
                                                               [
-                                                                _(next_index$1262, [ spec$1308, n$1331 ]),
-                                                                printer$1330,
-                                                                arg$1332,
-                                                                1 + i$1311
+                                                                _(next_index$1248, [ spec$1294, n$1316 ]),
+                                                                printer$1315,
+                                                                arg$1317,
+                                                                1 + i$1297
                                                               ]);
                                                   case 98: $r65 = true; break r$65;
                                                   case 99: $r62 = true; break r$62;
@@ -3985,12 +3967,12 @@ var oc$Printf$ =
                                                   case 114: $r68 = true; break r$68;
                                                   case 115: $r61 = true; break r$61;
                                                   case 116:
-                                                    var printer$1333 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                                    return __(cont_t$1285,
+                                                    var printer$1318 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                                    return __(cont_t$1271,
                                                               [
-                                                                _(next_index$1262, [ spec$1308, n$1309 ]),
-                                                                printer$1333,
-                                                                1 + i$1311
+                                                                _(next_index$1248, [ spec$1294, n$1295 ]),
+                                                                printer$1318,
+                                                                1 + i$1297
                                                               ]);
                                                   case 117: $r63 = true; break r$63;
                                                   case 118: $r68 = true; break r$68;
@@ -4003,70 +3985,70 @@ var oc$Printf$ =
                                                   }
                                                 }
                                               }
-                                              if ($r68) return __(bad_conversion_format$1061, [ fmt$1279, i$1311, conv$1312 ]);
+                                              if ($r68) return __(bad_conversion_format$1061, [ fmt$1265, i$1297, conv$1298 ]);
                                             }
                                           }
                                           if ($r61) {
                                             {
-                                              var x$1318 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                              var x$1319 =
-                                                conv$1312 === 115 ?
-                                                  x$1318 :
+                                              var x$1303 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                              var x$1304 =
+                                                conv$1298 === 115 ?
+                                                  x$1303 :
                                                   _(oc$Pervasives$[15],
-                                                    [ "\"", _(oc$Pervasives$[15], [ _(oc$String$[7], [ x$1318 ]), "\"" ]) ]);
-                                              var s$1320 =
-                                                i$1311 === 1 + pos$1282 ?
-                                                  x$1319 :
+                                                    [ "\"", _(oc$Pervasives$[15], [ _(oc$String$[7], [ x$1303 ]), "\"" ]) ]);
+                                              var s$1305 =
+                                                i$1297 === 1 + pos$1268 ?
+                                                  x$1304 :
                                                   _(format_string$1080,
-                                                    [ _(extract_format$1085, [ fmt$1279, pos$1282, i$1311, widths$1310 ]), x$1319 ]);
-                                              return __(cont_s$1283,
-                                                        [ _(next_index$1262, [ spec$1308, n$1309 ]), s$1320, 1 + i$1311 ]);
+                                                    [ _(extract_format$1085, [ fmt$1265, pos$1268, i$1297, widths$1296 ]), x$1304 ]);
+                                              return __(cont_s$1269,
+                                                        [ _(next_index$1248, [ spec$1294, n$1295 ]), s$1305, 1 + i$1297 ]);
                                             }
                                           }
                                         }
                                       }
                                       if ($r62) {
                                         {
-                                          var x$1321 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                          var s$1322 =
-                                            conv$1312 === 99 ?
-                                              _(oc$String$[0], [ 1, x$1321 ]) :
+                                          var x$1306 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                          var s$1307 =
+                                            conv$1298 === 99 ?
+                                              _(oc$String$[0], [ 1, x$1306 ]) :
                                               _(oc$Pervasives$[15],
-                                                [ "\'", _(oc$Pervasives$[15], [ _(oc$Char$[1], [ x$1321 ]), "\'" ]) ]);
-                                          return __(cont_s$1283, [ _(next_index$1262, [ spec$1308, n$1309 ]), s$1322, 1 + i$1311 ]);
+                                                [ "\'", _(oc$Pervasives$[15], [ _(oc$Char$[1], [ x$1306 ]), "\'" ]) ]);
+                                          return __(cont_s$1269, [ _(next_index$1248, [ spec$1294, n$1295 ]), s$1307, 1 + i$1297 ]);
                                         }
                                       }
                                     }
                                   }
                                   if ($r63) {
                                     {
-                                      var x$1323 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                      var s$1324 =
-                                        caml_format_int(_(extract_format$1085, [ fmt$1279, pos$1282, i$1311, widths$1310 ]),
-                                                        x$1323);
-                                      return __(cont_s$1283, [ _(next_index$1262, [ spec$1308, n$1309 ]), s$1324, 1 + i$1311 ]);
+                                      var x$1308 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                      var s$1309 =
+                                        caml_format_int(_(extract_format$1085, [ fmt$1265, pos$1268, i$1297, widths$1296 ]),
+                                                        x$1308);
+                                      return __(cont_s$1269, [ _(next_index$1248, [ spec$1294, n$1295 ]), s$1309, 1 + i$1297 ]);
                                     }
                                   }
                                 }
                               }
                               if ($r64) {
                                 {
-                                  var x$1325 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                  var s$1326 =
-                                    caml_format_float(_(extract_format$1085, [ fmt$1279, pos$1282, i$1311, widths$1310 ]), x$1325);
-                                  return __(cont_s$1283, [ _(next_index$1262, [ spec$1308, n$1309 ]), s$1326, 1 + i$1311 ]);
+                                  var x$1310 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                  var s$1311 =
+                                    caml_format_float(_(extract_format$1085, [ fmt$1265, pos$1268, i$1297, widths$1296 ]), x$1310);
+                                  return __(cont_s$1269, [ _(next_index$1248, [ spec$1294, n$1295 ]), s$1311, 1 + i$1297 ]);
                                 }
                               }
                             }
                           }
                           if ($r65) {
                             {
-                              var x$1329 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                              return __(cont_s$1283,
+                              var x$1314 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                              return __(cont_s$1269,
                                         [
-                                          _(next_index$1262, [ spec$1308, n$1309 ]),
-                                          _(oc$Pervasives$[17], [ x$1329 ]),
-                                          1 + i$1311
+                                          _(next_index$1248, [ spec$1294, n$1295 ]),
+                                          _(oc$Pervasives$[17], [ x$1314 ]),
+                                          1 + i$1297
                                         ]);
                             }
                           }
@@ -4074,16 +4056,16 @@ var oc$Printf$ =
                       }
                       if ($r66) {
                         {
-                          var match$1449 = oc$$srefu(fmt$1279, 1 + i$1311);
+                          var match$1434 = oc$$srefu(fmt$1265, 1 + i$1297);
                           var $r56 = false;
                           r$56: {
                             {
                               var $r57 = false;
                               r$57: {
                                 {
-                                  var switcher$1450 = -88 + match$1449;
-                                  if (switcher$1450 < 0 || switcher$1450 > 32) { { $r57 = true; break r$57; } }
-                                  switch (switcher$1450)
+                                  var switcher$1435 = -88 + match$1434;
+                                  if (switcher$1435 < 0 || switcher$1435 > 32) { { $r57 = true; break r$57; } }
+                                  switch (switcher$1435)
                                   {
                                   case 0: $r56 = true; break r$56;
                                   case 1: $r57 = true; break r$57;
@@ -4124,48 +4106,48 @@ var oc$Printf$ =
                               }
                               if ($r57) {
                                 {
-                                  var x$1339 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                  var s$1340 =
-                                    caml_format_int(_(extract_format$1085, [ fmt$1279, pos$1282, i$1311, widths$1310 ]), x$1339);
-                                  return __(cont_s$1283, [ _(next_index$1262, [ spec$1308, n$1309 ]), s$1340, 1 + i$1311 ]);
+                                  var x$1324 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                  var s$1325 =
+                                    caml_format_int(_(extract_format$1085, [ fmt$1265, pos$1268, i$1297, widths$1296 ]), x$1324);
+                                  return __(cont_s$1269, [ _(next_index$1248, [ spec$1294, n$1295 ]), s$1325, 1 + i$1297 ]);
                                 }
                               }
                             }
                           }
                           if ($r56) {
                             {
-                              var i$1334 = 1 + i$1311;
-                              var s$1335 =
+                              var i$1319 = 1 + i$1297;
+                              var s$1320 =
                                 function () {
                                   var $r51 = false;
                                   r$51: {
                                     {
-                                      var switcher$1448 = -108 + conv$1312;
-                                      if (switcher$1448 < 0 || switcher$1448 > 2) { { $r51 = true; break r$51; } }
-                                      switch (switcher$1448)
+                                      var switcher$1433 = -108 + conv$1298;
+                                      if (switcher$1433 < 0 || switcher$1433 > 2) { { $r51 = true; break r$51; } }
+                                      switch (switcher$1433)
                                       {
                                       case 0:
-                                        var x$1336 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                        return caml_format_int(_(extract_format$1085, [ fmt$1279, pos$1282, i$1334, widths$1310 ]),
-                                                               x$1336);
+                                        var x$1321 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                        return caml_format_int(_(extract_format$1085, [ fmt$1265, pos$1268, i$1319, widths$1296 ]),
+                                                               x$1321);
                                       case 1: $r51 = true; break r$51;
                                       case 2:
-                                        var x$1337 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                        return caml_format_int(_(extract_format$1085, [ fmt$1279, pos$1282, i$1334, widths$1310 ]),
-                                                               x$1337);
+                                        var x$1322 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                        return caml_format_int(_(extract_format$1085, [ fmt$1265, pos$1268, i$1319, widths$1296 ]),
+                                                               x$1322);
                                       default: return null;
                                       }
                                     }
                                   }
                                   if ($r51) {
                                     {
-                                      var x$1338 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                                      return caml_format_int(_(extract_format$1085, [ fmt$1279, pos$1282, i$1334, widths$1310 ]),
-                                                             x$1338);
+                                      var x$1323 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                                      return caml_format_int(_(extract_format$1085, [ fmt$1265, pos$1268, i$1319, widths$1296 ]),
+                                                             x$1323);
                                     }
                                   }
                                 }();
-                              return __(cont_s$1283, [ _(next_index$1262, [ spec$1308, n$1309 ]), s$1335, 1 + i$1334 ]);
+                              return __(cont_s$1269, [ _(next_index$1248, [ spec$1294, n$1295 ]), s$1320, 1 + i$1319 ]);
                             }
                           }
                         }
@@ -4174,139 +4156,139 @@ var oc$Printf$ =
                   }
                   if ($r67) {
                     {
-                      var xf$1341 = _(get_arg$1288, [ spec$1308, n$1309 ]);
-                      var i$1342 = 1 + i$1311;
-                      var j$1343 = _(sub_format_for_printf$1135, [ conv$1312, fmt$1279, i$1342 ]);
-                      if (conv$1312 === 123)
-                        return __(cont_s$1283,
-                                  [ _(next_index$1262, [ spec$1308, n$1309 ]), _(summarize_format_type$1162, [ xf$1341 ]), j$1343 ]);
-                      return __(cont_m$1287, [ _(next_index$1262, [ spec$1308, n$1309 ]), xf$1341, j$1343 ]);
+                      var xf$1326 = _(get_arg$1274, [ spec$1294, n$1295 ]);
+                      var i$1327 = 1 + i$1297;
+                      var j$1328 = _(sub_format_for_printf$1121, [ conv$1298, fmt$1265, i$1327 ]);
+                      if (conv$1298 === 123)
+                        return __(cont_s$1269,
+                                  [ _(next_index$1248, [ spec$1294, n$1295 ]), _(summarize_format_type$1148, [ xf$1326 ]), j$1328 ]);
+                      return __(cont_m$1273, [ _(next_index$1248, [ spec$1294, n$1295 ]), xf$1326, j$1328 ]);
                     }
                   }
                 });
-           return __(scan_positional$1291, [ n$1281, 0, 1 + pos$1282 ]);
+           return __(scan_positional$1277, [ n$1267, 0, 1 + pos$1268 ]);
          });
-    var mkprintf$1344 =
-      _f(function (to_s$1345, get_out$1346, outc$1347, outs$1348, flush$1349, k$1350, fmt$1351) {
-           var out$1352 = _(get_out$1346, [ fmt$1351 ]);
-           var pr$1353 =
-             _f(function (k$1354, n$1355, fmt$1356, v$1357) {
-                  var len$1358 = fmt$1356.length;
-                  var doprn$1359 =
-                    _f(function (n$1365, i$1366) {
-                         if (i$1366 >= len$1358) return _(k$1354, [ out$1352 ]);
-                         var c$1367 = oc$$srefu(fmt$1356, i$1366);
-                         if (c$1367 !== 37) {
-                           { _(outc$1347, [ out$1352, c$1367 ]); return __(doprn$1359, [ n$1365, 1 + i$1366 ]); }
+    var mkprintf$1329 =
+      _f(function (to_s$1330, get_out$1331, outc$1332, outs$1333, flush$1334, k$1335, fmt$1336) {
+           var out$1337 = _(get_out$1331, [ fmt$1336 ]);
+           var pr$1338 =
+             _f(function (k$1339, n$1340, fmt$1341, v$1342) {
+                  var len$1343 = fmt$1341.length;
+                  var doprn$1344 =
+                    _f(function (n$1350, i$1351) {
+                         if (i$1351 >= len$1343) return _(k$1339, [ out$1337 ]);
+                         var c$1352 = oc$$srefu(fmt$1341, i$1351);
+                         if (c$1352 !== 37) {
+                           { _(outc$1332, [ out$1337, c$1352 ]); return __(doprn$1344, [ n$1350, 1 + i$1351 ]); }
                          }
-                         return __(scan_format$1278,
+                         return __(scan_format$1264,
                                    [
-                                     fmt$1356,
-                                     v$1357,
-                                     n$1365,
-                                     i$1366,
-                                     cont_s$1360,
-                                     cont_a$1361,
-                                     cont_t$1362,
-                                     cont_f$1363,
-                                     cont_m$1364
+                                     fmt$1341,
+                                     v$1342,
+                                     n$1350,
+                                     i$1351,
+                                     cont_s$1345,
+                                     cont_a$1346,
+                                     cont_t$1347,
+                                     cont_f$1348,
+                                     cont_m$1349
                                    ]);
                        });
-                  var cont_s$1360 =
-                    _f(function (n$1368, s$1369, i$1370) {
-                         _(outs$1348, [ out$1352, s$1369 ]);
-                         return __(doprn$1359, [ n$1368, i$1370 ]);
+                  var cont_s$1345 =
+                    _f(function (n$1353, s$1354, i$1355) {
+                         _(outs$1333, [ out$1337, s$1354 ]);
+                         return __(doprn$1344, [ n$1353, i$1355 ]);
                        });
-                  var cont_a$1361 =
-                    _f(function (n$1371, printer$1372, arg$1373, i$1374) {
-                         if (to_s$1345)
-                           _(outs$1348, [ out$1352, _(printer$1372, [ 0, arg$1373 ]) ]);
+                  var cont_a$1346 =
+                    _f(function (n$1356, printer$1357, arg$1358, i$1359) {
+                         if (to_s$1330)
+                           _(outs$1333, [ out$1337, _(printer$1357, [ 0, arg$1358 ]) ]);
                          else
-                           _(printer$1372, [ out$1352, arg$1373 ]);
-                         return __(doprn$1359, [ n$1371, i$1374 ]);
+                           _(printer$1357, [ out$1337, arg$1358 ]);
+                         return __(doprn$1344, [ n$1356, i$1359 ]);
                        });
-                  var cont_t$1362 =
-                    _f(function (n$1375, printer$1376, i$1377) {
-                         if (to_s$1345) _(outs$1348, [ out$1352, _(printer$1376, [ 0 ]) ]); else _(printer$1376, [ out$1352 ]);
-                         return __(doprn$1359, [ n$1375, i$1377 ]);
+                  var cont_t$1347 =
+                    _f(function (n$1360, printer$1361, i$1362) {
+                         if (to_s$1330) _(outs$1333, [ out$1337, _(printer$1361, [ 0 ]) ]); else _(printer$1361, [ out$1337 ]);
+                         return __(doprn$1344, [ n$1360, i$1362 ]);
                        });
-                  var cont_f$1363 =
-                    _f(function (n$1378, i$1379) { _(flush$1349, [ out$1352 ]); return __(doprn$1359, [ n$1378, i$1379 ]); });
-                  var cont_m$1364 =
-                    _f(function (n$1380, xf$1381, i$1382) {
-                         var m$1383 = _(Sformat$1056[1], [ _(count_arguments_of_format$1198, [ xf$1381 ]), n$1380 ]);
-                         return __(pr$1353,
+                  var cont_f$1348 =
+                    _f(function (n$1363, i$1364) { _(flush$1334, [ out$1337 ]); return __(doprn$1344, [ n$1363, i$1364 ]); });
+                  var cont_m$1349 =
+                    _f(function (n$1365, xf$1366, i$1367) {
+                         var m$1368 = _(Sformat$1056[1], [ _(count_arguments_of_format$1184, [ xf$1366 ]), n$1365 ]);
+                         return __(pr$1338,
                                    [
-                                     _f(function (param$1445) { return __(doprn$1359, [ m$1383, i$1382 ]); }),
-                                     n$1380,
-                                     xf$1381,
-                                     v$1357
+                                     _f(function (param$1430) { return __(doprn$1344, [ m$1368, i$1367 ]); }),
+                                     n$1365,
+                                     xf$1366,
+                                     v$1342
                                    ]);
                        });
-                  return __(doprn$1359, [ n$1355, 0 ]);
+                  return __(doprn$1344, [ n$1340, 0 ]);
                 });
-           var kpr$1384 = _(pr$1353, [ k$1350, _(Sformat$1056[0], [ 0 ]) ]);
-           return __(kapr$1209, [ kpr$1384, fmt$1351 ]);
+           var kpr$1369 = _(pr$1338, [ k$1335, _(Sformat$1056[0], [ 0 ]) ]);
+           return __(kapr$1195, [ kpr$1369, fmt$1336 ]);
          });
-    var kfprintf$1385 =
-      _f(function (k$1386, oc$1387) {
-           return __(mkprintf$1344,
+    var kfprintf$1370 =
+      _f(function (k$1371, oc$1372) {
+           return __(mkprintf$1329,
                      [
                        false,
-                       _f(function (param$1444) { return oc$1387; }),
+                       _f(function (param$1429) { return oc$1372; }),
                        oc$Pervasives$[45],
                        oc$Pervasives$[46],
                        oc$Pervasives$[43],
-                       k$1386
+                       k$1371
                      ]);
          });
-    var ifprintf$1388 =
-      _f(function (oc$1389) {
-           return __(kapr$1209, [ _f(function (param$1442) { return _f(function (prim$1443) { return 0; }); }) ]);
+    var ifprintf$1373 =
+      _f(function (oc$1374) {
+           return __(kapr$1195, [ _f(function (param$1427) { return _f(function (prim$1428) { return 0; }); }) ]);
          });
-    var fprintf$1390 = _f(function (oc$1391) { return __(kfprintf$1385, [ _f(function (prim$1441) { return 0; }), oc$1391 ]); });
-    var printf$1392 = _f(function (fmt$1393) { return __(fprintf$1390, [ oc$Pervasives$[23], fmt$1393 ]); });
-    var eprintf$1394 = _f(function (fmt$1395) { return __(fprintf$1390, [ oc$Pervasives$[24], fmt$1395 ]); });
-    var kbprintf$1396 =
-      _f(function (k$1397, b$1398) {
-           return __(mkprintf$1344,
+    var fprintf$1375 = _f(function (oc$1376) { return __(kfprintf$1370, [ _f(function (prim$1426) { return 0; }), oc$1376 ]); });
+    var printf$1377 = _f(function (fmt$1378) { return __(fprintf$1375, [ oc$Pervasives$[23], fmt$1378 ]); });
+    var eprintf$1379 = _f(function (fmt$1380) { return __(fprintf$1375, [ oc$Pervasives$[24], fmt$1380 ]); });
+    var kbprintf$1381 =
+      _f(function (k$1382, b$1383) {
+           return __(mkprintf$1329,
                      [
                        false,
-                       _f(function (param$1439) { return b$1398; }),
+                       _f(function (param$1424) { return b$1383; }),
                        oc$Buffer$[8],
                        oc$Buffer$[9],
-                       _f(function (prim$1440) { return 0; }),
-                       k$1397
+                       _f(function (prim$1425) { return 0; }),
+                       k$1382
                      ]);
          });
-    var bprintf$1399 = _f(function (b$1400) { return __(kbprintf$1396, [ _f(function (prim$1438) { return 0; }), b$1400 ]); });
-    var get_buff$1401 = _f(function (fmt$1402) { var len$1403 = 2 * fmt$1402.length; return __(oc$Buffer$[0], [ len$1403 ]); });
-    var get_contents$1404 =
-      _f(function (b$1405) { var s$1406 = _(oc$Buffer$[1], [ b$1405 ]); _(oc$Buffer$[6], [ b$1405 ]); return s$1406; });
-    var get_cont$1407 = _f(function (k$1408, b$1409) { return __(k$1408, [ _(get_contents$1404, [ b$1409 ]) ]); });
-    var ksprintf$1410 =
-      _f(function (k$1411) {
-           return __(mkprintf$1344,
+    var bprintf$1384 = _f(function (b$1385) { return __(kbprintf$1381, [ _f(function (prim$1423) { return 0; }), b$1385 ]); });
+    var get_buff$1386 = _f(function (fmt$1387) { var len$1388 = 2 * fmt$1387.length; return __(oc$Buffer$[0], [ len$1388 ]); });
+    var get_contents$1389 =
+      _f(function (b$1390) { var s$1391 = _(oc$Buffer$[1], [ b$1390 ]); _(oc$Buffer$[6], [ b$1390 ]); return s$1391; });
+    var get_cont$1392 = _f(function (k$1393, b$1394) { return __(k$1393, [ _(get_contents$1389, [ b$1394 ]) ]); });
+    var ksprintf$1395 =
+      _f(function (k$1396) {
+           return __(mkprintf$1329,
                      [
                        true,
-                       get_buff$1401,
+                       get_buff$1386,
                        oc$Buffer$[8],
                        oc$Buffer$[9],
-                       _f(function (prim$1437) { return 0; }),
-                       _(get_cont$1407, [ k$1411 ])
+                       _f(function (prim$1422) { return 0; }),
+                       _(get_cont$1392, [ k$1396 ])
                      ]);
          });
-    var sprintf$1413 =
-      _f(function (fmt$1414) { return __(ksprintf$1410, [ _f(function (s$1415) { return s$1415; }), fmt$1414 ]); });
-    var CamlinternalPr$1430 =
+    var sprintf$1398 =
+      _f(function (fmt$1399) { return __(ksprintf$1395, [ _f(function (s$1400) { return s$1400; }), fmt$1399 ]); });
+    var CamlinternalPr$1415 =
       function () {
-        var Tformat$1429 = $(ac_of_format$1184, sub_format$1117, summarize_format_type$1162, scan_format$1278, kapr$1209);
-        return $(Sformat$1056, Tformat$1429);
+        var Tformat$1414 = $(ac_of_format$1170, sub_format$1103, summarize_format_type$1148, scan_format$1264, kapr$1195);
+        return $(Sformat$1056, Tformat$1414);
       }();
-    return $(fprintf$1390, printf$1392, eprintf$1394, ifprintf$1388, sprintf$1413, bprintf$1399, kfprintf$1385, ksprintf$1410,
-             kbprintf$1396, ksprintf$1410,
-             $(function () { var let$1436 = CamlinternalPr$1430[0]; return $(let$1436[0], let$1436[2], let$1436[4], let$1436[5]); }
-               (), CamlinternalPr$1430[1]));
+    return $(fprintf$1375, printf$1377, eprintf$1379, ifprintf$1373, sprintf$1398, bprintf$1384, kfprintf$1370, ksprintf$1395,
+             kbprintf$1381, ksprintf$1395,
+             $(function () { var let$1421 = CamlinternalPr$1415[0]; return $(let$1421[0], let$1421[2], let$1421[4], let$1421[5]); }
+               (), CamlinternalPr$1415[1]));
   }();
 var oc$Random$ =
   function () {

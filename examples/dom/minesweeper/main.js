@@ -183,7 +183,7 @@ var caml_float_of_string = function (s) {
   return isNaN(f) ? caml_failwith("float_of_string") : f;
 }
 var caml_classify_float = function (f) {
-  if (isNan(f)) return 4; // FP_nan
+  if (isNaN(f)) return 4; // FP_nan
   else if (!isFinite(f)) return 3; // FP_infinite
   else if (f === 0) return 2; // FP_zero
   // can't determine subnormal from js afaik
