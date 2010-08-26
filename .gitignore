@@ -6,10 +6,13 @@ stage
 doc
 ocaml
 *.byte
+*.js
 *~
 .#*
 src/lwt/*.ml*
 src/lwt/META*
+src/ounit/*.ml*
+src/ounit/META*
 src/stdlib/*.ml*
 !src/stdlib/random.ml
 src/jscomp/translclass.ml*
