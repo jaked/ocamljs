@@ -175,7 +175,7 @@ function oc$$asets(o, i, v) {
 }
 
 // mutable strings, argh
-
+/** @constructor */
 function oc$$ms(a) {
   this.a = a;
   this.length = a.length;

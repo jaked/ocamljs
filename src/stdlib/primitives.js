@@ -75,10 +75,10 @@ var compare_val = function (v1, v2, total) {
       // XXX is there a way to get the class of an object as a value?
       // XXX is it worth special casing various JS objects?
       if (v1 instanceof Date) {
-	var t1 = v1.getTime();
-	var t2 = v2.getTime();
-	if (t1 < t2) return LESS;
-	if (t1 > t2) return GREATER;
+	var t_1 = v1.getTime();
+	var t_2 = v2.getTime();
+	if (t_1 < t_2) return LESS;
+	if (t_1 > t_2) return GREATER;
 	return EQUAL;
       }
       if (v1 instanceof Array) {
@@ -179,10 +179,9 @@ var caml_classify_float = function (f) {
 var caml_greaterthan = function (v1, v2) { return compare_val(v1, v2, 0) > 0; }
 var caml_greaterequal = function (v1, v2) { return compare_val(v1, v2, 0) >= 0; }
 var caml_hash_univ_param = function (count, limit, obj) {
-  // globals
-  hash_univ_limit = limit;
-  hash_univ_count = count;
-  hash_accu = 0;
+  var hash_univ_limit = limit;
+  var hash_univ_count = count;
+  var hash_accu = 0;
 
   // XXX needs work
   function hash_aux(obj) {
@@ -284,8 +283,8 @@ var caml_ml_open_descriptor_in = function () { return 0; } // XXX
 var caml_ml_open_descriptor_out = function () { return 0; } // XXX
 var caml_ml_out_channels_list = function () { return 0; }
 
-var caml_ml_output = function (c, b, s, l) { print_verbatim(b); }
-var caml_ml_output_char = function (c, ch) {  }
+var caml_ml_output = function (c, b, s, l) { throw "caml_ml_output"; }
+var caml_ml_output_char = function (c, ch) { throw "caml_ml_output_char"; }
 
 var caml_ml_output_int = function () { throw "caml_ml_output_int"; }
 var caml_ml_pos_in = function () { throw "caml_ml_pos_in"; }
@@ -516,6 +515,13 @@ var caml_new_lex_engine = function (tbl, start_state, lexbuf)
 var caml_parser_trace = false
 
 /* Auxiliary for printing token just read */
+
+function print(s)
+{
+    if (window.console) {
+	window.console.log(s);
+    }
+}
 
 function token_name(names, number)
 {
@@ -769,7 +775,7 @@ function caml_finish_formatting(f, rawbuffer) {
   /* Do the formatting */
   var buffer = "";
   if (f.justify == '+' && f.filler == ' ')
-    for (i = len; i < f.width; i++) buffer += ' ';
+    for (var i = len; i < f.width; i++) buffer += ' ';
   if (f.signedconv) {
     if (f.sign < 0) buffer += '-';
     else if (f.signstyle != '-') buffer += f.signstyle;
@@ -777,10 +783,10 @@ function caml_finish_formatting(f, rawbuffer) {
   if (f.alternate && f.base == 8) buffer += '0';
   if (f.alternate && f.base == 16) buffer += "0x";
   if (f.justify == '+' && f.filler == '0')
-    for (i = len; i < f.width; i++) buffer += '0';
+    for (var i = len; i < f.width; i++) buffer += '0';
   buffer += rawbuffer;
   if (f.justify == '-')
-    for (i = len; i < f.width; i++) buffer += ' ';
+    for (var i = len; i < f.width; i++) buffer += ' ';
   return buffer;
 }
 
@@ -804,7 +810,7 @@ function caml_format_float (fmt, x) {
   else
     switch (f.conv) {
     case 'e':
-      var s = x.toExponential(f.prec);
+      s = x.toExponential(f.prec);
       // exponent should be at least two digits
       var i = s.length;
       if (s.charAt(i - 3) == 'e')
