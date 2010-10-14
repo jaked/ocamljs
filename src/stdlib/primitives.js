@@ -325,8 +325,10 @@ var caml_string_compare = function (s1, s2) {
   else if (oc$$sgt(s1, s2)) return 1;
   else return 0;
 }
+var caml_sys_close = function () { throw "caml_sys_close"; }
 var caml_sys_exit = function () { throw "caml_sys_exit"; }
   var init_time = (new Date()).getTime() / 1000;
+var caml_sys_getenv = function () { throw "caml_sys_getenv"; }
 var caml_sys_time = function () { return (new Date()).getTime() / 1000 - init_time; }
 var caml_sys_get_argv = function () { return $("", $()); } // XXX put something here?
 var caml_sys_get_config = function () { return $("js", 32); } // XXX browser name?
