@@ -15,6 +15,8 @@ src/ounit/*.ml*
 src/ounit/META*
 src/stdlib/*.ml*
 !src/stdlib/random.ml
+!src/stdlib/primitives.js
+!src/stdlib/support.js
 src/jscomp/translclass.ml*
 src/jscomp/translcore.ml*
 src/jscomp/translobj.ml*
