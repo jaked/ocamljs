@@ -65,18 +65,18 @@ function ___m(m, t, a)
 
   while (true) {
     var al = a.length;
-    var ml = m.length;
+    var ml = m.$oc;
 
     if (al < ml)
     {
       switch (ml - al) {
-      case 1: return _f(function (z) { return m.apply(t, ap(a, arguments)) });
-      case 2: return _f(function (z,y) { return m.apply(t, ap(a, arguments)) });
-      case 3: return _f(function (z,y,x) { return m.apply(t, ap(a, arguments)) });
-      case 4: return _f(function (z,y,x,w) { return m.apply(t, ap(a, arguments)) });
-      case 5: return _f(function (z,y,x,w,v) { return m.apply(t, ap(a, arguments)) });
-      case 6: return _f(function (z,y,x,w,v,u) { return m.apply(t, ap(a, arguments)) });
-      case 7: return _f(function (z,y,x,w,v,u,s) { return m.apply(t, ap(a, arguments)) });
+      case 1: return _f(1, function (z) { return m.apply(t, ap(a, arguments)) });
+      case 2: return _f(2, function (z,y) { return m.apply(t, ap(a, arguments)) });
+      case 3: return _f(3, function (z,y,x) { return m.apply(t, ap(a, arguments)) });
+      case 4: return _f(4, function (z,y,x,w) { return m.apply(t, ap(a, arguments)) });
+      case 5: return _f(5, function (z,y,x,w,v) { return m.apply(t, ap(a, arguments)) });
+      case 6: return _f(6, function (z,y,x,w,v,u) { return m.apply(t, ap(a, arguments)) });
+      case 7: return _f(7, function (z,y,x,w,v,u,s) { return m.apply(t, ap(a, arguments)) });
       default: throw "unimplemented";
       }
     }
@@ -96,7 +96,7 @@ var $in_tail = false;
 // tail call
 function __m(m, t, args)
 {
-  if (m.$oc) {
+  if ('$oc' in m) {
     if ($in_tail) {
       args.$m = m;
       args.$t = t;
@@ -118,7 +118,7 @@ function __(t, args) { return __m(t, t, args); }
 // non tail call
 function _m(m, t, args)
 {
-  if (m.$oc) {
+  if ('$oc' in m) {
     var old_in_tail = $in_tail;
     $in_tail = true;
     try {
@@ -138,8 +138,8 @@ function _m(m, t, args)
 }
 function _(t, args) { return _m(t, t, args); }
 
-function _f(f) {
-  f.$oc = true;
+function _f(args, f) {
+  f.$oc = args;
   return f;
 }
 
