@@ -438,9 +438,14 @@ end
 
 class type window =
 object
+  inherit element
+
   method _set_onload : (unit -> unit) -> unit
   method _set_onbeforeunload : (unit -> string) -> unit
   method _get_location : location
+
+  method _get_innerWidth : int
+  method _get_innerHeight : int
 
   method alert : string -> unit
   method confirm : string -> bool
