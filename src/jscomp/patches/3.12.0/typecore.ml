@@ -22,7 +22,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: typecore.ml 10540 2010-06-08 03:20:26Z garrigue $ *)
+(* $Id: typecore.ml 10624 2010-07-12 09:36:07Z garrigue $ *)
 
 (* Typechecking for the core language *)
 
@@ -702,7 +702,31 @@ let rec is_nonexpansive exp =
       Vars.fold (fun _ (mut,_,_) b -> decr count; b && mut = Immutable)
         vars true &&
       !count = 0
+  | Texp_pack mexp ->
+      is_nonexpansive_mod mexp
   | _ -> false
+
+and is_nonexpansive_mod mexp =
+  match mexp.mod_desc with
+  | Tmod_ident _ -> true
+  | Tmod_functor _ -> true
+  | Tmod_unpack (e, _) -> is_nonexpansive e
+  | Tmod_constraint (m, _, _) -> is_nonexpansive_mod m
+  | Tmod_structure items ->
+      List.for_all
+        (function
+          | Tstr_eval _ | Tstr_primitive _ | Tstr_type _ | Tstr_modtype _
+          | Tstr_open _ | Tstr_cltype _ | Tstr_exn_rebind _ -> true
+          | Tstr_value (_, pat_exp_list) ->
+              List.for_all (fun (_, exp) -> is_nonexpansive exp) pat_exp_list
+          | Tstr_module (_, m) | Tstr_include (m, _) -> is_nonexpansive_mod m
+          | Tstr_recmodule id_mod_list ->
+              List.for_all (fun (_, m) -> is_nonexpansive_mod m) id_mod_list
+          | Tstr_exception _ -> false (* true would be unsound *)
+          | Tstr_class _ -> false (* could be more precise *)
+        )
+        items
+  | Tmod_apply _ -> false
 
 and is_nonexpansive_opt = function
     None -> true

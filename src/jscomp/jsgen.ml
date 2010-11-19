@@ -157,11 +157,16 @@ let comp_ccall c es =
     | "$call", e::es -> << $e$($list:es$) >>
     | "$false", _ -> << false >>
     | "$fieldref", [e; Jstring (_loc, id, _)] -> << $e$.$id$ >>
-    | "$function", [Jcall (_loc, Jvar _, (Jfun _ as f))] -> f
+    | "$function", [Jcall (_loc, Jvar _, (Jexp_cons (_, _, (Jfun _ as f))))] -> f
 
     (* removes initial dummy arg; see camlinternalOO.ml *)
-    | "$dummyargfun", [Jcall (_loc, Jvar (_loc2, v), (Jfun (_loc3, name, (_::args), stmts)))] ->
-        Jcall (_loc, Jvar (_loc2, v), (Jfun (_loc3, name, args, stmts)))
+    | "$dummyargfun", [Jcall (_loc,
+                              Jvar (_loc2, v),
+                              Jexp_cons (_loc3, Jnum (_loc4, numargs), Jfun (_loc5, name, (_::args), stmts)))] ->
+        let numargs = string_of_int (int_of_string numargs - 1) in
+        Jcall (_loc,
+               Jvar (_loc2, v),
+               Jexp_cons (_loc3, Jnum (_loc4, numargs), (Jfun (_loc5, name, args, stmts))))
 
     | "$hashref", [e1; e2] -> << $e1$[$e2$] >>
     | "$new", (Jstring (_, id, _))::es -> << new $id:id$($list:es$) >>
@@ -333,7 +338,7 @@ let rec comp_expr tail expr =
 
     | Lfunction (_, args, e) ->
         let e = Jfun (_loc, None, List.map jsident_of_ident args, comp_expr_st true e kreturn) in
-        << _f($exp:e$) >>
+        << _f($`int:List.length args$, $exp:e$) >>
 
     | Lapply(e, es, _) ->
         let app = if tail then "__" else "_" in
