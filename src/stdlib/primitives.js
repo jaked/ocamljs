@@ -175,6 +175,10 @@ var caml_classify_float = function (f) {
   // can't determine subnormal from js afaik
   else return 0; // FP_normal
 }
+var caml_modf_float = function (f) {
+  var r = f % 1.0;
+  return [r,f-r];
+}
 
 var caml_greaterthan = function (v1, v2) { return compare_val(v1, v2, 0) > 0; }
 var caml_greaterequal = function (v1, v2) { return compare_val(v1, v2, 0) >= 0; }
@@ -283,8 +287,8 @@ var caml_ml_open_descriptor_in = function () { return 0; } // XXX
 var caml_ml_open_descriptor_out = function () { return 0; } // XXX
 var caml_ml_out_channels_list = function () { return 0; }
 
-var caml_ml_output = function (c, b, s, l) { throw "caml_ml_output"; }
-var caml_ml_output_char = function (c, ch) { throw "caml_ml_output_char"; }
+var caml_ml_output = function (c, b, s, l) { print_verbatim(b); }
+var caml_ml_output_char = function (c, ch) {  }
 
 var caml_ml_output_int = function () { throw "caml_ml_output_int"; }
 var caml_ml_pos_in = function () { throw "caml_ml_pos_in"; }
@@ -517,13 +521,6 @@ var caml_new_lex_engine = function (tbl, start_state, lexbuf)
 var caml_parser_trace = false
 
 /* Auxiliary for printing token just read */
-
-function print(s)
-{
-    if (window.console) {
-	window.console.log(s);
-    }
-}
 
 function token_name(names, number)
 {
