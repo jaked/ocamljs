@@ -96,7 +96,7 @@ var $in_tail = false;
 // tail call
 function __m(m, t, args)
 {
-  if ('$oc' in m) {
+  if (m.$oc >= 0) {
     if ($in_tail) {
       args.$m = m;
       args.$t = t;
@@ -118,7 +118,7 @@ function __(t, args) { return __m(t, t, args); }
 // non tail call
 function _m(m, t, args)
 {
-  if ('$oc' in m) {
+  if (m.$oc >= 0) {
     var old_in_tail = $in_tail;
     $in_tail = true;
     try {
