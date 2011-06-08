@@ -68,18 +68,7 @@ function ___m(m, t, a)
     var ml = m.$oc;
 
     if (al < ml)
-    {
-      switch (ml - al) {
-      case 1: return _f(1, function (z) { return m.apply(t, ap(a, arguments)) });
-      case 2: return _f(2, function (z,y) { return m.apply(t, ap(a, arguments)) });
-      case 3: return _f(3, function (z,y,x) { return m.apply(t, ap(a, arguments)) });
-      case 4: return _f(4, function (z,y,x,w) { return m.apply(t, ap(a, arguments)) });
-      case 5: return _f(5, function (z,y,x,w,v) { return m.apply(t, ap(a, arguments)) });
-      case 6: return _f(6, function (z,y,x,w,v,u) { return m.apply(t, ap(a, arguments)) });
-      case 7: return _f(7, function (z,y,x,w,v,u,s) { return m.apply(t, ap(a, arguments)) });
-      default: throw "unimplemented";
-      }
-    }
+      return _f(ml - al, function () { return m.apply(t, ap(a, arguments)) });
     else if (al == ml)
       return m.apply(t, a);
     else // al > ml
