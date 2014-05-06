@@ -25,6 +25,8 @@ uninstall:
 	done
 	rm -f $(BINDIR)/ocamlfindjs
 
+reinstall: uninstall install
+
 clean:
 	for pkg in $(PKGLIST); do \
 		$(MAKE) -C src/$$pkg clean || exit; \

@@ -51,7 +51,7 @@ let pPrimary = 36
 
 module JSString =
 struct
-  external is_printable: char -> bool = "caml_is_printable"
+  let is_printable_ascii c = let cc = Char.code c in cc > 31 && cc < 127
 
   let escaped s =
     let buf = Buffer.create 0 in
@@ -67,7 +67,7 @@ struct
           | '\r' -> Buffer.add_string buf "\\r"
           | '\b' -> Buffer.add_string buf "\\b"
           | c ->
-              if is_printable c
+              if is_printable_ascii c
               then Buffer.add_char buf c
               else Printf.bprintf buf "\\x%02X" (Char.code c) in
     Array.iter escaped (Utf8.to_int_array s 0 (String.length s));
